@@ -12,3 +12,10 @@ packages/
 
 # Include when developing application packages.
 pubspec.lock
+
+#Ignore IntelliJ/Webstorm files that are user specific
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+
+#Mac
+.DS_Store

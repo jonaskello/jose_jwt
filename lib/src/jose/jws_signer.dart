@@ -10,8 +10,6 @@ part of jose_jwt.jose;
  */
 abstract class JWSSigner extends JWSAlgorithmProvider {
 
-/*
-
 	/**
 	 * Signs the specified {@link JWSObject#getSigningInput input} of a 
 	 * {@link JWSObject JWS object}.
@@ -26,9 +24,6 @@ abstract class JWSSigner extends JWSAlgorithmProvider {
 	 * @throws JOSEException If the JWS algorithm is not supported or if
 	 *                       signing failed for some other reason.
 	 */
-	Base64URL sign(final JWSHeader header, final byte[] signingInput)
-		throws JOSEException;
-
-*/
+	Base64URL sign(final JWSHeader header, final Uint8List signingInput);
 
 }

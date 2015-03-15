@@ -8,103 +8,89 @@ part of jose_jwt.jose;
  */
 class PlainObject extends JOSEObject {
 
+  /**
+   * The header.
+   */
+  final PlainHeader _header;
 
-	/*
+  /**
+   * Creates a new plaintext JOSE object with a default
+   * {@link PlainHeader} and the specified payload.
+   *
+   * @param payload The payload. Must not be {@code null}.
+   */
+  PlainObject.payloadOnly(final Payload payload)
+  :  _header = new PlainHeader.minimal() {
 
-	/**
-	 * The header.
-	 */
-	private final PlainHeader header;
+    if (payload == null) {
 
+      throw new ArgumentError.notNull("payload");
+    }
 
-	/**
-	 * Creates a new plaintext JOSE object with a default 
-	 * {@link PlainHeader} and the specified payload.
-	 *
-	 * @param payload The payload. Must not be {@code null}.
-	 */
-	PlainObject(final Payload payload) {
+    setPayload(payload);
 
-		if (payload == null) {
+  }
 
-			throw new IllegalArgumentException("The payload must not be null");
-		}
+  /**
+   * Creates a new plaintext JOSE object with the specified header and
+   * payload.
+   *
+   * @param header  The plaintext header. Must not be {@code null}.
+   * @param payload The payload. Must not be {@code null}.
+   */
+  PlainObject(final PlainHeader header, final Payload payload)
+  : _header = header {
 
-		setPayload(payload);
+    if (_header == null) {
+      throw new ArgumentError.notNull("header");
+    }
 
-		header = new PlainHeader();
-	}
+    if (payload == null) {
+      throw new ArgumentError.notNull("payload");
+    }
 
+    setPayload(payload);
+  }
 
-	/**
-	 * Creates a new plaintext JOSE object with the specified header and 
-	 * payload.
-	 *
-	 * @param header  The plaintext header. Must not be {@code null}.
-	 * @param payload The payload. Must not be {@code null}.
-	 */
-	PlainObject(final PlainHeader header, final Payload payload) {
+  /**
+   * Creates a new plaintext JOSE object with the specified
+   * Base64URL-encoded parts.
+   *
+   * @param firstPart  The first part, corresponding to the plaintext
+   *                   header. Must not be {@code null}.
+   * @param secondPart The second part, corresponding to the payload.
+   *                   Must not be {@code null}.
+   *
+   * @throws ParseException If parsing of the serialised parts failed.
+   */
+  PlainObject.fromParts(final Base64URL firstPart, final Base64URL secondPart)
+  : _header = PlainHeader.parseBase64Url(firstPart) {
 
-		if (header == null) {
+    if (firstPart == null) {
+      throw new ArgumentError.notNull("firstPart");
+    }
 
-			throw new IllegalArgumentException("The plain header must not be null");
-		}
+//    try {
+//      _header = PlainHeader.parse(firstPart);
+//
+//    } catch (e) {
+//      if (e is ParseError)
+//        throw new ParseError("Invalid plain header: " + e.toString(), 0);
+//    }
 
-		this.header = header;
+    if (secondPart == null) {
+      throw new ArgumentError.notNull("secondPart");
+    }
 
-		if (payload == null) {
+    setPayload(new Payload(secondPart));
 
-			throw new IllegalArgumentException("The payload must not be null");
-		}
-
-		setPayload(payload);
-	}
-
-
-	/**
-	 * Creates a new plaintext JOSE object with the specified 
-	 * Base64URL-encoded parts.
-	 *
-	 * @param firstPart  The first part, corresponding to the plaintext 
-	 *                   header. Must not be {@code null}.
-	 * @param secondPart The second part, corresponding to the payload. 
-	 *                   Must not be {@code null}.
-	 *
-	 * @throws ParseException If parsing of the serialised parts failed.
-	 */
-	PlainObject(final Base64URL firstPart, final Base64URL secondPart)
-		throws ParseException {
-
-		if (firstPart == null) {
-
-			throw new IllegalArgumentException("The first part must not be null");
-		}
-
-		try {
-			header = PlainHeader.parse(firstPart);
-
-		} catch (ParseException e) {
-
-			throw new ParseException("Invalid plain header: " + e.getMessage(), 0);
-		}
-
-		if (secondPart == null) {
-
-			throw new IllegalArgumentException("The second part must not be null");
-		}
-
-		setPayload(new Payload(secondPart));
-
-		setParsedParts(firstPart, secondPart, null);
-	}
-
+    setParsedParts([firstPart, secondPart, null]);
+  }
 
 	@override
 	PlainHeader getHeader() {
-
-		return header;
+		return _header;
 	}
-
 
 	/**
 	 * Serialises this plaintext JOSE object to its compact format 
@@ -120,13 +106,12 @@ class PlainObject extends JOSEObject {
 	@override
 	String serialize() {
 
-		StringBuilder sb = new StringBuilder(header.toBase64URL().toString());
-		sb.append('.');
-		sb.append(getPayload().toBase64URL().toString());
-		sb.append('.');
+		StringBuffer sb = new StringBuffer(_header.toBase64URL().toString());
+		sb.write('.');
+		sb.write(getPayload().toBase64URL().toString());
+		sb.write('.');
 		return sb.toString();
 	}
-
 
 	/**
 	 * Parses a plaintext JOSE object from the specified string in compact 
@@ -139,19 +124,16 @@ class PlainObject extends JOSEObject {
 	 * @throws ParseException If the string couldn't be parsed to a valid 
 	 *                        plaintext JOSE object.
 	 */
-	static PlainObject parse(final String s)
-		throws ParseException {
+	static PlainObject parse(final String s) {
 
-		Base64URL[] parts = JOSEObject.split(s);
+		List<Base64URL> parts = JOSEObject.split(s);
 
-		if (! parts[2].toString().isEmpty()) {
+		if (! parts[2].toString().isEmpty) {
 			
-			throw new ParseException("Unexpected third Base64URL part", 0);
+			throw new ParseError("Unexpected third Base64URL part", 0);
 		}
 
-		return new PlainObject(parts[0], parts[1]);
+		return new PlainObject.fromParts(parts[0], parts[1]);
 	}
-
-*/
 
 }

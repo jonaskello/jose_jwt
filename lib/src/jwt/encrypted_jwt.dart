@@ -17,8 +17,7 @@ class EncryptedJWT extends JWEObject implements JWT {
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
   EncryptedJWT.toBeEncrypted(final JWEHeader header, final ReadOnlyJWTClaimsSet claimsSet)
-  : super(header, new Payload(claimsSet.toJSONObject()));
-
+  : super.toBeEncrypted(header, new Payload.fromJsonObject(claimsSet.toJSONObject()));
 
   /**
    * Creates a new encrypted JSON Web Token (JWT) with the specified
@@ -59,7 +58,7 @@ class EncryptedJWT extends JWEObject implements JWT {
       throw new ParseError("Payload of JWE object is not a valid JSON object", 0);
     }
 
-    return JWTClaimsSet.parse(json);
+    return JWTClaimsSet.parseFromJson(json);
   }
 
   /**

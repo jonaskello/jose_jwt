@@ -334,9 +334,9 @@ class JWSHeaderBuilder {
   JWSHeader build() {
 
     return new JWSHeader(
-        alg, typ, cty, crit,
-        jku, jwk, x5u, x5t, x5t256, x5c, kid,
-        customParams, parsedBase64URL);
+        _alg, _typ, _cty, _crit,
+        _jku, _jwk, _x5u, _x5t, _x5t256, _x5c, _kid,
+        _customParams, _parsedBase64URL);
   }
 
 }
@@ -545,7 +545,7 @@ class JWSHeader extends CommonSEHeader {
    */
   static JWSHeader parseJsonObject(final JSONObject jsonObject) {
 
-    return parse(jsonObject, null);
+    return parseJsonObjectAndUrl(jsonObject, null);
   }
 
   /**
@@ -583,7 +583,7 @@ class JWSHeader extends CommonSEHeader {
       } else if ("cty" == name) {
         header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
       } else if ("crit" == name) {
-        header = header.criticalParams(new Set(JSONObjectUtils.getStringList(jsonObject, name)));
+        header = header.criticalParams(new Set.from(JSONObjectUtils.getStringList(jsonObject, name)));
       } else if ("jku" == name) {
         header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
       } else if ("jwk" == name) {

@@ -2,6 +2,18 @@ part of jose_jwt.json_object;
 
 class JSONObject {
 
+  JSONObject(Map<String, Object> map) {
+    throw new UnimplementedError();
+  }
+
+  Set<String> keySet() {
+    throw new UnimplementedError();
+  }
+
+  bool containsKey(String name) {
+    throw new UnimplementedError();
+  }
+
   void put(String name, dynamic value) {
     throw new UnimplementedError();
   }

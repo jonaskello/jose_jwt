@@ -258,7 +258,7 @@ class JWEHeader extends CommonSEHeader {
       throw new ArgumentError("The JWE algorithm cannot be \"none\"");
     }
 
-    if (enc == null) {
+    if (_enc == null) {
       throw new ArgumentError.notNull("enc");
     }
 
@@ -543,7 +543,7 @@ class JWEHeader extends CommonSEHeader {
    */
   static JWEHeader parseJsonObject(final JSONObject jsonObject) {
 
-    return parse(jsonObject, null);
+    return parseJsonObjectAndUrl(jsonObject, null);
   }
 
   /**
@@ -586,7 +586,7 @@ class JWEHeader extends CommonSEHeader {
       } else if ("cty" == name) {
         header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
       } else if ("crit" == name) {
-        header = header.criticalParams(new Set(JSONObjectUtils.getStringList(jsonObject, name)));
+        header = header.criticalParams(new Set.from(JSONObjectUtils.getStringList(jsonObject, name)));
       } else if ("jku" == name) {
         header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
       } else if ("jwk" == name) {
@@ -930,7 +930,7 @@ class JWEHeaderBuilder {
    *
    * @return This builder.
    */
-  JWEHeaderBuilder jwkURL(final URL jku) {
+  JWEHeaderBuilder jwkURL(final Uri jku) {
 
     this._jku = jku;
     return this;
@@ -960,7 +960,7 @@ class JWEHeaderBuilder {
    *
    * @return This builder.
    */
-  JWEHeaderBuilder x509CertURL(final URL x5u) {
+  JWEHeaderBuilder x509CertURL(final Uri x5u) {
 
     this._x5u = x5u;
     return this;
@@ -1116,7 +1116,7 @@ class JWEHeaderBuilder {
   JWEHeaderBuilder pbes2Count(final int p2c) {
 
     if (p2c < 0)
-      throw new IllegalArgumentException("The PBES2 count parameter must not be negative");
+      throw new ArgumentError("The PBES2 count parameter must not be negative");
 
     this._p2c = p2c;
     return this;

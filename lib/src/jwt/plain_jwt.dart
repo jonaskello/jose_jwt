@@ -16,7 +16,7 @@ class PlainJWT extends PlainObject implements JWT {
    *
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
-  PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) : super(new Payload(claimsSet.toJSONObject()));
+  PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) : super.payloadOnly(new Payload.fromJsonObject(claimsSet.toJSONObject()));
 
   /**
    * Creates a new plain JSON Web Token (JWT) with the specified header
@@ -25,7 +25,8 @@ class PlainJWT extends PlainObject implements JWT {
    * @param header    The plain header. Must not be {@code null}.
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
-  PlainJWT.fromHeaderAndClaimSet(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet) :super(header, new Payload(claimsSet.toJSONObject()));
+  PlainJWT.fromHeaderAndClaimSet(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet)
+  : super(header, new Payload.fromJsonObject(claimsSet.toJSONObject()));
 
   /**
    * Creates a new plain JSON Web Token (JWT) with the specified
@@ -38,7 +39,7 @@ class PlainJWT extends PlainObject implements JWT {
    *
    * @throws ParseException If parsing of the serialised parts failed.
    */
-  PlainJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart) :super(firstPart, secondPart);
+  PlainJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart) :super.fromParts(firstPart, secondPart);
 
   @override
   ReadOnlyJWTClaimsSet getJWTClaimsSet() {
@@ -50,7 +51,7 @@ class PlainJWT extends PlainObject implements JWT {
       throw new ParseError("Payload of plain JOSE object is not a valid JSON object", 0);
     }
 
-    return JWTClaimsSet.parse(json);
+    return JWTClaimsSet.parseFromJson(json);
   }
 
   /**
@@ -68,14 +69,13 @@ class PlainJWT extends PlainObject implements JWT {
 
     List<Base64URL> parts = JOSEObject.split(s);
 
-    if (!parts[2].toString().isEmpty()) {
+    if (!parts[2].toString().isEmpty) {
 
       throw new ParseError("Unexpected third Base64URL part in the plain JWT object", 0);
     }
 
-    return new PlainJWT(parts[0], parts[1]);
+    return new PlainJWT.fromParts(parts[0], parts[1]);
   }
-
 
 }
 

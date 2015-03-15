@@ -22,6 +22,7 @@ part 'jose/jose_object_handler.dart';
 part 'jose/jose_object_handler_adapter.dart';
 part 'jose/jose_object_type.dart';
 part 'jose/jwe_algorithm.dart';
+part 'jose/jwe_algorithm_provider.dart';
 part 'jose/jwe_crypto_parts.dart';
 part 'jose/jwe_decrypter.dart';
 part 'jose/jwe_encrypter.dart';
@@ -62,3 +63,4 @@ part 'jose/requirement.dart';
  * </ul>
  */
 package com.nimbusds.jose;
+*/

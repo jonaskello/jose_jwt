@@ -42,14 +42,14 @@ class JWTParser {
 
     Algorithm alg = Header.parseAlgorithm(jsonObject);
 
-    if (alg.equals(Algorithm.NONE)) {
+    if (alg == Algorithm.NONE) {
       return PlainJWT.parse(s);
     } else if (alg is JWSAlgorithm) {
       return SignedJWT.parse(s);
     } else if (alg is JWEAlgorithm) {
       return EncryptedJWT.parse(s);
     } else {
-      throw new StateError("Unexpected algorithm type: " + alg);
+      throw new StateError("Unexpected algorithm type: $alg");
     }
   }
 
@@ -67,7 +67,7 @@ class JWTParser {
    *                        plain, signed or encrypted JWT.
    */
   //static dynamic parseWithHandler(final String s, final JWTHandler<T> handler) {
-    static dynamic parseWithHandler(final String s, final JWTHandler handler) {
+  static dynamic parseWithHandler(final String s, final JWTHandler handler) {
 // <T>
     JWT jwt = parse(s);
 
@@ -80,10 +80,10 @@ class JWTParser {
     }
   }
 
-	/**
-	 * Prevents instantiation.
-	 */
-	JWTParser._() {
+  /**
+   * Prevents instantiation.
+   */
+  JWTParser._() {
 
-	}
+  }
 }

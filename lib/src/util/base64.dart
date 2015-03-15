@@ -134,7 +134,7 @@ class Base64 implements JSONAware {
    */
   static Base64 encodeBigInteger(final BigInteger bigInt) {
 
-    return encode(BigIntegerUtils.toBytesUnsigned(bigInt));
+    return encodeBytes(BigIntegerUtils.toBytesUnsigned(bigInt));
   }
 
   /**
@@ -147,7 +147,7 @@ class Base64 implements JSONAware {
    */
   static Base64 encodeString(final String text) {
 
-    return encode(text.getBytes(CHARSET));
+    return encodeBytes(text.getBytes(CHARSET));
   }
 
 }

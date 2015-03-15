@@ -17,7 +17,7 @@ class SignedJWT extends JWSObject implements JWT {
    * @param header    The JWS header. Must not be {@code null}.
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
-  SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) :super(header, new Payload(claimsSet.toJSONObject()));
+  SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) :super(header, new Payload.fromJsonObject(claimsSet.toJSONObject()));
 
   /**
    * Creates a new signed JSON Web Token (JWT) with the specified
@@ -33,7 +33,8 @@ class SignedJWT extends JWSObject implements JWT {
    *
    * @throws ParseException If parsing of the serialised parts failed.
    */
-  SignedJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart, final Base64URL thirdPart) : super(firstPart, secondPart, thirdPart);
+  SignedJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart, final Base64URL thirdPart)
+  : super.fromParts(firstPart, secondPart, thirdPart);
 
   @override
   ReadOnlyJWTClaimsSet getJWTClaimsSet() {
@@ -44,7 +45,7 @@ class SignedJWT extends JWSObject implements JWT {
       throw new ParseError("Payload of JWS object is not a valid JSON object", 0);
     }
 
-    return JWTClaimsSet.parse(json);
+    return JWTClaimsSet.parseFromJson(json);
   }
 
   /**
@@ -66,7 +67,7 @@ class SignedJWT extends JWSObject implements JWT {
       throw new ParseError("Unexpected number of Base64URL parts, must be three", 0);
     }
 
-    return new SignedJWT(parts[0], parts[1], parts[2]);
+    return new SignedJWT.fromParts(parts[0], parts[1], parts[2]);
   }
 
 }

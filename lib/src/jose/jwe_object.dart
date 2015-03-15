@@ -129,7 +129,7 @@ class JWEObject extends JOSEObject {
     }
 
     try {
-      this._header = JWEHeader.parse(firstPart);
+      this._header = JWEHeader.parseBase64Url(firstPart);
 
     } catch (e) {
       //ParseException
@@ -164,7 +164,7 @@ class JWEObject extends JOSEObject {
 
     _state = JWEObjectState.ENCRYPTED; // but not decrypted yet!
 
-    setParsedParts(firstPart, secondPart, thirdPart, fourthPart, fifthPart);
+    setParsedParts([firstPart, secondPart, thirdPart, fourthPart, fifthPart]);
   }
 
   @override
@@ -241,7 +241,6 @@ class JWEObject extends JOSEObject {
   void _ensureUnencryptedState() {
 
     if (_state != JWEObjectState.UNENCRYPTED) {
-
       throw new StateError("The JWE object must be in an unencrypted state");
     }
   }
@@ -286,13 +285,13 @@ class JWEObject extends JOSEObject {
 
     if (!encrypter.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
 
-      throw new JOSEException("The \"" + getHeader().getAlgorithm() +
+      throw new JOSEException("The \"" + getHeader().getAlgorithm().toString() +
       "\" algorithm is not supported by the JWE encrypter");
     }
 
     if (!encrypter.supportedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
 
-      throw new JOSEException("The \"" + getHeader().getEncryptionMethod() +
+      throw new JOSEException("The \"" + getHeader().getEncryptionMethod().toString() +
       "\" encryption method is not supported by the JWE encrypter");
     }
   }
@@ -308,13 +307,13 @@ class JWEObject extends JOSEObject {
 
     if (!decrypter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
 
-      throw new JOSEException("The \"" + getHeader().getAlgorithm() +
+      throw new JOSEException("The \"" + getHeader().getAlgorithm().toString() +
       "\" algorithm is not accepted by the JWE decrypter");
     }
 
     if (!decrypter.getAcceptedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
 
-      throw new JOSEException("The \"" + getHeader().getEncryptionMethod() +
+      throw new JOSEException("The \"" + getHeader().getEncryptionMethod().toString() +
       "\" encryption method is not accepted by the JWE decrypter");
     }
   }
@@ -333,9 +332,9 @@ class JWEObject extends JOSEObject {
    */
   void encrypt(final JWEEncrypter encrypter) {
 
-    ensureUnencryptedState();
+    _ensureUnencryptedState();
 
-    ensureJWEEncrypterSupport(encrypter);
+    _ensureJWEEncrypterSupport(encrypter);
 
     JWECryptoParts parts = null;
 
@@ -387,7 +386,7 @@ class JWEObject extends JOSEObject {
     _ensureJWEDecrypterAcceptance(decrypter);
 
     try {
-      setPayload(new Payload(decrypter.decrypt(getHeader(),
+      setPayload(new Payload.fromBytes(decrypter.decrypt(getHeader(),
       getEncryptedKey(),
       getIV(),
       getCipherText(),

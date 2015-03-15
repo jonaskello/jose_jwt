@@ -165,7 +165,7 @@ abstract class Header {
    */
   Object getCustomParam(final String name) {
 
-    return _customParams.get(name);
+    return _customParams[name];
   }
 
 
@@ -334,7 +334,7 @@ abstract class Header {
    */
   static Header parseJsonObject(final JSONObject jsonObject) {
 
-    return parse(jsonObject, null);
+    return parseJsonObjectAndUrl(jsonObject, null);
   }
 
   /**
@@ -358,19 +358,19 @@ abstract class Header {
 
     if (alg == Algorithm.NONE) {
 
-      return PlainHeader.parse(jsonObject, parsedBase64URL);
+      return PlainHeader.parseJsonObjectAndUrl(jsonObject, parsedBase64URL);
 
     } else if (alg is JWSAlgorithm) {
 
-      return JWSHeader.parse(jsonObject, parsedBase64URL);
+      return JWSHeader.parseJsonObjectAndUrl(jsonObject, parsedBase64URL);
 
     } else if (alg is JWEAlgorithm) {
 
-      return JWEHeader.parse(jsonObject, parsedBase64URL);
+      return JWEHeader.parseJsonObjectAndUrl(jsonObject, parsedBase64URL);
 
     } else {
 
-      throw new StateError("Unexpected algorithm type: " + alg);
+      throw new StateError("Unexpected algorithm type: $alg");
     }
   }
 

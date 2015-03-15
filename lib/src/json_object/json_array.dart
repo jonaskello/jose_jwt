@@ -6,4 +6,12 @@ class JSONArray {
     throw new UnimplementedError();
   }
 
+  void addAll(List toAdd) {
+    throw new UnimplementedError();
+  }
+
+  int get lengh {
+    throw new UnimplementedError();
+  }
+
 }
