@@ -156,7 +156,7 @@ class JSONUtils {
    */
   static double getDouble(final Map o, final String key) {
 
-    return _getGeneric(o, key, num).doubleValue();
+    return (_getGeneric(o, key, num) as num).toDouble();
   }
 
   /**

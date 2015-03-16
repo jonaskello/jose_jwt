@@ -1,74 +1,74 @@
-/*
+library jose_jwt.test.jwt_handler_test;
+
+import 'package:unittest/unittest.dart';
+import 'package:cipher/cipher.dart';
+import 'package:jose_jwt/src/jwt.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/crypto.dart';
+
 /**
  * Tests the JWT handler interface.
  */
-public class JWTHandlerTest extends TestCase {
+//public class JWTHandlerTest extends TestCase {
 
+ReadOnlyJWTClaimsSet _generateClaimsSet() {
 
-	public static class JWTHandlerImpl implements JWTHandler<String> {
-
-
-		@Override
-		public String onPlainJWT(PlainJWT plainJWT) {
-			return "plain";
-		}
-
-
-		@Override
-		public String onSignedJWT(SignedJWT signedJWT) {
-			return "signed";
-		}
-
-
-		@Override
-		public String onEncryptedJWT(EncryptedJWT encryptedJWT) {
-			return "encrypted";
-		}
-	}
-
-
-	private static ReadOnlyJWTClaimsSet generateClaimsSet() {
-
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setIssuer("c2id.com");
-		claimsSet.setSubject("alice");
-		return claimsSet;
-	}
-
-
-	public void testParsePlainJWT()
-		throws Exception {
-
-		JWT plainJWT = new PlainJWT(generateClaimsSet());
-
-		assertEquals("plain", JWTParser.parse(plainJWT.serialize(), new JWTHandlerImpl()));
-	}
-
-
-	public void testParseSignedJWT()
-		throws Exception {
-
-		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), generateClaimsSet());
-
-		String key = "12345678901234567890123456789012";
-
-		signedJWT.sign(new MACSigner(key));
-
-		assertEquals("signed", JWTParser.parse(signedJWT.serialize(), new JWTHandlerImpl()));
-	}
-
-
-	public void testEncryptedJWT()
-		throws Exception {
-
-		EncryptedJWT encryptedJWT = new EncryptedJWT(new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM), generateClaimsSet());
-
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-		keyGen.initialize(512);
-
-		encryptedJWT.encrypt(new RSAEncrypter((RSAPublicKey)keyGen.generateKeyPair().getPublic()));
-
-		assertEquals("encrypted", JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerImpl()));
-	}
+  JWTClaimsSet claimsSet = new JWTClaimsSet();
+  claimsSet.setIssuer("c2id.com");
+  claimsSet.setSubject("alice");
+  return claimsSet;
 }
-*/
+
+class JWTHandlerImpl implements JWTHandler<String> {
+
+  @override
+  String onPlainJWT(PlainJWT plainJWT) {
+    return "plain";
+  }
+
+
+  @override
+  String onSignedJWT(SignedJWT signedJWT) {
+    return "signed";
+  }
+
+  @override
+  String onEncryptedJWT(EncryptedJWT encryptedJWT) {
+    return "encrypted";
+  }
+}
+
+main() {
+
+  test('testParsePlainJWT', () {
+
+    JWT plainJWT = new PlainJWT(_generateClaimsSet());
+
+    expect("plain", equals(JWTParser.parseWithHandler(plainJWT.serialize(), new JWTHandlerImpl())));
+  });
+
+  test('testParseSignedJWT', () {
+
+    SignedJWT signedJWT = new SignedJWT(new JWSHeader.fromAlg(JWSAlgorithm.HS256), _generateClaimsSet());
+
+    String key = "12345678901234567890123456789012";
+
+    signedJWT.sign(new MACSigner(key));
+
+    expect("signed", equals(JWTParser.parseWithHandler(signedJWT.serialize(), new JWTHandlerImpl())));
+  });
+
+  test('testEncryptedJWT', () {
+
+    EncryptedJWT encryptedJWT = new EncryptedJWT.toBeEncrypted(
+        new JWEHeader.minimal(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM), _generateClaimsSet());
+
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    keyGen.initialize(512);
+
+    encryptedJWT.encrypt(new RSAEncrypter(keyGen.generateKeyPair().getPublic()) as RSAPublicKey);
+
+    expect("encrypted", equals(JWTParser.parseWithHandler(encryptedJWT.serialize(), new JWTHandlerImpl())));
+  });
+
+}

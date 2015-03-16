@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:bignum/bignum.dart';
 import 'errors.dart';
 import 'json_object.dart';
+import 'package:crypto/crypto.dart' show CryptoUtils;
 
 part 'util/base64.dart';
 part 'util/base64_codec.dart';

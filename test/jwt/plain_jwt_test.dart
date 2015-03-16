@@ -1,123 +1,120 @@
-/*
+library jose_jwt.test.plain_jwt_test;
+
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jwt.dart';
+import 'package:jose_jwt/src/jose.dart';
+
 /**
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-08-21)
  */
-public class PlainJWTTest extends TestCase {
+//public class PlainJWTTest extends TestCase {
 
+main() {
 
-	public void testClaimsSetConstructor()
-		throws Exception {
+  test('testClaimsSetConstructor', () {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
-		claimsSet.setIssuer("http://c2id.com");
-		claimsSet.setAudience("http://app.example.com");
+    JWTClaimsSet claimsSet = new JWTClaimsSet();
+    claimsSet.setSubject("alice");
+    claimsSet.setIssuer("http://c2id.com");
+    claimsSet.setAudience("http://app.example.com");
 
-		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+    ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
 
-		PlainJWT jwt = new PlainJWT(readOnlyClaimsSet);
+    PlainJWT jwt = new PlainJWT(readOnlyClaimsSet);
 
-		assertEquals("alice", jwt.getJWTClaimsSet().getSubject());
-		assertEquals("http://c2id.com", jwt.getJWTClaimsSet().getIssuer());
-		assertEquals("http://app.example.com", jwt.getJWTClaimsSet().getAudience().get(0));
-	}
+    expect("alice", jwt.getJWTClaimsSet().getSubject());
+    expect("http://c2id.com", equals(jwt.getJWTClaimsSet().getIssuer()));
+    expect("http://app.example.com", equals(jwt.getJWTClaimsSet().getAudience()[0]));
+  });
 
+  test('testHeaderAndClaimsSetConstructor', () {
 
-	public void testHeaderAndClaimsSetConstructor()
-		throws Exception {
+    PlainHeader header = new PlainHeaderBuilder().customParam("exp", 1000).build();
 
-		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000l).build();
+    JWTClaimsSet claimsSet = new JWTClaimsSet();
+    claimsSet.setSubject("alice");
+    claimsSet.setIssuer("http://c2id.com");
+    claimsSet.setAudience("http://app.example.com");
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
-		claimsSet.setIssuer("http://c2id.com");
-		claimsSet.setAudience("http://app.example.com");
+    ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
 
-		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+    PlainJWT jwt = new PlainJWT.fromHeaderAndClaimSet(header, readOnlyClaimsSet);
 
-		PlainJWT jwt = new PlainJWT(header, readOnlyClaimsSet);
+    expect(header, equals(jwt.getHeader()));
 
-		assertEquals(header, jwt.getHeader());
+    expect("alice", equals(jwt.getJWTClaimsSet().getSubject()));
+    expect("http://c2id.com", equals(jwt.getJWTClaimsSet().getIssuer()));
+    expect("http://app.example.com", equals(jwt.getJWTClaimsSet().getAudience()[0]));
+  });
 
-		assertEquals("alice", jwt.getJWTClaimsSet().getSubject());
-		assertEquals("http://c2id.com", jwt.getJWTClaimsSet().getIssuer());
-		assertEquals("http://app.example.com", jwt.getJWTClaimsSet().getAudience().get(0));
-	}
+  test('testBase64URLConstructor', () {
 
+    // {"alg":"none"}
+    Base64URL part1 = new Base64URL("eyJhbGciOiJub25lIn0");
 
-	public void testBase64URLConstructor()
-		throws Exception {
+    // {"iss":"joe","exp":1300819380,"http://example.com/is_root":true}
+    Base64URL part2 = new Base64URL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ");
 
-		// {"alg":"none"}
-		Base64URL part1 = new Base64URL("eyJhbGciOiJub25lIn0");
+    PlainJWT jwt = new PlainJWT.fromParts(part1, part2);
 
-		// {"iss":"joe","exp":1300819380,"http://example.com/is_root":true}
-		Base64URL part2 = new Base64URL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-				"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ");
+    expect(Algorithm.NONE, equals(jwt.getHeader().getAlgorithm()));
+    expect(jwt.getHeader().getType(), isNull);
+    expect(jwt.getHeader().getContentType(), isNull);
 
-		PlainJWT jwt = new PlainJWT(part1, part2);
+    ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 
-		assertEquals(Algorithm.NONE, jwt.getHeader().getAlgorithm());
-		assertNull(jwt.getHeader().getType());
-		assertNull(jwt.getHeader().getContentType());
+    expect("joe", equals(cs.getIssuer()));
+    expect(new DateTime.fromMillisecondsSinceEpoch(1300819380 * 1000), equals(cs.getExpirationTime()));
+    expect(cs.getCustomClaim("http://example.com/is_root") as bool, isTrue);
+  });
 
-		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
+  test('testParse', () {
 
-		assertEquals("joe", cs.getIssuer());
-		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
-		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
-	}
+    String s = "eyJhbGciOiJub25lIn0" +
+    "." +
+    "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
+    ".";
 
+    PlainJWT jwt = PlainJWT.parse(s);
 
-	public void testParse()
-		throws Exception {
+    expect(Algorithm.NONE, equals(jwt.getHeader().getAlgorithm()));
+    expect(jwt.getHeader().getType(), isNull);
+    expect(jwt.getHeader().getContentType(), isNull);
 
-		String s = "eyJhbGciOiJub25lIn0" +
-				"." +
-				"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-				"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
-				".";
+    ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 
-		PlainJWT jwt = PlainJWT.parse(s);
+    expect("joe", equals(cs.getIssuer()));
+    expect(new DateTime.fromMillisecondsSinceEpoch(1300819380 * 1000), equals(cs.getExpirationTime()));
+    expect(cs.getCustomClaim("http://example.com/is_root") as bool, isTrue);
+  });
 
-		assertEquals(Algorithm.NONE, jwt.getHeader().getAlgorithm());
-		assertNull(jwt.getHeader().getType());
-		assertNull(jwt.getHeader().getContentType());
+  test('testExampleKristina', () {
 
-		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
+    String jwtString = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0=\n" +
+    ".eyJleHAiOjM3NzQ4NjQwNSwiYXpwIjoiRFAwMWd5M1Frd1ZHR2RJZWpJSmdMWEN0UlRnYSIsInN1\n" +
+    "YiI6ImFkbWluQGNhcmJvbi5zdXBlciIsImF1ZCI6IkRQMDFneTNRa3dWR0dkSWVqSUpnTFhDdFJU\n" +
+    "Z2EiLCJpc3MiOiJodHRwczpcL1wvbG9jYWxob3N0Ojk0NDNcL29hdXRoMmVuZHBvaW50c1wvdG9r\n" +
+    "ZW4iLCJpYXQiOjM3Mzg4NjQwNX0=\n" +
+    ".";
 
-		assertEquals("joe", cs.getIssuer());
-		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
-		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
-	}
+    PlainJWT plainJWT = PlainJWT.parse(jwtString);
 
+    // Header
+    expect(Algorithm.NONE, equals(plainJWT.getHeader().getAlgorithm()));
+    expect(new JOSEObjectType("JWT"), equals(plainJWT.getHeader().getType()));
 
-	public void testExampleKristina()
-		throws Exception {
+    // Claims
+    expect(new DateTime.fromMillisecondsSinceEpoch(377486405 * 1000), equals(plainJWT.getJWTClaimsSet().getExpirationTime()));
+    expect("DP01gy3QkwVGGdIejIJgLXCtRTga", equals(plainJWT.getJWTClaimsSet().getClaim("azp")));
+    expect("admin@carbon.super", equals(plainJWT.getJWTClaimsSet().getSubject()));
+    expect("DP01gy3QkwVGGdIejIJgLXCtRTga", equals(plainJWT.getJWTClaimsSet().getAudience()[0]));
+    expect("https://localhost:9443/oauth2endpoints/token", equals(plainJWT.getJWTClaimsSet().getIssuer()));
+    expect(new DateTime.fromMillisecondsSinceEpoch (373886405 * 1000), equals(plainJWT.getJWTClaimsSet().getIssueTime()));
+  });
 
-		String jwtString = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0=\n" +
-			".eyJleHAiOjM3NzQ4NjQwNSwiYXpwIjoiRFAwMWd5M1Frd1ZHR2RJZWpJSmdMWEN0UlRnYSIsInN1\n" +
-			"YiI6ImFkbWluQGNhcmJvbi5zdXBlciIsImF1ZCI6IkRQMDFneTNRa3dWR0dkSWVqSUpnTFhDdFJU\n" +
-			"Z2EiLCJpc3MiOiJodHRwczpcL1wvbG9jYWxob3N0Ojk0NDNcL29hdXRoMmVuZHBvaW50c1wvdG9r\n" +
-			"ZW4iLCJpYXQiOjM3Mzg4NjQwNX0=\n" +
-			".";
-
-		PlainJWT plainJWT = PlainJWT.parse(jwtString);
-
-		// Header
-		assertEquals(Algorithm.NONE, plainJWT.getHeader().getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), plainJWT.getHeader().getType());
-
-		// Claims
-		assertEquals(new Date(377486405l * 1000), plainJWT.getJWTClaimsSet().getExpirationTime());
-		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getClaim("azp"));
-		assertEquals("admin@carbon.super", plainJWT.getJWTClaimsSet().getSubject());
-		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getAudience().get(0));
-		assertEquals("https://localhost:9443/oauth2endpoints/token", plainJWT.getJWTClaimsSet().getIssuer());
-		assertEquals(new Date(373886405l * 1000), plainJWT.getJWTClaimsSet().getIssueTime());
-	}
 }
-*/

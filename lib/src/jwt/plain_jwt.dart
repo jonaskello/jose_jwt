@@ -39,7 +39,8 @@ class PlainJWT extends PlainObject implements JWT {
    *
    * @throws ParseException If parsing of the serialised parts failed.
    */
-  PlainJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart) :super.fromParts(firstPart, secondPart);
+  PlainJWT.fromParts(final Base64URL firstPart, final Base64URL secondPart)
+  : super.fromParts(firstPart, secondPart);
 
   @override
   ReadOnlyJWTClaimsSet getJWTClaimsSet() {

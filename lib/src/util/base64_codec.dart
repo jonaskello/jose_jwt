@@ -43,46 +43,45 @@ part of jose_jwt.util;
  */
 class Base64Codec {
 
-	/*
 
   /**
    * The base 64 characters.
    */
-  static final List<char> _CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
-
+  static final List<int> _CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".codeUnits;
 
   /**
    * The base 64 URL-safe characters.
    */
-  static final List<char> _CA_URL_SAFE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".toCharArray();
-
+  static final List<int> _CA_URL_SAFE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".codeUnits;
 
   /**
    * Maps base 64 characters to their respective byte values.
    */
-  static final Uint8List _IA = new Uint8List();
+  static final Uint8List _IA = new Uint8List(256);
 
   /**
    * Maps base 64 URL-safe characters to their respective byte values.
    */
-  static final Uint8List _IA_URL_SAFE = new Uint8List();
+  static final Uint8List _IA_URL_SAFE = new Uint8List(256);
 
 
   static init() {
     // Regular map
-    Arrays.fill(IA, -1);
-    for (int i = 0, iS = CA.length; i < iS; i++) {
-      _IA[CA[i]] = i;
+    _IA.fillRange(0, _IA.length - 1, -1);
+    for (int i = 0, iS = _CA.length; i < iS; i++) {
+      _IA[_CA[i]] = i;
     }
     _IA['='] = 0;
 
     // URL-safe map
-    Arrays.fill(_IA_URL_SAFE, -1);
+    _IA_URL_SAFE.fillRange(0, _IA_URL_SAFE.length - 1, -1);
     for (int i = 0, iS = _CA_URL_SAFE.length; i < iS; i++) {
       _IA_URL_SAFE[_CA_URL_SAFE[i]] = i;
     }
     _IA_URL_SAFE['='] = 0;
   }
+
+  /*
 
   /**
    * Computes the base 64 encoded character length for the specified
@@ -114,7 +113,7 @@ class Base64Codec {
       return ((inputLength - 1) / 3 + 1) << 2;
     }
   }
-
+*/
   /**
    * Normalises a base 64 encoded string by ensuring any URL-safe
    * characters are replaced with their regular base64 representation and
@@ -127,33 +126,35 @@ class Base64Codec {
    */
   static String normalizeEncodedString(final String b64String) {
 
-    final int inputLen = b64String.length();
+    final int inputLen = b64String.length;
 
     // Compute missing padding, taking illegal chars into account
     final int legalLen = inputLen - countIllegalChars(b64String);
     final int padLength = legalLen % 4 == 0 ? 0 : 4 - (legalLen % 4);
 
     // Create output array
-		new List<char> chars = new List<char>(inputLen + padLength);
+    List<int> chars = new List<int>(inputLen + padLength);
 
     // Copy chars into output array
-    b64String.getChars(0, inputLen, chars, 0);
+//    b64String.getChars(0, inputLen, chars, 0);
+    chars.setAll(0, b64String.codeUnits);
 
     // Append padding chars if required
     for (int i = 0; i < padLength; i++) {
-      chars[inputLen + i] = '=';
+      chars[inputLen + i] = '='.codeUnitAt(0);
     }
 
     // Replace URL-safe chars
     for (int i = 0; i < inputLen; i++) {
       if (chars[i] == '_') {
-        chars[i] = '/';
+        chars[i] = '/'.codeUnitAt(0);
       } else if (chars[i] == '-') {
-        chars[i] = '+';
+        chars[i] = '+'.codeUnitAt(0);
       }
     }
+//    return new String(chars);
+    return new String.fromCharCodes(chars);
 
-    return new String(chars);
   }
 
   /**
@@ -170,17 +171,19 @@ class Base64Codec {
     // Number of separator and illegal characters
     int illegalCharCount = 0;
 
-    for (int i = 0; i < b64String.length(); i++) {
+    for (int i = 0; i < b64String.length; i++) {
 
-      final char c = b64String.charAt(i);
+      final int c = b64String.codeUnitAt(i);
 
-      if (IA[c] == -1 && IA_URL_SAFE[c] == -1) {
+      if (_IA[c] == -1 && _IA_URL_SAFE[c] == -1) {
         illegalCharCount++;
       }
     }
 
     return illegalCharCount;
   }
+
+/*
 
 	/**
 	 * Encodes a byte array into a base 64 encoded character array.
@@ -256,72 +259,77 @@ class Base64Codec {
 	}
 */
 
-	/**
-	 * Encodes a byte array into a base 64 encoded string.
-	 *
-	 * @param byteArray The bytes to convert. If {@code null} or length 0
-	 *                  an empty array will be returned.
-	 * @param urlSafe   If {@code true} to apply URL-safe encoding (padding
-	 *                  still included and not to spec).
-	 *
-	 * @return The base 64 encoded string. Never {@code null}.
-	 */
-	static String encodeToString(Uint8List byteArray, final bool urlSafe) {
-		throw new UnimplementedError();
+  /**
+   * Encodes a byte array into a base 64 encoded string.
+   *
+   * @param byteArray The bytes to convert. If {@code null} or length 0
+   *                  an empty array will be returned.
+   * @param urlSafe   If {@code true} to apply URL-safe encoding (padding
+   *                  still included and not to spec).
+   *
+   * @return The base 64 encoded string. Never {@code null}.
+   */
+  static String encodeToString(Uint8List byteArray, final bool urlSafe) {
+    throw new UnimplementedError();
 /*
 		// Reuse char[] since we can't create a String incrementally
 		// and StringBuffer/Builder would be slower
 		return new String(encodeToChar(byteArray, urlSafe));
 		*/
-	}
+  }
 
 
-	/**
-	 * Decodes a base 64 or base 64 URL-safe encoded string. May contain
-	 * line separators. Any illegal characters are ignored.
-	 *
-	 * @param b64String The base 64 or base 64 URL-safe encoded string. May
-	 *                  be empty or {@code null}.
-	 *
-	 * @return The decoded byte array, empty if the input base 64 encoded
-	 *         string is empty, {@code null} or corrupted.
-	 */
-	static Uint8List decode(final String b64String) {
+  /**
+   * Decodes a base 64 or base 64 URL-safe encoded string. May contain
+   * line separators. Any illegal characters are ignored.
+   *
+   * @param b64String The base 64 or base 64 URL-safe encoded string. May
+   *                  be empty or {@code null}.
+   *
+   * @return The decoded byte array, empty if the input base 64 encoded
+   *         string is empty, {@code null} or corrupted.
+   */
+  static Uint8List decode(final String b64String) {
 
-		throw new UnimplementedError();
-/*
-		// Check special case
-		if (b64String == null || b64String.isEmpty()) {
-			return new byte[0];
-		}
+    // Check special case
+    if (b64String == null || b64String.isEmpty) {
+      return new Uint8List(0);
+    }
 
-		final String nStr = normalizeEncodedString(b64String);
+    final String nStr = normalizeEncodedString(b64String);
 
-		final int sLen = nStr.length();
+    final int sLen = nStr.length;
 
-		// Count illegal characters (including '\r', '\n') to determine
-		// the size of the byte array to return
-		final int sepCnt = countIllegalChars(nStr);
+    // Count illegal characters (including '\r', '\n') to determine
+    // the size of the byte array to return
+    final int sepCnt = countIllegalChars(nStr);
 
-		// Ensure the legal chars (including '=' padding) divide by 4 (RFC 2045)
-		if ((sLen - sepCnt) % 4 != 0) {
-			// The string is corrupted
-			return new byte[0];
-		}
+    // Ensure the legal chars (including '=' padding) divide by 4 (RFC 2045)
+    if ((sLen - sepCnt) % 4 != 0) {
+      // The string is corrupted
+      return new Uint8List(0);
+    }
 
-		// Count '=' at end
-		int pad = 0;
+    return new Uint8List.fromList(CryptoUtils.base64StringToBytes(nStr));
 
-		for (int i = sLen; i > 1 && IA[nStr.charAt(--i)] <= 0; ) {
-			if (nStr.charAt(i) == '=') {
-				pad++;
-			}
-		}
+    /*
 
-		int len = ((sLen - sepCnt) * 6 >> 3) - pad;
+    // Count '=' at end
+    int pad = 0;
+
+    for (int i = sLen; i > 1 && _IA[nStr.codeUnitAt(--i)] <= 0;) {
+      if (nStr.substring(i, 1) == '=') {
+        pad++;
+      }
+    }
+
+    int len = ((sLen - sepCnt) * 6 >> 3) - pad;
 
 		// Preallocate byte[] of final length
-		byte[] dArr = new byte[len];
+		Uint8List dArr = new Uint8List(len);
+
+    throw new UnimplementedError();
+
 
 		for (int s = 0, d = 0; d < len; ) {
 			// Assemble three bytes into an int from four base 64
@@ -349,7 +357,7 @@ class Base64Codec {
 
 		return dArr;
 		*/
-	}
+  }
 
 
 }

@@ -1,6 +1,7 @@
 library jose_jwt.crypto;
 
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:cipher/cipher.dart';
 import 'jose.dart';
