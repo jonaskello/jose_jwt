@@ -1,10 +1,14 @@
 library jose_jwt.jose;
 
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'util.dart';
 import 'errors.dart';
 import 'json_object.dart';
+import 'jwk.dart';
+
+import 'jwt.dart' show SignedJWT;
 
 export 'util.dart';
 export 'errors.dart';

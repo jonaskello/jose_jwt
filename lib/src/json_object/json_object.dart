@@ -2,7 +2,11 @@ part of jose_jwt.json_object;
 
 class JSONObject {
 
-  JSONObject(Map<String, Object> map) {
+  JSONObject() {
+    throw new UnimplementedError();
+  }
+
+  JSONObject.fromMap(Map<String, Object> map) {
     throw new UnimplementedError();
   }
 

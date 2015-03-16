@@ -64,13 +64,13 @@ class Payload {
    * UTF-8 is the character set for all conversions between strings and
    * byte arrays.
    */
-  static final Charset _CHARSET = Charset.forName("UTF-8");
+  static final Encoding _CHARSET = UTF8; //Charset.forName("UTF-8");
 
 
   /**
    * The original payload data type.
    */
-  Origin _origin;
+  PayloadOrigin _origin;
 
 
   /**
@@ -121,7 +121,8 @@ class Payload {
       return null;
     }
 
-    return new String(bytes, CHARSET);
+//    return new String(bytes, CHARSET);
+    return _CHARSET.decode(bytes);
   }
 
   /**
@@ -137,7 +138,8 @@ class Payload {
       return null;
     }
 
-    return string.getBytes(CHARSET);
+//    return string.getBytes(CHARSET);
+    return _CHARSET.encode(string);
   }
 
   /**
@@ -242,7 +244,7 @@ class Payload {
       throw new ArgumentError.notNull("jwsObject");
     }
 
-    if (jwsObject._getState() == JWSObjectState.UNSIGNED) {
+    if (jwsObject.getState() == JWSObjectState.UNSIGNED) {
       throw new ArgumentError("The JWS object must be signed");
     }
   }
@@ -276,7 +278,7 @@ class Payload {
    *
    * @return The payload origin.
    */
-  Origin getOrigin() {
+  PayloadOrigin getOrigin() {
 
     return _origin;
   }

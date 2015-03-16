@@ -8,12 +8,10 @@ part of jose_jwt.util;
 //@immutable
 class Base64 implements JSONAware {
 
-/*
 	/**
 	 * UTF-8 is the required character set for all JOSE + JWT objects.
 	 */
-	static final Charset CHARSET = Charset.forName("UTF-8");
-*/
+	static final Encoding CHARSET = UTF8; //Charset.forName("UTF-8");
 
   /**
    * The Base64 value.
@@ -44,7 +42,7 @@ class Base64 implements JSONAware {
    */
   Uint8List decode() {
 
-    return Base64Codec.decode(value);
+    return Base64Codec.decode(_value);
   }
 
 
@@ -67,7 +65,8 @@ class Base64 implements JSONAware {
    */
   String decodeToString() {
 
-    return new String(decode(), CHARSET);
+    //return new String(decode(), CHARSET);
+    return CHARSET.decode(decode());
   }
 
   /**
@@ -147,7 +146,8 @@ class Base64 implements JSONAware {
    */
   static Base64 encodeString(final String text) {
 
-    return encodeBytes(text.getBytes(CHARSET));
+//    return encodeBytes(text.getBytes(CHARSET));
+    return encodeBytes(CHARSET.encode(text));
   }
 
 }

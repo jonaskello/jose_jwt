@@ -72,7 +72,8 @@ class Base64URL extends Base64 {
    */
   static Base64URL encodeString(final String text) {
 
-    return encodeBytes(text.getBytes(Base64.CHARSET));
+//    return encodeBytes(text.getBytes(Base64.CHARSET));
+    return encodeBytes(Base64.CHARSET.encode(text));
   }
 
 }

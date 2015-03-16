@@ -8,7 +8,7 @@ part of jose_jwt.jose;
  */
 abstract class AlgorithmProvider {
 
-
+/*
   /**
    * Sets a specific JCA provider, to be used for all operations.
    *
@@ -16,5 +16,6 @@ abstract class AlgorithmProvider {
    *                 one.
    */
   void setProvider(final Provider provider);
+*/
 
 }

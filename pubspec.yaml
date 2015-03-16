@@ -6,7 +6,7 @@ homepage: https://github.com/jonaskello/jose_jwt
 environment:
   sdk: '>=1.3.0 <2.0.0'
 dependencies:
-#  cipher: '>=0.7.1 <0.8.0'
+  cipher: '>=0.7.1 <0.8.0'
 #  crypto: '>=0.9.0 <0.10.0'
 #  logging: '>=0.9.1+1 <0.10.0'
 #  option: '>=0.3.3 <0.4.0'

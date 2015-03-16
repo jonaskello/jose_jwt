@@ -181,7 +181,7 @@ class EncryptionMethod extends Algorithm {
 
     } else {
 
-      return new EncryptionMethod(s);
+      return new EncryptionMethod.nameOnly(s);
     }
   }
 

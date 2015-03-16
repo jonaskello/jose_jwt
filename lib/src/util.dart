@@ -1,5 +1,6 @@
 library jose_jwt.util;
 
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bignum/bignum.dart';
 import 'errors.dart';

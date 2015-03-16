@@ -28,6 +28,7 @@ abstract class JWEAlgorithmProvider extends AlgorithmProvider {
 	 */
 	Set<EncryptionMethod> supportedEncryptionMethods();
 
+/*
 	/**
 	 * Sets a specific JCA provider for the key encryption.
 	 *
@@ -61,5 +62,7 @@ abstract class JWEAlgorithmProvider extends AlgorithmProvider {
 	 *                  the default one.
 	 */
 	void setSecureRandom(final SecureRandom randomGen);
+
+*/
 
 }

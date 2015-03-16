@@ -230,7 +230,7 @@ abstract class Header {
 
     // Include custom parameters, they will be overwritten if their
     // names match specified registered ones
-    JSONObject o = new JSONObject(_customParams);
+    JSONObject o = new JSONObject.fromMap(_customParams);
 
     // Alg is always defined
     o.put("alg", _alg.toString());

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="All but packages" pattern="!file:packages//*&amp;&amp;!file[jose_jwt]:.idea//*" />
+</component>

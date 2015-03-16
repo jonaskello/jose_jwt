@@ -551,7 +551,7 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
   @override
   JSONObject toJSONObject() {
 
-    JSONObject o = new JSONObject(customClaims);
+    JSONObject o = new JSONObject.fromMap(customClaims);
 
     if (iss != null) {
       o.put(ISSUER_CLAIM, iss);

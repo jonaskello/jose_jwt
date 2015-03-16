@@ -7,5 +7,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK (2)" level="application" />
+    <orderEntry type="library" name="Dart SDK" level="application" />
   </component>
 </module>

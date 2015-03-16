@@ -177,7 +177,8 @@ class JWSObject extends JOSEObject {
    */
   Uint8List getSigningInput() {
 
-    return _signingInputString.getBytes(Charset.forName("UTF-8"));
+//    return _signingInputString.getBytes(Charset.forName("UTF-8"));
+    return UTF8.encode(_signingInputString);
   }
 
 //	/**
@@ -205,7 +206,7 @@ class JWSObject extends JOSEObject {
    *
    * @return The state.
    */
-  JWSObjectState _getState() {
+  JWSObjectState getState() {
 
     return _state;
   }
