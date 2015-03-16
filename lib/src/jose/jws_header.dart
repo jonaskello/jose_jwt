@@ -88,7 +88,7 @@ class JWSHeaderBuilder {
    *            not be "none" or {@code null}.
    */
   JWSHeaderBuilder(final JWSAlgorithm alg)
-  : this._(alg, null, null, null, null, null, null, null, null, null, null, null, null);
+  : this._(alg, null, null, null, null, null, null, null, null, null, null, null);
 
   /**
    * Creates a new JWS header builder with the parameters from
@@ -100,11 +100,10 @@ class JWSHeaderBuilder {
   JWSHeaderBuilder.fromHeader(final JWSHeader jwsHeader)
   : this._(jwsHeader.getAlgorithm(), jwsHeader.getType(), jwsHeader.getContentType(), jwsHeader.getCriticalParams(),
   jwsHeader.getCustomParams(), jwsHeader.getJWKURL(), jwsHeader.getJWK(), jwsHeader.getX509CertURL(), jwsHeader.getX509CertThumbprint(),
-  jwsHeader.getX509CertSHA256Thumbprint(), jwsHeader.getX509CertChain(), jwsHeader.getKeyID(), jwsHeader.getCustomParams());
+  jwsHeader.getX509CertSHA256Thumbprint(), jwsHeader.getX509CertChain(), jwsHeader.getKeyID());
 
   JWSHeaderBuilder._(this._alg, this._typ, this._cty, this._crit, this._customParams, this._jku,
-                     this._jwk, this._x5u, this._x5t, this._x5t256, this._x5c, this._kid,
-                     this._customParams) {
+                     this._jwk, this._x5u, this._x5t, this._x5t256, this._x5c, this._kid) {
 
     if (_alg.getName() == Algorithm.NONE.getName()) {
       throw new ArgumentError("The JWS algorithm \"alg\" cannot be \"none\"");
