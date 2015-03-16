@@ -17,7 +17,8 @@ class SignedJWT extends JWSObject implements JWT {
    * @param header    The JWS header. Must not be {@code null}.
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
-  SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) :super(header, new Payload.fromJsonObject(claimsSet.toJSONObject()));
+  SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet)
+  : super(header, new Payload.fromJson(claimsSet.toJson()));
 
   /**
    * Creates a new signed JSON Web Token (JWT) with the specified
@@ -39,13 +40,13 @@ class SignedJWT extends JWSObject implements JWT {
   @override
   ReadOnlyJWTClaimsSet getJWTClaimsSet() {
 
-    JSONObject json = getPayload().toJSONObject();
+    Map json = getPayload().toJson();
 
     if (json == null) {
       throw new ParseError("Payload of JWS object is not a valid JSON object", 0);
     }
 
-    return JWTClaimsSet.parseFromJson(json);
+    return JWTClaimsSet.fromJson(json);
   }
 
   /**

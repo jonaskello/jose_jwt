@@ -221,7 +221,7 @@ abstract class ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The JSON object representation.
 	 */
-	JSONObject toJSONObject();
+	Map toJson();
 
 }
 

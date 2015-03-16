@@ -68,7 +68,9 @@ abstract class RSASSAProvider extends BaseJWSProvider {
    */
   static Signature getRSASignerAndVerifier(final JWSAlgorithm alg,
                                            final Provider provider) {
+    throw new UnimplementedError();
 
+/*
     // The JCE crypto provider uses different alg names
 
     String internalAlgName;
@@ -144,10 +146,9 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 
     return signature;
+    */
   }
 
-/*
-*/
 
 }
 

@@ -6,7 +6,7 @@ part of jose_jwt.util;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-01-08)
  */
-class JSONObjectUtils {
+class JSONUtils {
 
 
   /**
@@ -33,25 +33,10 @@ class JSONObjectUtils {
    * @throws ParseException If the string cannot be parsed to a valid JSON
    *                        object.
    */
-  static JSONObject parseJSONObject(final String s) {
-    throw new UnimplementedError();
-/*
-		Object o = null;
+  static Map parseJson(final String s) {
 
-		try {
-			o = new JSONParser(JSONParser.USE_HI_PRECISION_FLOAT).parse(s);
+    return JSON.decode(s);
 
-		} catch (net.minidev.json.parser.ParseException e) {
-
-			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
-		}
-
-		if (o instanceof JSONObject) {
-			return (JSONObject)o;
-		} else {
-			throw new ParseException("JSON entity is not an object", 0);
-		}
-*/
   }
 
 
@@ -70,18 +55,18 @@ class JSONObjectUtils {
    */
 //	@SuppressWarnings("unchecked")
 //  private static <T> T _getGeneric(final JSONObject o, final String key, final Class<T> clazz)
-  static dynamic _getGeneric(final JSONObject o, final String key, final Type clazz) {
+  static dynamic _getGeneric(final Map o, final String key, final Type clazz) {
 //    throw new UnimplementedError();
 
     if (!o.containsKey(key)) {
       throw new ParseError("Missing JSON object member with key \"" + key + "\"", 0);
     }
 
-    if (o.get(key) == null) {
+    if (o[key] == null) {
       throw new ParseError("JSON object member with key \"" + key + "\" has null value", 0);
     }
 
-    Object value = o.get(key);
+    Object value = o[key];
 
 //		if (! clazz.isAssignableFrom(value.getClass())) {
 //			throw new ParseError("Unexpected type of JSON object member with key \"" + key + "\"", 0);
@@ -104,7 +89,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static bool getBoolean(final JSONObject o, final String key) {
+  static bool getBoolean(final Map o, final String key) {
 
     return _getGeneric(o, key, bool);
   }
@@ -121,7 +106,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static int getInt(final JSONObject o, final String key) {
+  static int getInt(final Map o, final String key) {
 
     return (_getGeneric(o, key, num) as num).toInt();
   }
@@ -169,7 +154,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static double getDouble(final JSONObject o, final String key) {
+  static double getDouble(final Map o, final String key) {
 
     return _getGeneric(o, key, num).doubleValue();
   }
@@ -185,7 +170,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static String getString(final JSONObject o, final String key) {
+  static String getString(final Map o, final String key) {
 
     return _getGeneric(o, key, String);
   }
@@ -202,7 +187,7 @@ class JSONObjectUtils {
    *                        of the expected type.
    */
 //  static URL getURL(final JSONObject o, final String key) {
-  static Uri getURL(final JSONObject o, final String key) {
+  static Uri getURL(final Map o, final String key) {
 
     try {
       return Uri.parse(_getGeneric(o, key, String));
@@ -224,7 +209,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static JSONArray getJSONArray(final JSONObject o, final String key) {
+  static JSONArray getJSONArray(final Map o, final String key) {
 
     return _getGeneric(o, key, JSONArray);
   }
@@ -240,7 +225,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static List<String> getStringArray(final JSONObject o, final String key) {
+  static List<String> getStringArray(final Map o, final String key) {
 
     JSONArray jsonArray = getJSONArray(o, key);
 
@@ -264,11 +249,13 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static List<String> getStringList(final JSONObject o, final String key) {
+  static List<String> getStringList(final Map o, final String key) {
 
-    List<String> array = getStringArray(o, key);
+    return o[key];
 
-    return array.toList(growable:false);
+//    List<String> array = getStringArray(o, key);
+//
+//    return array.toList(growable:false);
 
   }
 
@@ -283,7 +270,7 @@ class JSONObjectUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static JSONObject getJSONObject(final JSONObject o, final String key) {
+  static JSONObject getJSONObject(final Map o, final String key) {
 
     return _getGeneric(o, key, JSONObject);
   }
@@ -291,7 +278,7 @@ class JSONObjectUtils {
   /**
    * Prevents instantiation.
    */
-  JSONObjectUtils._() {
+  JSONUtils._() {
 
     // Nothing to do
   }

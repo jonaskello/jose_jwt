@@ -2,28 +2,34 @@ part of jose_jwt.json_object;
 
 class JSONObject {
 
+  Map<String, Object> _map;
+
+  int get length {
+    return _map.length;
+  }
+
   JSONObject() {
-    throw new UnimplementedError();
+    _map = new Map<String, Object>();
   }
 
   JSONObject.fromMap(Map<String, Object> map) {
-    throw new UnimplementedError();
+    _map = map;
   }
 
   Set<String> keySet() {
-    throw new UnimplementedError();
+    return _map.keys.toSet();
   }
 
   bool containsKey(String name) {
-    throw new UnimplementedError();
+    return _map.containsKey(name);
   }
 
-  void put(String name, dynamic value) {
-    throw new UnimplementedError();
+  void put(String name, Object value) {
+    _map[name] = value;
   }
 
-  dynamic get(String name) {
-    throw new UnimplementedError();
+  Object get(String name) {
+    return _map[name];
   }
 
   static String escape(String str) {

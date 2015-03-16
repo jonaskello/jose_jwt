@@ -65,6 +65,8 @@ class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
   @override
   JWECryptoParts encrypt(final JWEHeader header, final Uint8List bytes) {
 
+    throw new UnimplementedError();
+/*
     final JWEAlgorithm alg = header.getAlgorithm();
     final EncryptionMethod enc = header.getEncryptionMethod();
 
@@ -140,7 +142,7 @@ class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
     Base64URL.encodeBytes(iv),
     Base64URL.encodeBytes(authCipherText.getCipherText()),
     Base64URL.encodeBytes(authCipherText.getAuthenticationTag()));
-
+*/
   }
 
 }

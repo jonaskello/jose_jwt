@@ -66,24 +66,20 @@ class Payload {
    */
   static final Encoding _CHARSET = UTF8; //Charset.forName("UTF-8");
 
-
   /**
    * The original payload data type.
    */
   PayloadOrigin _origin;
 
-
   /**
    * The JSON object view.
    */
-  final JSONObject _jsonObject;
-
+  final Map _json;
 
   /**
    * The string view.
    */
   final String _string;
-
 
   /**
    * The byte array view.
@@ -95,12 +91,10 @@ class Payload {
    */
   final Base64URL _base64URL;
 
-
   /**
    * The JWS object view.
    */
   final JWSObject _jwsObject;
-
 
   /**
    * The signed JWT view.
@@ -142,14 +136,35 @@ class Payload {
     return _CHARSET.encode(string);
   }
 
+
+//  /**
+//   * Creates a new payload from the specified JSON object.
+//   *
+//   * @param jsonObject The JSON object representing the payload. Must not
+//   *                   be {@code null}.
+//   */
+//  Payload.fromJsonObject(final JSONObject jsonObject) :
+//  _json = jsonObject,
+//  _string = null,
+//  _bytes = null,
+//  _base64URL = null,
+//  _jwsObject = null,
+//  _signedJWT = null,
+//  _origin = PayloadOrigin.JSON
+//  {
+//    if (jsonObject == null) {
+//      throw new ArgumentError.notNull("jsonObject");
+//    }
+//  }
+
   /**
    * Creates a new payload from the specified JSON object.
    *
    * @param jsonObject The JSON object representing the payload. Must not
    *                   be {@code null}.
    */
-  Payload.fromJsonObject(final JSONObject jsonObject) :
-  _jsonObject = jsonObject,
+  Payload.fromJson(final Map json) :
+  _json = json,
   _string = null,
   _bytes = null,
   _base64URL = null,
@@ -157,8 +172,8 @@ class Payload {
   _signedJWT = null,
   _origin = PayloadOrigin.JSON
   {
-    if (jsonObject == null) {
-      throw new ArgumentError.notNull("jsonObject");
+    if (json == null) {
+      throw new ArgumentError.notNull("json");
     }
   }
 
@@ -170,7 +185,7 @@ class Payload {
    */
   Payload.fromString(final String string)
   :
-  _jsonObject = null,
+  _json = null,
   _string = string,
   _bytes = null,
   _base64URL = null,
@@ -190,7 +205,7 @@ class Payload {
    *              {@code null}.
    */
   Payload.fromBytes(final Uint8List bytes)
-  : _jsonObject = null,
+  : _json = null,
   _string = null,
   _bytes = bytes,
   _base64URL = null,
@@ -210,7 +225,7 @@ class Payload {
    *                  payload. Must not be {@code null}.
    */
   Payload(final Base64URL base64URL)
-  : _jsonObject = null,
+  : _json = null,
   _string = null,
   _bytes = null,
   _base64URL = base64URL,
@@ -231,7 +246,7 @@ class Payload {
    */
   Payload.fromJWSObject(final JWSObject jwsObject)
   :
-  _jsonObject = null,
+  _json = null,
   _string = null,
   _bytes = null,
   _base64URL = null,
@@ -257,7 +272,7 @@ class Payload {
    *                  a signed state and not {@code null}.
    */
   Payload.fromSignedJwt(final SignedJWT signedJWT)
-  : _jsonObject = null,
+  : _json = null,
   _string = null,
   _bytes = null,
   _base64URL = null,
@@ -289,10 +304,10 @@ class Payload {
    * @return The JSON object view, {@code null} if the payload couldn't
    *         be converted to a JSON object.
    */
-  JSONObject toJSONObject() {
+  Map toJson() {
 
-    if (_jsonObject != null) {
-      return _jsonObject;
+    if (_json != null) {
+      return _json;
     }
 
     // Convert
@@ -304,14 +319,15 @@ class Payload {
       return null;
     }
 
-    try {
-      return JSONObjectUtils.parseJSONObject(s);
+//    try {
+//    return JSONObjectUtils.parseJSONObject(s);
+    return JSONUtils.parseJson(s);
 
-    } catch (e) {
-      // Payload not a JSON object
-      if (e is ParseError)
-        return null;
-    }
+//    } catch (e) {
+//      // Payload not a JSON object
+//      if (e is ParseError)
+//        return null;
+//    }
   }
 
   /**
@@ -335,9 +351,9 @@ class Payload {
         return _jwsObject.serialize();
       }
 
-    } else if (_jsonObject != null) {
+    } else if (_json != null) {
 
-      return _jsonObject.toString();
+      return _json.toString();
 
     } else if (_bytes != null) {
 

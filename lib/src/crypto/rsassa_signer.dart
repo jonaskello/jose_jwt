@@ -50,7 +50,8 @@ class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
   @override
   Base64URL sign(final JWSHeader header, final Uint8List signingInput) {
-
+    throw new UnimplementedError();
+/*
     Signature signer = RSASSAProvider.getRSASignerAndVerifier(header.getAlgorithm(), provider);
 
     try {
@@ -65,6 +66,7 @@ class RSASSASigner extends RSASSAProvider implements JWSSigner {
 //        throw new JOSEException("RSA signature exception: " + e.getMessage(), e);
       throw new JOSEException(e.toString());
     }
+    */
   }
 }
 

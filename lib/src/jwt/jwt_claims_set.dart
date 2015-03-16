@@ -37,27 +37,34 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
   /**
    * The registered claim names.
    */
-  static Set<String> REGISTERED_CLAIM_NAMES;
+  static Set<String> REGISTERED_CLAIM_NAMES = new UnmodifiableSetView(new Set<String>.from([
+      ISSUER_CLAIM,
+      SUBJECT_CLAIM,
+      AUDIENCE_CLAIM,
+      EXPIRATION_TIME_CLAIM,
+      NOT_BEFORE_CLAIM,
+      ISSUED_AT_CLAIM,
+      JWT_ID_CLAIM
+  ]));
 
-
-  /**
-   * Initialises the registered claim name set.
-   */
-  static initRegisteredClaimNameSet() {
-    if (REGISTERED_CLAIM_NAMES == null) {
-      Set<String> n = new Set<String>();
-
-      n.add(ISSUER_CLAIM);
-      n.add(SUBJECT_CLAIM);
-      n.add(AUDIENCE_CLAIM);
-      n.add(EXPIRATION_TIME_CLAIM);
-      n.add(NOT_BEFORE_CLAIM);
-      n.add(ISSUED_AT_CLAIM);
-      n.add(JWT_ID_CLAIM);
-
-      REGISTERED_CLAIM_NAMES = new UnmodifiableSetView(n);
-    }
-  }
+//  /**
+//   * Initialises the registered claim name set.
+//   */
+//  static initRegisteredClaimNameSet() {
+//    if (REGISTERED_CLAIM_NAMES == null) {
+//      Set<String> n = new Set<String>();
+//
+//      n.add(ISSUER_CLAIM);
+//      n.add(SUBJECT_CLAIM);
+//      n.add(AUDIENCE_CLAIM);
+//      n.add(EXPIRATION_TIME_CLAIM);
+//      n.add(NOT_BEFORE_CLAIM);
+//      n.add(ISSUED_AT_CLAIM);
+//      n.add(JWT_ID_CLAIM);
+//
+//      REGISTERED_CLAIM_NAMES = new UnmodifiableSetView(n);
+//    }
+//  }
 
   /**
    * The issuer claim.
@@ -103,7 +110,6 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
    * Creates a new empty JWT claims set.
    */
   JWTClaimsSet() {
-    initRegisteredClaimNameSet();
     // Nothing to do
   }
 
@@ -113,7 +119,6 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
    * @param old The JWT claims set to copy. Must not be {@code null}.
    */
   JWTClaimsSet.copyOf(final ReadOnlyJWTClaimsSet old) : super() {
-    initRegisteredClaimNameSet();
 
     setAllClaims(old.getAllClaims());
   }
@@ -361,7 +366,7 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
       throw new ParseError("The \"" + name + "\" claim is not a list / JSON array", 0);
     }
 
-    List<String> stringArray = new List<String>(); // [list.size()];
+    List<String> stringArray = new List<String>(list.length);
 
     for (int i = 0; i < stringArray.length; i++) {
 
@@ -547,10 +552,12 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 //    }
     newClaims.forEach((name, value) => setClaim(name, value));
   }
+/*
 
   @override
   JSONObject toJSONObject() {
 
+    throw new UnimplementedError();
     JSONObject o = new JSONObject.fromMap(customClaims);
 
     if (iss != null) {
@@ -590,6 +597,49 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
     return o;
   }
+*/
+
+  Map toJson() {
+
+    Map o = new Map.from(customClaims);
+
+    if (iss != null) {
+      o[ISSUER_CLAIM] = iss;
+    }
+
+    if (sub != null) {
+      o[SUBJECT_CLAIM] = sub;
+    }
+
+    if (aud != null && !aud.isEmpty) {
+
+      if (aud.length == 1) {
+        o[AUDIENCE_CLAIM] = aud[0];
+      } else {
+        List audArray = new List();
+        audArray.addAll(aud);
+        o[AUDIENCE_CLAIM] = audArray;
+      }
+    }
+
+    if (exp != null) {
+      o[EXPIRATION_TIME_CLAIM] = exp.millisecondsSinceEpoch / 1000;
+    }
+
+    if (nbf != null) {
+      o[NOT_BEFORE_CLAIM] = nbf.millisecondsSinceEpoch / 1000;
+    }
+
+    if (iat != null) {
+      o[ISSUED_AT_CLAIM] = iat.millisecondsSinceEpoch / 1000;
+    }
+
+    if (jti != null) {
+      o[JWT_ID_CLAIM] = jti;
+    }
+
+    return o;
+  }
 
   /**
    * Parses a JSON Web Token (JWT) claims set from the specified JSON
@@ -602,54 +652,51 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid JWT claims set.
    */
-  static JWTClaimsSet parseFromJson(final JSONObject json) {
+  static JWTClaimsSet fromJson(final Map json) {
 
     JWTClaimsSet cs = new JWTClaimsSet();
 
     // Parse registered + custom params
-    for (final String name in json.keySet()) {
+    for (final String name in json.keys) {
 
       if (name == ISSUER_CLAIM) {
 
-        cs.setIssuer(JSONObjectUtils.getString(json, ISSUER_CLAIM));
+        cs.setIssuer(JSONUtils.getString(json, ISSUER_CLAIM));
 
       } else if (name == SUBJECT_CLAIM) {
 
-        cs.setSubject(JSONObjectUtils.getString(json, SUBJECT_CLAIM));
+        cs.setSubject(JSONUtils.getString(json, SUBJECT_CLAIM));
 
       } else if (name == AUDIENCE_CLAIM) {
 
-        Object audValue = json.get(AUDIENCE_CLAIM);
+        Object audValue = json[AUDIENCE_CLAIM];
 
         if (audValue is String) {
           List<String> singleAud = new List<String>();
-          singleAud.add(JSONObjectUtils.getString(json, AUDIENCE_CLAIM));
+          singleAud.add(JSONUtils.getString(json, AUDIENCE_CLAIM));
           cs.setAudienceList(singleAud);
         } else if (audValue is List) {
-          cs.setAudienceList(JSONObjectUtils.getStringList(json, AUDIENCE_CLAIM));
+          cs.setAudienceList(JSONUtils.getStringList(json, AUDIENCE_CLAIM));
         }
 
       } else if (name == EXPIRATION_TIME_CLAIM) {
 
-//        cs.setExpirationTime(new DateTime(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM) * 1000));
-        cs.setExpirationTime(new DateTime(JSONObjectUtils.getInt(json, EXPIRATION_TIME_CLAIM) * 1000));
+        cs.setExpirationTime(new DateTime.fromMillisecondsSinceEpoch (JSONUtils.getInt(json, EXPIRATION_TIME_CLAIM) * 1000));
 
       } else if (name == NOT_BEFORE_CLAIM) {
 
-//        cs.setNotBeforeTime(new DateTime(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM) * 1000));
-        cs.setNotBeforeTime(new DateTime(JSONObjectUtils.getInt(json, NOT_BEFORE_CLAIM) * 1000));
+        cs.setNotBeforeTime(new DateTime.fromMillisecondsSinceEpoch(JSONUtils.getInt(json, NOT_BEFORE_CLAIM) * 1000));
 
       } else if (name == ISSUED_AT_CLAIM) {
 
-//        cs.setIssueTime(new DateTime(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM) * 1000));
-        cs.setIssueTime(new DateTime(JSONObjectUtils.getInt(json, ISSUED_AT_CLAIM) * 1000));
+        cs.setIssueTime(new DateTime.fromMillisecondsSinceEpoch(JSONUtils.getInt(json, ISSUED_AT_CLAIM) * 1000));
 
       } else if (name == JWT_ID_CLAIM) {
 
-        cs.setJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
+        cs.setJWTID(JSONUtils.getString(json, JWT_ID_CLAIM));
 
       } else {
-        cs.setCustomClaim(name, json.get(name));
+        cs.setCustomClaim(name, json[name]);
       }
     }
 
@@ -667,9 +714,9 @@ class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
    * @throws ParseException If the specified JSON object string doesn't
    *                        represent a valid JWT claims set.
    */
-  static JWTClaimsSet parseFromJsonString(final String s) {
+  static JWTClaimsSet fromJsonString(final String s) {
 
-    return parseFromJson(JSONObjectUtils.parseJSONObject(s));
+    return fromJson(JSONUtils.parseJson(s));
   }
 
   @override

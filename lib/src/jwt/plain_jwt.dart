@@ -16,7 +16,7 @@ class PlainJWT extends PlainObject implements JWT {
    *
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
-  PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) : super.payloadOnly(new Payload.fromJsonObject(claimsSet.toJSONObject()));
+  PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) : super.payloadOnly(new Payload.fromJson(claimsSet.toJson()));
 
   /**
    * Creates a new plain JSON Web Token (JWT) with the specified header
@@ -26,7 +26,7 @@ class PlainJWT extends PlainObject implements JWT {
    * @param claimsSet The JWT claims set. Must not be {@code null}.
    */
   PlainJWT.fromHeaderAndClaimSet(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet)
-  : super(header, new Payload.fromJsonObject(claimsSet.toJSONObject()));
+  : super(header, new Payload.fromJson(claimsSet.toJson()));
 
   /**
    * Creates a new plain JSON Web Token (JWT) with the specified
@@ -44,14 +44,14 @@ class PlainJWT extends PlainObject implements JWT {
   @override
   ReadOnlyJWTClaimsSet getJWTClaimsSet() {
 
-    JSONObject json = getPayload().toJSONObject();
+    Map json = getPayload().toJson();
 
     if (json == null) {
 
       throw new ParseError("Payload of plain JOSE object is not a valid JSON object", 0);
     }
 
-    return JWTClaimsSet.parseFromJson(json);
+    return JWTClaimsSet.fromJson(json);
   }
 
   /**

@@ -126,6 +126,8 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
    * @return The secure random generator.
    */
   SecureRandom getSecureRandom() {
+    throw new UnimplementedError();
+/*
     if (randomGen == null) {
       // Use default SecureRandom instance for this JVM/platform.
       this.randomGen = new SecureRandom();
@@ -134,6 +136,7 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
       // Use the specified instance.
       return randomGen;
     }
+*/
   }
 
 

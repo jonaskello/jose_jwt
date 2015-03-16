@@ -41,22 +41,19 @@ class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
   /**
    * The accepted JWE algorithms.
    */
-  Set<JWEAlgorithm> _acceptedAlgs =
-  new Set.from(supportedAlgorithms());
+  Set<JWEAlgorithm> _acceptedAlgs; // = new Set.from(supportedAlgorithms());
 
 
   /**
    * The accepted encryption methods.
    */
-  Set<EncryptionMethod> _acceptedEncs =
-  new Set.from(supportedEncryptionMethods());
+  Set<EncryptionMethod> _acceptedEncs; // = new Set.from(supportedEncryptionMethods());
 
 
   /**
    * The critical header parameter checker.
    */
-  final CriticalHeaderParameterChecker _critParamChecker =
-  new CriticalHeaderParameterChecker();
+  final CriticalHeaderParameterChecker _critParamChecker = new CriticalHeaderParameterChecker();
 
 
   /**
@@ -74,6 +71,10 @@ class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
     if (_privateKey == null) {
       throw new ArgumentError.notNull("privateKey");
     }
+
+    _acceptedAlgs = new Set.from(supportedAlgorithms());
+    _acceptedEncs = new Set.from(supportedEncryptionMethods());
+
   }
 
   /**
@@ -143,6 +144,8 @@ class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
                     final Base64URL cipherText,
                     final Base64URL authTag) {
 
+    throw new UnimplementedError();
+/*
     // Validate required JWE parts
     if (encryptedKey == null) {
 
@@ -194,11 +197,11 @@ class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
     } else if (alg == JWEAlgorithm.RSA_OAEP) {
 
-      cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
+      cek = RSA_OAEP.decryptCEK(_privateKey, encryptedKey.decode(), keyEncryptionProvider);
 
     } else if (alg == JWEAlgorithm.RSA_OAEP_256) {
 
-      cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
+      cek = RSA_OAEP_256.decryptCEK(_privateKey, encryptedKey.decode(), keyEncryptionProvider);
 
     } else {
 
@@ -258,6 +261,7 @@ class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
     // Apply decompression if requested
     return DeflateHelper.applyDecompression(header, plainText);
+*/
   }
 
 }

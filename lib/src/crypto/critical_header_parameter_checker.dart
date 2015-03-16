@@ -1,15 +1,5 @@
 part of jose_jwt.crypto;
 
-/*
-package com.nimbusds.jose.crypto;
-
-
-import java.util.HashSet;
-import java.util.Set;
-
-import com.nimbusds.jose.Header;
-
-
 /**
  * Critical header parameter checker.
  *
@@ -22,8 +12,7 @@ class CriticalHeaderParameterChecker {
 	/**
 	 * The critical header parameters to ignore.
 	 */
-	private Set<String> ignoredCritParams = new HashSet<>();
-
+	Set<String> _ignoredCritParams = new Set();
 
 	/**
 	 * Gets the names of the critical header parameters to ignore.
@@ -31,11 +20,10 @@ class CriticalHeaderParameterChecker {
 	 * @return The names of the critical parameters to ignore. Empty or
 	 *         {@code null} if none.
 	 */
-	public Set<String> getIgnoredCriticalHeaders() {
+	Set<String> getIgnoredCriticalHeaders() {
 
-		return ignoredCritParams;
+		return _ignoredCritParams;
 	}
-
 
 	/**
 	 * Sets the names of the critical header parameters to ignore.
@@ -43,11 +31,10 @@ class CriticalHeaderParameterChecker {
 	 * @param headers The names of the critical parameter to ignore. Empty
 	 *                or {@code null} if none.
 	 */
-	public void setIgnoredCriticalHeaders(final Set<String> headers) {
+	void setIgnoredCriticalHeaders(final Set<String> headers) {
 
-		ignoredCritParams = headers;
+		_ignoredCritParams = headers;
 	}
-
 
 	/**
 	 * Returns {@code true} if the specified header passes the critical
@@ -60,16 +47,16 @@ class CriticalHeaderParameterChecker {
 	 *         header contains one or more critical header parameters which
 	 *         must not be ignored.
 	 */
-	public boolean headerPasses(final Header header) {
+	bool headerPasses(final Header header) {
 
 		Set<String> crit = header.getCriticalParams();
 
-		if (crit == null || crit.isEmpty()) {
+		if (crit == null || crit.isEmpty) {
 			return true; // OK
 		}
 
-		return ignoredCritParams != null && ignoredCritParams.containsAll(crit);
+		return _ignoredCritParams != null && _ignoredCritParams.containsAll(crit);
 	}
+
 }
 
-*/
