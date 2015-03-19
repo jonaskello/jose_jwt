@@ -306,7 +306,7 @@ class PlainHeader extends Header {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid plain header.
    */
-  static PlainHeader parseJsonObject(final JSONObject jsonObject) {
+  static PlainHeader parseJsonObject(final Map jsonObject) {
 
     return parseJsonObjectAndUrl(jsonObject, null);
   }
@@ -324,7 +324,7 @@ class PlainHeader extends Header {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid plain header.
    */
-  static PlainHeader parseJsonObjectAndUrl(final JSONObject jsonObject,
+  static PlainHeader parseJsonObjectAndUrl(final Map jsonObject,
                                            final Base64URL parsedBase64URL) {
 
     // Get the "alg" parameter
@@ -337,72 +337,72 @@ class PlainHeader extends Header {
     PlainHeaderBuilder header = new PlainHeaderBuilder().parsedBase64URL(parsedBase64URL);
 
     // Parse optional + custom parameters
-    for (final String name in jsonObject.keySet()) {
+    for (final String name in jsonObject.keys) {
 
       if ("alg" == name) {
         // skip
       } else if ("typ" == name) {
-        header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
+        header = header.type(new JOSEObjectType(JSONUtils.getString(jsonObject, name)));
       } else if ("cty" == name) {
-        header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
+        header = header.contentType(JSONUtils.getString(jsonObject, name));
       } else if ("crit" == name) {
-        header = header.criticalParams(new Set.from(JSONObjectUtils.getStringList(jsonObject, name)));
+        header = header.criticalParams(new Set.from(JSONUtils.getStringList(jsonObject, name)));
       } else {
-        header = header.customParam(name, jsonObject.get(name));
+        header = header.customParam(name, jsonObject["name"]);
       }
     }
 
     return header.build();
   }
 
-	/**
-	 * Parses a plain header from the specified JSON string.
-	 *
-	 * @param jsonString The JSON string to parse. Must not be
-	 *                   {@code null}.
-	 *
-	 * @return The plain header.
-	 *
-	 * @throws ParseException If the specified JSON string doesn't
-	 *                        represent a valid plain header.
-	 */
-	static PlainHeader parseJsonString(final String jsonString) {
+  /**
+   * Parses a plain header from the specified JSON string.
+   *
+   * @param jsonString The JSON string to parse. Must not be
+   *                   {@code null}.
+   *
+   * @return The plain header.
+   *
+   * @throws ParseException If the specified JSON string doesn't
+   *                        represent a valid plain header.
+   */
+  static PlainHeader parseJsonString(final String jsonString) {
 
-		return parseJsonStringAndUrl(jsonString, null);
-	}
+    return parseJsonStringAndUrl(jsonString, null);
+  }
 
-	/**
-	 * Parses a plain header from the specified JSON string.
-	 *
-	 * @param jsonString      The JSON string to parse. Must not be
-	 *                        {@code null}.
-	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
-	 *                        if not applicable.
-	 *
-	 * @return The plain header.
-	 *
-	 * @throws ParseException If the specified JSON string doesn't 
-	 *                        represent a valid plain header.
-	 */
-	static PlainHeader parseJsonStringAndUrl(final String jsonString,
-					final Base64URL parsedBase64URL) {
+  /**
+   * Parses a plain header from the specified JSON string.
+   *
+   * @param jsonString      The JSON string to parse. Must not be
+   *                        {@code null}.
+   * @param parsedBase64URL The original parsed Base64URL, {@code null}
+   *                        if not applicable.
+   *
+   * @return The plain header.
+   *
+   * @throws ParseException If the specified JSON string doesn't
+   *                        represent a valid plain header.
+   */
+  static PlainHeader parseJsonStringAndUrl(final String jsonString,
+                                           final Base64URL parsedBase64URL) {
 
-		return parseJsonObjectAndUrl(JSONObjectUtils.parseJSONObject(jsonString), parsedBase64URL);
-	}
+    return parseJsonObjectAndUrl(JSON.decode(jsonString), parsedBase64URL);
+  }
 
-	/**
-	 * Parses a plain header from the specified Base64URL.
-	 *
-	 * @param base64URL The Base64URL to parse. Must not be {@code null}.
-	 *
-	 * @return The plain header.
-	 *
-	 * @throws ParseException If the specified Base64URL doesn't represent
-	 *                        a valid plain header.
-	 */
-	static PlainHeader parseBase64Url(final Base64URL base64URL) {
+  /**
+   * Parses a plain header from the specified Base64URL.
+   *
+   * @param base64URL The Base64URL to parse. Must not be {@code null}.
+   *
+   * @return The plain header.
+   *
+   * @throws ParseException If the specified Base64URL doesn't represent
+   *                        a valid plain header.
+   */
+  static PlainHeader parseBase64Url(final Base64URL base64URL) {
 
-		return parseJsonStringAndUrl(base64URL.decodeToString(), base64URL);
-	}
+    return parseJsonStringAndUrl(base64URL.decodeToString(), base64URL);
+  }
 
 }

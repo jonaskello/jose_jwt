@@ -302,9 +302,9 @@ abstract class Header {
    * @throws ParseException If the {@code alg} parameter couldn't be
    *                        parsed.
    */
-  static Algorithm parseAlgorithm(final JSONObject json) {
+  static Algorithm parseAlgorithm(final Map json) {
 
-    String algName = JSONObjectUtils.getString(json, "alg");
+    String algName = JSONUtils.getString(json, "alg");
 
     // Infer algorithm type
 
@@ -332,7 +332,7 @@ abstract class Header {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid header.
    */
-  static Header parseJsonObject(final JSONObject jsonObject) {
+  static Header parseJsonObject(final Map jsonObject) {
 
     return parseJsonObjectAndUrl(jsonObject, null);
   }
@@ -351,7 +351,7 @@ abstract class Header {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid header.
    */
-  static Header parseJsonObjectAndUrl(final JSONObject jsonObject,
+  static Header parseJsonObjectAndUrl(final Map jsonObject,
                              final Base64URL parsedBase64URL) {
 
     Algorithm alg = parseAlgorithm(jsonObject);
@@ -408,7 +408,7 @@ abstract class Header {
   static Header parseJsonStringAndUrl(final String jsonString,
                       final Base64URL parsedBase64URL) {
 
-    JSONObject jsonObject = JSONObjectUtils.parseJSONObject(jsonString);
+    Map jsonObject = JSON.decode(jsonString);
 
     return parseJsonObjectAndUrl(jsonObject, parsedBase64URL);
   }

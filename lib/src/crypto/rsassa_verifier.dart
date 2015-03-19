@@ -1,27 +1,7 @@
 part of jose_jwt.crypto;
 
-/*
-package com.nimbusds.jose.crypto;
-
-
-import java.security.InvalidKeyException;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
-import java.util.Set;
-
-import net.jcip.annotations.ThreadSafe;
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.util.Base64URL;
-
-
 /**
- * RSA Signature-Scheme-with-Appendix (RSASSA) verifier of 
+ * RSA Signature-Scheme-with-Appendix (RSASSA) verifier of
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
@@ -38,125 +18,122 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
  * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
  * restrict the acceptable JWS algorithms.
- * 
+ *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-22)
  */
-@ThreadSafe
-public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
+//@ThreadSafe
+class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
+
+  /**
+   * The accepted JWS algorithms.
+   */
+  Set<JWSAlgorithm> _acceptedAlgs; // = new Set(supportedAlgorithms());
 
 
-	/**
-	 * The accepted JWS algorithms.
-	 */
-	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
+  /**
+   * The critical header parameter checker.
+   */
+  final CriticalHeaderParameterChecker _critParamChecker = new CriticalHeaderParameterChecker();
 
 
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+  /**
+   * The public RSA key.
+   */
+  final RSAPublicKey _publicKey;
 
 
-	/**
-	 * The public RSA key.
-	 */
-	private final RSAPublicKey publicKey;
+  /**
+   * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
+   *
+   * @param publicKey The public RSA key. Must not be {@code null}.
+   */
+  RSASSAVerifier(this._publicKey) {
+
+    if (_publicKey == null) {
+
+      throw new ArgumentError.notNull("_publicKey");
+    }
+
+    _acceptedAlgs = new Set.from(supportedAlgorithms());
+
+  }
+
+  /**
+   * Gets the public RSA key.
+   *
+   * @return The public RSA key.
+   */
+  RSAPublicKey getPublicKey() {
+
+    return _publicKey;
+  }
+
+  @override
+  Set<JWSAlgorithm> getAcceptedAlgorithms() {
+
+    return _acceptedAlgs;
+  }
 
 
-	/**
-	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
-	 *
-	 * @param publicKey The public RSA key. Must not be {@code null}.
-	 */
-	public RSASSAVerifier(final RSAPublicKey publicKey) {
+  @override
+  void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
 
-		if (publicKey == null) {
+    if (acceptedAlgs == null) {
+      throw new ArgumentError.notNull("acceptedAlgs");
+    }
 
-			throw new IllegalArgumentException("The public RSA key must not be null");
-		}
+    if (!supportedAlgorithms().containsAll(acceptedAlgs)) {
+      throw new ArgumentError("Unsupported JWS algorithm(s)");
+    }
 
-		this.publicKey = publicKey;
-	}
+    _acceptedAlgs = acceptedAlgs;
+  }
 
+  @override
+  Set<String> getIgnoredCriticalHeaderParameters() {
 
-	/**
-	 * Gets the public RSA key.
-	 *
-	 * @return The public RSA key.
-	 */
-	public RSAPublicKey getPublicKey() {
+    return _critParamChecker.getIgnoredCriticalHeaders();
+  }
 
-		return publicKey;
-	}
+  @override
+  void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
 
+    _critParamChecker.setIgnoredCriticalHeaders(headers);
+  }
 
-	@Override
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
+  @override
+  bool verify(final JWSHeader header,
+              final Uint8List signedContent,
+              final Base64URL signature) {
 
-		return acceptedAlgs;
-	}
+    throw new UnimplementedError();
+/*
+    if (!_critParamChecker.headerPasses(header)) {
+      return false;
+    }
 
+    Signature verifier = RSASSAProvider.getRSASignerAndVerifier(header.getAlgorithm(), provider);
 
-	@Override
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+    try {
+      verifier.initVerify(publicKey);
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
-		}
+    } catch (e) {
+      if (e is InvalidKeyException)
+        throw new JOSEException("Invalid public RSA key: " + e.toString(), e);
+      throw e;
+    }
 
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
-		}
+    try {
+      verifier.update(signedContent);
+      return verifier.verify(signature.decode());
 
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
-	}
-
-
-	@Override
-	public boolean verify(final JWSHeader header,
-		              final byte[] signedContent, 
-		              final Base64URL signature)
-		throws JOSEException {
-
-		if (! critParamChecker.headerPasses(header)) {
-			return false;
-		}
-
-		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), provider);
-
-		try {
-			verifier.initVerify(publicKey);
-
-		} catch (InvalidKeyException e) {
-
-			throw new JOSEException("Invalid public RSA key: " + e.getMessage(), e);
-		}
-
-		try {
-			verifier.update(signedContent);
-			return verifier.verify(signature.decode());
-
-		} catch (SignatureException e) {
-
-			return false;
-		}
-	}
-}
+    } catch (e) {
+      if (e is SignatureException)
+        return false;
+      throw e;
+    }
 */
+  }
+
+}

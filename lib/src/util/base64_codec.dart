@@ -43,7 +43,7 @@ part of jose_jwt.util;
  */
 class Base64Codec {
 
-
+/*
   /**
    * The base 64 characters.
    */
@@ -53,7 +53,7 @@ class Base64Codec {
    * The base 64 URL-safe characters.
    */
   static final List<int> _CA_URL_SAFE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".codeUnits;
-
+*/
   /**
    * Maps base 64 characters to their respective byte values.
    */
@@ -64,7 +64,7 @@ class Base64Codec {
    */
   static final Uint8List _IA_URL_SAFE = new Uint8List(256);
 
-
+/*
   static init() {
     // Regular map
     _IA.fillRange(0, _IA.length - 1, -1);
@@ -80,6 +80,7 @@ class Base64Codec {
     }
     _IA_URL_SAFE['='] = 0;
   }
+*/
 
   /*
 

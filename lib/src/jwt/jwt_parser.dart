@@ -30,14 +30,14 @@ class JWTParser {
 
     Base64URL header = new Base64URL(s.substring(0, firstDotPos));
 
-    JSONObject jsonObject;
+    Map jsonObject;
 
     try {
-      jsonObject = JSONObjectUtils.parseJSONObject(header.decodeToString());
+      jsonObject = JSON.decode(header.decodeToString());
 
     } catch (e) {
       // ParseException
-      throw new ParseError("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
+      throw new ParseError("Invalid plain/JWS/JWE header: " + e.toString(), 0);
     }
 
     Algorithm alg = Header.parseAlgorithm(jsonObject);

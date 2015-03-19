@@ -53,7 +53,7 @@ main() {
 
     String key = "12345678901234567890123456789012";
 
-    signedJWT.sign(new MACSigner(key));
+    signedJWT.sign(new MACSigner.secretString(key));
 
     expect("signed", equals(JWTParser.parseWithHandler(signedJWT.serialize(), new JWTHandlerImpl())));
   });
@@ -66,7 +66,7 @@ main() {
     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
     keyGen.initialize(512);
 
-    encryptedJWT.encrypt(new RSAEncrypter(keyGen.generateKeyPair().getPublic()) as RSAPublicKey);
+    encryptedJWT.encrypt(new RSAEncrypter(keyGen.generateKeyPair().getPublic() as RSAPublicKey));
 
     expect("encrypted", equals(JWTParser.parseWithHandler(encryptedJWT.serialize(), new JWTHandlerImpl())));
   });

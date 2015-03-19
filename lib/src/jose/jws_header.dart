@@ -542,7 +542,7 @@ class JWSHeader extends CommonSEHeader {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid JWS header.
    */
-  static JWSHeader parseJsonObject(final JSONObject jsonObject) {
+  static JWSHeader parseJsonObject(final Map jsonObject) {
 
     return parseJsonObjectAndUrl(jsonObject, null);
   }
@@ -560,7 +560,7 @@ class JWSHeader extends CommonSEHeader {
    * @throws ParseException If the specified JSON object doesn't
    *                        represent a valid JWS header.
    */
-  static JWSHeader parseJsonObjectAndUrl(final JSONObject jsonObject,
+  static JWSHeader parseJsonObjectAndUrl(final Map jsonObject,
                                          final Base64URL parsedBase64URL) {
 
     // Get the "alg" parameter
@@ -573,32 +573,32 @@ class JWSHeader extends CommonSEHeader {
     JWSHeaderBuilder header = new JWSHeaderBuilder(alg as JWSAlgorithm).parsedBase64URL(parsedBase64URL);
 
     // Parse optional + custom parameters
-    for (final String name in jsonObject.keySet()) {
+    for (final String name in jsonObject.keys) {
 
       if ("alg" == name) {
         // skip
       } else if ("typ" == name) {
-        header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
+        header = header.type(new JOSEObjectType(JSONUtils.getString(jsonObject, name)));
       } else if ("cty" == name) {
-        header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
+        header = header.contentType(JSONUtils.getString(jsonObject, name));
       } else if ("crit" == name) {
-        header = header.criticalParams(new Set.from(JSONObjectUtils.getStringList(jsonObject, name)));
+        header = header.criticalParams(new Set.from(JSONUtils.getStringList(jsonObject, name)));
       } else if ("jku" == name) {
-        header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
+        header = header.jwkURL(JSONUtils.getURL(jsonObject, name));
       } else if ("jwk" == name) {
-        header = header.jwk(JWK.parseFromJsonObject(JSONObjectUtils.getJSONObject(jsonObject, name)));
+        header = header.jwk(JWK.parseFromJsonObject(JSONUtils.getJSONObject(jsonObject, name)));
       } else if ("x5u" == name) {
-        header = header.x509CertURL(JSONObjectUtils.getURL(jsonObject, name));
+        header = header.x509CertURL(JSONUtils.getURL(jsonObject, name));
       } else if ("x5t" == name) {
-        header = header.x509CertThumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
+        header = header.x509CertThumbprint(new Base64URL(JSONUtils.getString(jsonObject, name)));
       } else if ("x5t#S256" == name) {
-        header = header.x509CertSHA256Thumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
+        header = header.x509CertSHA256Thumbprint(new Base64URL(JSONUtils.getString(jsonObject, name)));
       } else if ("x5c" == name) {
-        header = header.x509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name)));
+        header = header.x509CertChain(X509CertChainUtils.parseX509CertChain(JSONUtils.getJSONArray(jsonObject, name)));
       } else if ("kid" == name) {
-        header = header.keyID(JSONObjectUtils.getString(jsonObject, name));
+        header = header.keyID(JSONUtils.getString(jsonObject, name));
       } else {
-        header = header.customParam(name, jsonObject.get(name));
+        header = header.customParam(name, jsonObject["name"]);
       }
     }
 
@@ -637,7 +637,7 @@ class JWSHeader extends CommonSEHeader {
   static JWSHeader parseJsonStringAndUrl(final String jsonString,
                                          final Base64URL parsedBase64URL) {
 
-    return parseJsonObjectAndUrl(JSONObjectUtils.parseJSONObject(jsonString), parsedBase64URL);
+    return parseJsonObjectAndUrl(JSON.decode(jsonString), parsedBase64URL);
   }
 
   /**

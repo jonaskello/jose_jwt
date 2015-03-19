@@ -1,5 +1,6 @@
 library jose_jwt.jwt;
 
+import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'jose.dart';
 
