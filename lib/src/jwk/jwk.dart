@@ -247,14 +247,16 @@ abstract class JWK implements JSONAware {
    *
    * @return The JSON object representation.
    */
-  JSONObject toJSONObject() {
+  Map toJson() {
 
-    JSONObject o = new JSONObject();
+//    JSONObject o = new JSONObject();
+    Map o = new Map();
 
-    o.put("kty", _kty.getValue());
+    o["kty"] = _kty.getValue();
 
     if (_use != null) {
-      o.put("use", _use.identifier());
+//      o.put("use", _use.identifier());
+      o["use"] = _use.toString();
     }
 
     if (_ops != null) {
@@ -265,27 +267,27 @@ abstract class JWK implements JSONAware {
         sl.add(op.identifier());
       }
 
-      o.put("key_ops", sl);
+      o["key_ops"] = sl;
     }
 
     if (_alg != null) {
-      o.put("alg", _alg.getName());
+      o["alg"] = _alg.getName();
     }
 
     if (_kid != null) {
-      o.put("kid", _kid);
+      o["kid"] = _kid;
     }
 
     if (_x5u != null) {
-      o.put("x5u", _x5u.toString());
+      o["x5u"] = _x5u.toString();
     }
 
     if (_x5t != null) {
-      o.put("x5t", _x5t.toString());
+      o["x5t"] = _x5t.toString();
     }
 
     if (_x5c != null) {
-      o.put("x5c", _x5c);
+      o["x5c"] = _x5c;
     }
 
     return o;
@@ -299,7 +301,7 @@ abstract class JWK implements JSONAware {
   @override
   String toJSONString() {
 
-    return toJSONObject().toString();
+    return toJson().toString();
   }
 
   /**
@@ -308,7 +310,7 @@ abstract class JWK implements JSONAware {
   @override
   String toString() {
 
-    return toJSONObject().toString();
+    return toJson().toString();
   }
 
   /**
@@ -323,9 +325,9 @@ abstract class JWK implements JSONAware {
    * @throws ParseException If the string couldn't be parsed to a
    *                        supported JWK.
    */
-  static JWK parseFromString(final String s) {
+  static JWK fromJsonString(final String s) {
 
-    return parseFromJsonObject(JSONObjectUtils.parseJSONObject(s));
+    return fromJson(JSON.decode(s));
   }
 
   /**
@@ -341,21 +343,21 @@ abstract class JWK implements JSONAware {
    * @throws ParseException If the JSON object couldn't be parsed to a
    *                        supported JWK.
    */
-  static JWK parseFromJsonObject(final JSONObject jsonObject) {
+  static JWK fromJson(final Map jsonObject) {
 
-    KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+    KeyType kty = KeyType.parse(JSONUtils.getString(jsonObject, "kty"));
 
     if (kty == KeyType.EC) {
 
-      return ECKey.parseFromJsonObject(jsonObject);
+      return ECKey.fromJson(jsonObject);
 
     } else if (kty == KeyType.RSA) {
 
-      return RSAKey.parseFromJsonObject(jsonObject);
+      return RSAKey.fromJson(jsonObject);
 
     } else if (kty == KeyType.OCT) {
 
-      return OctetSequenceKey.parseFromJsonObject(jsonObject);
+      return OctetSequenceKey.fromJson(jsonObject);
 
     } else {
 

@@ -9,6 +9,7 @@ import 'package:jose_jwt/src/jwk.dart';
 import 'package:jose_jwt/src/jose.dart';
 //import 'package:jose_jwt/src/crypto.dart';
 //import 'package:uuid/uuid.dart';
+import 'package:jose_jwt/src/util.dart';
 
 /**
  * Tests the EC JWK class.
@@ -18,11 +19,26 @@ import 'package:jose_jwt/src/jose.dart';
  */
 //public class ECKeyTest extends TestCase {
 
+expectEquals(a, b) {
+  return expect(a, equals(b));
+}
+
+expectNull(a) {
+  return expect(a, isNull);
+}
+
+expectFalse(a) {
+  return expect(a, isFalse);
+}
+
+expectTrue(a) {
+  return expect(a, isTrue);
+}
 
 // Test parameters are from JWK spec
 class _ExampleKeyP256 {
 
-  static final ECKey.Curve CRV = ECKey.Curve.P_256;
+  static final ECKeyCurve CRV = ECKeyCurve.P_256;
   static final Base64URL X = new Base64URL("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4");
   static final Base64URL Y = new Base64URL("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM");
   static final Base64URL D = new Base64URL("870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE");
@@ -31,7 +47,7 @@ class _ExampleKeyP256 {
 // Test parameters are from Anders Rundgren, public only
 class _ExampleKeyP256Alt {
 
-  static final ECKey.Curve CRV = ECKey.Curve.P_256;
+  static final ECKeyCurve CRV = ECKeyCurve.P_256;
   static final Base64URL X = new Base64URL("3l2Da_flYc-AuUTm2QzxgyvJxYM_2TeB9DMlwz7j1PE");
   static final Base64URL Y = new Base64URL("-kjT7Wrfhwsi9SG6H4UXiyUiVE9GHCLauslksZ3-_t0");
 }
@@ -39,7 +55,7 @@ class _ExampleKeyP256Alt {
 // Test parameters are from Anders Rundgren, public only
 class _ExampleKeyP384Alt {
 
-  static final ECKey.Curve CRV = ECKey.Curve.P_384;
+  static final ECKeyCurve CRV = ECKeyCurve.P_384;
   static final Base64URL X = new Base64URL("Xy0mn0LmRyDBeHBjZrqH9z5Weu5pzCZYl1FJGHdoEj1utAoCpD4-Wn3VAIT-qgFF");
   static final Base64URL Y = new Base64URL("mrZQ1aB1E7JksXe6LXmM3BiGzqtlwCtMN0cpJb5EU62JMSISSK8l7cXSFt84A25z");
 }
@@ -47,7 +63,7 @@ class _ExampleKeyP384Alt {
 // Test parameters are from Anders Rundgren, public only
 class _ExampleKeyP521Alt {
 
-  static final ECKey.Curve CRV = ECKey.Curve.P_521;
+  static final ECKeyCurve CRV = ECKeyCurve.P_521;
   static final Base64URL X = new Base64URL("AfwEaSkqoPQynn4SdAXOqbyDuK6KsbI04i-6aWvh3GdvREZuHaWFyg791gcvJ4OqG13-gzfYxZxfblPMqfOtQrzk");
   static final Base64URL Y = new Base64URL("AHgOZhhJb2ZiozkquiEa0Z9SfERJbWaaE7qEnCuk9VVZaWruKWKNzZadoIRPt8h305r14KRoxu8AfV20X-d_2Ups");
 }
@@ -57,14 +73,14 @@ main() {
 
   test('testAltECKeyParamLengths', () {
 
-    expectEquals(32, ExampleKeyP256Alt.X.decode().length);
-    expectEquals(32, ExampleKeyP256Alt.Y.decode().length);
+    expectEquals(32, _ExampleKeyP256Alt.X.decode().length);
+    expectEquals(32, _ExampleKeyP256Alt.Y.decode().length);
 
-    expectEquals(48, ExampleKeyP384Alt.X.decode().length);
-    expectEquals(48, ExampleKeyP384Alt.Y.decode().length);
+    expectEquals(48, _ExampleKeyP384Alt.X.decode().length);
+    expectEquals(48, _ExampleKeyP384Alt.Y.decode().length);
 
-    expectEquals(66, ExampleKeyP521Alt.X.decode().length);
-    expectEquals(66, ExampleKeyP521Alt.Y.decode().length);
+    expectEquals(66, _ExampleKeyP521Alt.X.decode().length);
+    expectEquals(66, _ExampleKeyP521Alt.Y.decode().length);
   });
 
   test('testCoordinateEncoding', () {
@@ -74,60 +90,60 @@ main() {
 
     // With no padding required
     int fieldSize = unpadded.length * 8;
-    expectEquals(Base64URL.encode(unpadded), ECKey.encodeCoordinate(fieldSize, bigInteger));
+    expectEquals(Base64URL.encodeBytes(unpadded), ECKey.encodeCoordinate(fieldSize, bigInteger));
 
     // With two leading zeros padding required
     fieldSize = unpadded.length * 8 + 2 * 8;
-    expectEquals(Base64URL.encode(new Uint8List.fromList([ 0, 0, 1, 2, 3, 4, 5])), ECKey.encodeCoordinate(fieldSize, bigInteger));
+    expectEquals(Base64URL.encodeBytes(new Uint8List.fromList([ 0, 0, 1, 2, 3, 4, 5])), ECKey.encodeCoordinate(fieldSize, bigInteger));
     expectEquals(bigInteger.toString(), ECKey.encodeCoordinate(fieldSize, bigInteger).decodeToBigInteger().toString());
   });
 
 
   test('testFullConstructorAndSerialization', () {
 
-    URL x5u = new URL("http://example.com/jwk.json");
+    Uri x5u = Uri.parse("http://example.com/jwk.json");
     Base64URL x5t = new Base64URL("abc");
     List<Base64> x5c = new List();
     x5c.add(new Base64("def"));
 
     Set<KeyOperation> ops = null;
 
-    ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
+    ECKey key = new ECKey.keyPair(_ExampleKeyP256.CRV, _ExampleKeyP256.X, _ExampleKeyP256.Y, _ExampleKeyP256.D,
     KeyUse.SIGNATURE, ops, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
 
     // Test getters
     expectEquals(KeyUse.SIGNATURE, key.getKeyUse());
-    assertNull(key.getKeyOperations());
+    expectNull(key.getKeyOperations());
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
-    String jwkString = key.toJSONObject().toString();
+    String jwkString = key.toJson().toString();
 
-    key = ECKey.parse(jwkString);
+    key = ECKey.fromJsonString(jwkString);
 
     // Test getters
     expectEquals(KeyUse.SIGNATURE, key.getKeyUse());
-    assertNull(key.getKeyOperations());
+    expectNull(key.getKeyOperations());
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
     // Test conversion to public JWK
@@ -135,104 +151,104 @@ main() {
     key = key.toPublicJWK();
 
     expectEquals(KeyUse.SIGNATURE, key.getKeyUse());
-    assertNull(key.getKeyOperations());
+    expectNull(key.getKeyOperations());
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    assertNull(key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectNull(key.getD());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
   });
 
   test('testFullConstructorAndSerializationWithOps', () {
 
-    URL x5u = new URL("http://example.com/jwk.json");
+    Uri x5u = Uri.parse("http://example.com/jwk.json");
     Base64URL x5t = new Base64URL("abc");
     List<Base64> x5c = new List();
     x5c.add(new Base64("def"));
 
     KeyUse use = null;
-    Set<KeyOperation> ops = new Set(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+    Set<KeyOperation> ops = new Set.from([KeyOperation.SIGN, KeyOperation.VERIFY]);
 
-    ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
+    ECKey key = new ECKey.keyPair(_ExampleKeyP256.CRV, _ExampleKeyP256.X, _ExampleKeyP256.Y, _ExampleKeyP256.D,
     use, ops, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
 
     // Test getters
-    assertNull(key.getKeyUse());
-    assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-    assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-    expectEquals(2, key.getKeyOperations().size());
+    expectNull(key.getKeyUse());
+    expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+    expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+    expectEquals(2, key.getKeyOperations().length);
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
-    String jwkString = key.toJSONObject().toString();
+    String jwkString = key.toJson().toString();
 
-    key = ECKey.parse(jwkString);
+    key = ECKey.fromJsonString(jwkString);
 
     // Test getters
-    assertNull(key.getKeyUse());
-    assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-    assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-    expectEquals(2, key.getKeyOperations().size());
+    expectNull(key.getKeyUse());
+    expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+    expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+    expectEquals(2, key.getKeyOperations().length);
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
     // Test conversion to public JWK
 
     key = key.toPublicJWK();
 
-    assertNull(key.getKeyUse());
-    assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-    assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-    expectEquals(2, key.getKeyOperations().size());
+    expectNull(key.getKeyUse());
+    expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+    expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+    expectEquals(2, key.getKeyOperations().length);
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    assertNull(key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectNull(key.getD());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
   });
 
   test('testBuilder', () {
 
-    URL x5u = new URL("http://example.com/jwk.json");
+    Uri x5u = Uri.parse("http://example.com/jwk.json");
     Base64URL x5t = new Base64URL("abc");
     List<Base64> x5c = new List();
     x5c.add(new Base64("def"));
 
-    ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y).
-    d(ExampleKeyP256.D).
+    ECKey key = new ECKeyBuilder(ECKeyCurve.P_256, _ExampleKeyP256.X, _ExampleKeyP256.Y).
+    d(_ExampleKeyP256.D).
     keyUse(KeyUse.SIGNATURE).
     algorithm(JWSAlgorithm.ES256).
     keyID("1").
@@ -247,31 +263,31 @@ main() {
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
-    String jwkString = key.toJSONObject().toString();
+    String jwkString = key.toJson().toString();
 
-    key = ECKey.parse(jwkString);
+    key = ECKey.fromJsonString(jwkString);
 
     // Test getters
     expectEquals(KeyUse.SIGNATURE, key.getKeyUse());
     expectEquals(JWSAlgorithm.ES256, key.getAlgorithm());
     expectEquals("1", key.getKeyID());
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
 
 
     // Test conversion to public JWK
@@ -283,14 +299,14 @@ main() {
     expectEquals("1", key.getKeyID());
     expectEquals(x5u.toString(), key.getX509CertURL().toString());
     expectEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-    expectEquals(x5c.size(), key.getX509CertChain().size());
+    expectEquals(x5c.length, key.getX509CertChain().length);
 
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    assertNull(key.getD());
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectNull(key.getD());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
 
   });
 
@@ -298,117 +314,119 @@ main() {
 
     // Public + private
 
-    ECKey key = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).d(ExampleKeyP256.D).build();
+    ECKey key = new ECKeyBuilder(_ExampleKeyP256.CRV, _ExampleKeyP256.X, _ExampleKeyP256.Y).d(_ExampleKeyP256.D).build();
 
     // Export
-    KeyPair pair = key.toKeyPair();
+    AsymmetricKeyPair pair = key.toKeyPair();
 
-    ECPublicKey pub = pair.getPublic() as ECPublicKey;
-    expectEquals(256, pub.getParams().getCurve().getField().getFieldSize());
-    expectEquals(ExampleKeyP256.X.decodeToBigInteger(), pub.getW().getAffineX());
-    expectEquals(ExampleKeyP256.Y.decodeToBigInteger(), pub.getW().getAffineY());
+    ECPublicKey pub = pair.publicKey as ECPublicKey;
+    expectEquals(256, pub.parameters.curve.fieldSize);
+    expectEquals(_ExampleKeyP256.X.decodeToBigInteger(), pub.Q.x);
+    expectEquals(_ExampleKeyP256.Y.decodeToBigInteger(), pub.Q.y);
 
-    ECPrivateKey priv = pair.getPrivate() as ECPrivateKey;
-    expectEquals(256, priv.getParams().getCurve().getField().getFieldSize());
-    expectEquals(ExampleKeyP256.D.decodeToBigInteger(), priv.getS());
+    ECPrivateKey priv = pair.privateKey as ECPrivateKey;
+    expectEquals(256, priv.parameters.curve.fieldSize);
+    expectEquals(_ExampleKeyP256.D.decodeToBigInteger(), priv.d);
 
     // Import
-    key = new ECKey.Builder(ECKey.Curve.P_256, pub).privateKey(priv).build();
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256.X, key.getX());
-    expectEquals(ExampleKeyP256.Y, key.getY());
-    expectEquals(ExampleKeyP256.D, key.getD());
-    expectEquals(32, ExampleKeyP256.D.decode().length);
+    key = new ECKeyBuilder.pub(ECKeyCurve.P_256, pub).privateKey(priv).build();
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256.X, key.getX());
+    expectEquals(_ExampleKeyP256.Y, key.getY());
+    expectEquals(_ExampleKeyP256.D, key.getD());
+    expectEquals(32, _ExampleKeyP256.D.decode().length);
 
-    assertTrue(key.isPrivate());
+    expectTrue(key.isPrivate());
   });
 
   test('testP256AltExportAndImport', () {
 
-    ECKey key = new ECKey.Builder(ExampleKeyP256Alt.CRV, ExampleKeyP256Alt.X, ExampleKeyP256Alt.Y).build();
+    ECKey key = new ECKeyBuilder(_ExampleKeyP256Alt.CRV, _ExampleKeyP256Alt.X, _ExampleKeyP256Alt.Y).build();
 
     // Export
-    KeyPair pair = key.toKeyPair();
+    AsymmetricKeyPair pair = key.toKeyPair();
 
-    ECPublicKey pub = pair.getPublic() as ECPublicKey;
-    expectEquals(256, pub.getParams().getCurve().getField().getFieldSize());
-    expectEquals(ExampleKeyP256Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
-    expectEquals(ExampleKeyP256Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
+    ECPublicKey pub = pair.publicKey as ECPublicKey;
+    expectEquals(256, pub.parameters.curve.fieldSize);
+    expectEquals(_ExampleKeyP256Alt.X.decodeToBigInteger(), pub.Q.x);
+    expectEquals(_ExampleKeyP256Alt.Y.decodeToBigInteger(), pub.Q.x);
 
     // Import
-    key = new ECKey.Builder(ExampleKeyP256Alt.CRV, pub).build();
-    expectEquals(ECKey.Curve.P_256, key.getCurve());
-    expectEquals(ExampleKeyP256Alt.X, key.getX());
-    expectEquals(ExampleKeyP256Alt.Y, key.getY());
+    key = new ECKeyBuilder.pub(_ExampleKeyP256Alt.CRV, pub).build();
+    expectEquals(ECKeyCurve.P_256, key.getCurve());
+    expectEquals(_ExampleKeyP256Alt.X, key.getX());
+    expectEquals(_ExampleKeyP256Alt.Y, key.getY());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
   });
 
   test('testP384AltExportAndImport', () {
 
-    ECKey key = new ECKey.Builder(ExampleKeyP384Alt.CRV, ExampleKeyP384Alt.X, ExampleKeyP384Alt.Y).build();
+    ECKey key = new ECKeyBuilder(_ExampleKeyP384Alt.CRV, _ExampleKeyP384Alt.X, _ExampleKeyP384Alt.Y).build();
 
     // Export
-    KeyPair pair = key.toKeyPair();
+    AsymmetricKeyPair pair = key.toKeyPair();
 
-    ECPublicKey pub = pair.getPublic() as ECPublicKey;
-    expectEquals(384, pub.getParams().getCurve().getField().getFieldSize());
-    expectEquals(ExampleKeyP384Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
-    expectEquals(ExampleKeyP384Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
+    ECPublicKey pub = pair.publicKey as ECPublicKey;
+    expectEquals(384, pub.parameters.curve.fieldSize);
+    expectEquals(_ExampleKeyP384Alt.X.decodeToBigInteger(), pub.Q.x);
+    expectEquals(_ExampleKeyP384Alt.Y.decodeToBigInteger(), pub.Q.y);
 
     // Import
-    key = new ECKey.Builder(ExampleKeyP384Alt.CRV, pub).build();
-    expectEquals(ECKey.Curve.P_384, key.getCurve());
-    expectEquals(ExampleKeyP384Alt.X, key.getX());
-    expectEquals(ExampleKeyP384Alt.Y, key.getY());
+    key = new ECKeyBuilder.pub(_ExampleKeyP384Alt.CRV, pub).build();
+    expectEquals(ECKeyCurve.P_384, key.getCurve());
+    expectEquals(_ExampleKeyP384Alt.X, key.getX());
+    expectEquals(_ExampleKeyP384Alt.Y, key.getY());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
   });
 
   test('testP521AltExportAndImport', () {
 
-    ECKey key = new ECKey.Builder(ExampleKeyP521Alt.CRV, ExampleKeyP521Alt.X, ExampleKeyP521Alt.Y).build();
+    ECKey key = new ECKeyBuilder(_ExampleKeyP521Alt.CRV, _ExampleKeyP521Alt.X, _ExampleKeyP521Alt.Y).build();
 
     // Export
-    KeyPair pair = key.toKeyPair();
+    AsymmetricKeyPair pair = key.toKeyPair();
 
-    ECPublicKey pub = pair.getPublic() as ECPublicKey;
-    expectEquals(521, pub.getParams().getCurve().getField().getFieldSize());
-    expectEquals(ExampleKeyP521Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
-    expectEquals(ExampleKeyP521Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
+    ECPublicKey pub = pair.publicKey as ECPublicKey;
+    expectEquals(521, pub.parameters.curve.fieldSize);
+    expectEquals(_ExampleKeyP521Alt.X.decodeToBigInteger(), pub.Q.x);
+    expectEquals(_ExampleKeyP521Alt.Y.decodeToBigInteger(), pub.Q.y);
 
     // Import
-    key = new ECKey.Builder(ExampleKeyP521Alt.CRV, pub).build();
-    expectEquals(ECKey.Curve.P_521, key.getCurve());
-    expectEquals(ExampleKeyP521Alt.X, key.getX());
-    expectEquals(ExampleKeyP521Alt.Y, key.getY());
+    key = new ECKeyBuilder.pub(_ExampleKeyP521Alt.CRV, pub).build();
+    expectEquals(ECKeyCurve.P_521, key.getCurve());
+    expectEquals(_ExampleKeyP521Alt.X, key.getX());
+    expectEquals(_ExampleKeyP521Alt.Y, key.getY());
 
-    assertFalse(key.isPrivate());
+    expectFalse(key.isPrivate());
   });
 
   test('testRejectKeyUseWithOps', () {
 
     KeyUse use = KeyUse.SIGNATURE;
 
-    Set<KeyOperation> ops = new Set(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+    Set<KeyOperation> ops = new Set.from([KeyOperation.SIGN, KeyOperation.VERIFY]);
 
-    try {
-      new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, use, ops, null, null, null, null, null);
+//    try {
+    expect(() => new ECKey.key(_ExampleKeyP256.CRV, _ExampleKeyP256.X, _ExampleKeyP256.Y, use, ops, null, null, null, null, null),
+    throwsA(new isInstanceOf<ArgumentError>()));
 
-      fail();
-    } catch (e) {
-      if (e is! IllegalArgumentException) throw e;
-      // ok
-    }
+//      fail();
+//    } catch (e) {
+//      if (e is! ArgumentError) throw e;
+//      // ok
+//    }
 
-    try {
-      new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).
-      keyUse(use).keyOperations(ops).build();
-      fail();
-    } catch (e) {
-      if (e is! IllegalStateException) throw e;
-      // ok
-    }
+//    try {
+    expect(() => new ECKeyBuilder(_ExampleKeyP256.CRV, _ExampleKeyP256.X, _ExampleKeyP256.Y).
+    keyUse(use).keyOperations(ops).build(),
+    throwsA(new isInstanceOf<ArgumentError>()));
+//      fail();
+//    } catch (e) {
+//      if (e is! StateError) throw e;
+//      // ok
+//    }
   });
 
   test('testCookbookExampleKey', () {
@@ -428,12 +446,12 @@ main() {
     "KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt\"" +
     "}";
 
-    ECKey jwk = ECKey.parse(json);
+    ECKey jwk = ECKey.fromJsonString(json);
 
     expectEquals(KeyType.EC, jwk.getKeyType());
     expectEquals("bilbo.baggins@hobbiton.example", jwk.getKeyID());
     expectEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
-    expectEquals(ECKey.Curve.P_521, jwk.getCurve());
+    expectEquals(ECKeyCurve.P_521, jwk.getCurve());
 
     expectEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
     "A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
@@ -448,7 +466,7 @@ main() {
     ECPublicKey ecPublicKey = jwk.toECPublicKey();
     ECPrivateKey ecPrivateKey = jwk.toECPrivateKey();
 
-    jwk = new ECKey.Builder(ECKey.Curve.P_521, ecPublicKey).privateKey(ecPrivateKey).build();
+    jwk = new ECKeyBuilder.pub(ECKeyCurve.P_521, ecPublicKey).privateKey(ecPrivateKey).build();
 
     expectEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
     "A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
@@ -459,6 +477,5 @@ main() {
     expectEquals("AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb" +
     "KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt", jwk.getD().toString());
   });
-
 
 }

@@ -1,4 +1,4 @@
-library jose_jwt.test.encrypted_jwt_test;
+library jose_jwt.test.jwt.encrypted_jwt_test;
 
 import 'dart:typed_data';
 import 'package:unittest/unittest.dart';

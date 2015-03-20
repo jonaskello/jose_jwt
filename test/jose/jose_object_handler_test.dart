@@ -1,77 +1,64 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jose_object_handler_test;
 
-
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPublicKey;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.RSAEncrypter;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/crypto.dart';
 
 /**
  * Tests the JOSE object handler interface.
  */
-public class JOSEObjectHandlerTest extends TestCase {
+//public class JOSEObjectHandlerTest extends TestCase {
 
+class JOSEObjectHandlerImpl implements JOSEObjectHandler<String> {
 
-	public static class JOSEObjectHandlerImpl implements JOSEObjectHandler<String> {
+  @override
+  String onPlainObject(PlainObject plainObject) {
+    return "plain";
+  }
 
+  @override
+  String onJWSObject(JWSObject jwsObject) {
+    return "jws";
+  }
 
-		@Override
-		public String onPlainObject(PlainObject plainObject) {
-			return "plain";
-		}
-
-
-		@Override
-		public String onJWSObject(JWSObject jwsObject) {
-			return "jws";
-		}
-
-
-		@Override
-		public String onJWEObject(JWEObject jweObject) {
-			return "jwe";
-		}
-	}
-
-
-	public void testParsePlainObject()
-		throws Exception {
-
-		PlainObject plainObject = new PlainObject(new Payload("Hello world!"));
-
-		assertEquals("plain", JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerImpl()));
-	}
-
-
-	public void testParseJWSObject()
-		throws Exception {
-
-		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello world!"));
-
-		String key = "12345678901234567890123456789012";
-
-		jwsObject.sign(new MACSigner(key));
-
-		assertEquals("jws", JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerImpl()));
-	}
-
-
-	public void testJWEObject()
-		throws Exception {
-
-		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM), new Payload("Hello world"));
-
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-		keyGen.initialize(512);
-
-		jweObject.encrypt(new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic()));
-
-		assertEquals("jwe", JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerImpl()));
-	}
+  @override
+  String onJWEObject(JWEObject jweObject) {
+    return "jwe";
+  }
 }
-*/
+
+
+main() {
+
+  test('testParsePlainObject', () {
+
+    PlainObject plainObject = new PlainObject.payloadOnly(new Payload.fromString("Hello world!"));
+
+    expect("plain", JOSEObject.parseWithHandler(plainObject.serialize(), new JOSEObjectHandlerImpl()));
+  });
+
+  test('testParseJWSObject', () {
+
+    JWSObject jwsObject = new JWSObject(new JWSHeader.fromAlg(JWSAlgorithm.HS256), new Payload.fromString("Hello world!"));
+
+    String key = "12345678901234567890123456789012";
+
+    jwsObject.sign(new MACSigner.secretString(key));
+
+    expect("jws", JOSEObject.parseWithHandler(jwsObject.serialize(), new JOSEObjectHandlerImpl()));
+  });
+
+  test('testJWEObject', () {
+
+    JWEObject jweObject = new JWEObject.toBeEncrypted(new JWEHeader.minimal(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM),
+    new Payload.fromString("Hello world"));
+
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    keyGen.initialize(512);
+
+    jweObject.encrypt(new RSAEncrypter(keyGen.generateKeyPair().getPublic()) as RSAPublicKey);
+
+    expect("jwe", JOSEObject.parseWithHandler(jweObject.serialize(), new JOSEObjectHandlerImpl()));
+  });
+
+}

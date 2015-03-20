@@ -19,12 +19,12 @@ class X509CertChainUtils {
    * @throws ParseException If the X.509 certificate chain couldn't be
    *                        parsed.
    */
-  static List<Base64> parseX509CertChain(final JSONArray jsonArray) {
+  static List<Base64> parseX509CertChain(final List jsonArray) {
 
 //    List<Base64> chain = new LinkedList();
     List<Base64> chain = new List();
 
-    for (int i = 0; i < jsonArray.lengh; i++) {
+    for (int i = 0; i < jsonArray.length; i++) {
 
       Object item = jsonArray[i];
 

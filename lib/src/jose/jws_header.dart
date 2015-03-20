@@ -586,7 +586,7 @@ class JWSHeader extends CommonSEHeader {
       } else if ("jku" == name) {
         header = header.jwkURL(JSONUtils.getURL(jsonObject, name));
       } else if ("jwk" == name) {
-        header = header.jwk(JWK.parseFromJsonObject(JSONUtils.getJSONObject(jsonObject, name)));
+        header = header.jwk(JWK.fromJson(JSONUtils.getJSONObject(jsonObject, name)));
       } else if ("x5u" == name) {
         header = header.x509CertURL(JSONUtils.getURL(jsonObject, name));
       } else if ("x5t" == name) {

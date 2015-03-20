@@ -480,7 +480,7 @@ class JWEHeader extends CommonSEHeader {
     }
 
     if (_epk != null) {
-      o.put("epk", _epk.toJSONObject());
+      o.put("epk", _epk.toJson());
     }
 
     if (_zip != null) {
@@ -590,7 +590,7 @@ class JWEHeader extends CommonSEHeader {
       } else if ("jku" == name) {
         header = header.jwkURL(JSONUtils.getURL(jsonObject, name));
       } else if ("jwk" == name) {
-        header = header.jwk(JWK.parseFromJsonObject(JSONUtils.getJSONObject(jsonObject, name)));
+        header = header.jwk(JWK.fromJson(JSONUtils.getJSONObject(jsonObject, name)));
       } else if ("x5u" == name) {
         header = header.x509CertURL(JSONUtils.getURL(jsonObject, name));
       } else if ("x5t" == name) {
@@ -602,7 +602,7 @@ class JWEHeader extends CommonSEHeader {
       } else if ("kid" == name) {
         header = header.keyID(JSONUtils.getString(jsonObject, name));
       } else if ("epk" == name) {
-        header = header.ephemeralPublicKey(ECKey.parseFromJsonObject(JSONUtils.getJSONObject(jsonObject, name)));
+        header = header.ephemeralPublicKey(ECKey.fromJson(JSONUtils.getJSONObject(jsonObject, name)));
       } else if ("zip" == name) {
         header = header.compressionAlgorithm(new CompressionAlgorithm(JSONUtils.getString(jsonObject, name)));
       } else if ("apu" == name) {

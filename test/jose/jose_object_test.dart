@@ -1,12 +1,7 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jose_object_test;
 
-
-import java.text.ParseException;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.util.Base64URL;
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 
 /**
@@ -15,151 +10,153 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-02-04)
  */
-public class JOSEObjectTest extends TestCase {
-	
-	
-	public void testSplitThreeParts() {
+//public class JOSEObjectTest extends TestCase {
+main() {
 
-		// Implies JWS
-		String s = "abc.def.ghi";
+  test('testSplitThreeParts', () {
 
-		Base64URL[] parts = null;
+    // Implies JWS
+    String s = "abc.def.ghi";
 
-		try {
-			parts = JOSEObject.split(s);
+    List<Base64URL> parts = null;
 
-		} catch (ParseException e) {
+//		try {
+    parts = JOSEObject.split(s);
 
-			fail(e.getMessage());
-		}
+//		} catch (ParseException e) {
+//
+//			fail(e.getMessage());
+//		}
 
-		assertEquals(3, parts.length);
+    expect(3, parts.length);
 
-		assertEquals("abc", parts[0].toString());
-		assertEquals("def", parts[1].toString());
-		assertEquals("ghi", parts[2].toString());
-	}
-
-
-	public void testSplitFiveParts() {
-
-		// Implies JWE
-		String s = "abc.def.ghi.jkl.mno";
-
-		Base64URL[] parts = null;
-
-		try {
-			parts = JOSEObject.split(s);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
-
-		assertEquals(5, parts.length);
-
-		assertEquals("abc", parts[0].toString());
-		assertEquals("def", parts[1].toString());
-		assertEquals("ghi", parts[2].toString());
-		assertEquals("jkl", parts[3].toString());
-		assertEquals("mno", parts[4].toString());
-	}
+    expect("abc", parts[0].toString());
+    expect("def", parts[1].toString());
+    expect("ghi", parts[2].toString());
+  });
 
 
-	public void testSplitEmptyThirdPart() {
+  test('testSplitFiveParts', () {
 
-		// Implies plain JOSE object
-		String s = "abc.def.";
+    // Implies JWE
+    String s = "abc.def.ghi.jkl.mno";
 
-		Base64URL[] parts = null;
+    List<Base64URL> parts = null;
 
-		try {
-			parts = JOSEObject.split(s);
+//		try {
+    parts = JOSEObject.split(s);
 
-		} catch (ParseException e) {
+//		} catch (ParseException e) {
+//
+//			fail(e.getMessage());
+//		}
 
-			fail(e.getMessage());
-		}
+    expect(5, parts.length);
 
-		assertEquals(3, parts.length);
-
-		assertEquals("abc", parts[0].toString());
-		assertEquals("def", parts[1].toString());
-		assertEquals("", parts[2].toString());
-	}
-
-
-	public void testSplitEmptySecondPart() {
-
-		// JWS with empty payload
-		String s = "abc..ghi";
-
-		Base64URL[] parts = null;
-
-		try {
-			parts = JOSEObject.split(s);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
-
-		assertEquals(3, parts.length);
-
-		assertEquals("abc", parts[0].toString());
-		assertEquals("", parts[1].toString());
-		assertEquals("ghi", parts[2].toString());
-	}
+    expect("abc", parts[0].toString());
+    expect("def", parts[1].toString());
+    expect("ghi", parts[2].toString());
+    expect("jkl", parts[3].toString());
+    expect("mno", parts[4].toString());
+  });
 
 
-	public void testSplitEmptyFiveParts() {
+  test('testSplitEmptyThirdPart', () {
 
-		// JWS with empty payload
-		String s = "....";
+    // Implies plain JOSE object
+    String s = "abc.def.";
 
-		Base64URL[] parts = null;
+    List<Base64URL> parts = null;
 
-		try {
-			parts = JOSEObject.split(s);
+//		try {
+    parts = JOSEObject.split(s);
 
-		} catch (ParseException e) {
+//		} catch (ParseException e) {
+//
+//			fail(e.getMessage());
+//		}
 
-			fail(e.getMessage());
-		}
+    expect(3, parts.length);
 
-		assertEquals(5, parts.length);
-
-		assertEquals("", parts[0].toString());
-		assertEquals("", parts[1].toString());
-		assertEquals("", parts[2].toString());
-		assertEquals("", parts[3].toString());
-		assertEquals("", parts[4].toString());
-	}
+    expect("abc", parts[0].toString());
+    expect("def", parts[1].toString());
+    expect("", parts[2].toString());
+  });
 
 
-	public void testSplitException() {
+  test('testSplitEmptySecondPart', () {
 
-		// Illegal JOSE
-		String s = "abc.def";
+    // JWS with empty payload
+    String s = "abc..ghi";
 
-		Base64URL[] parts = null;
+    List<Base64URL> parts = null;
 
-		try {
-			parts = JOSEObject.split(s);
+//		try {
+    parts = JOSEObject.split(s);
 
-			fail("Failed to raise exception");
+//		} catch (ParseException e) {
+//
+//			fail(e.getMessage());
+//		}
 
-		} catch (ParseException e) {
+    expect(3, parts.length);
 
-			// ok
-		}
-	}
+    expect("abc", parts[0].toString());
+    expect("", parts[1].toString());
+    expect("ghi", parts[2].toString());
+  });
 
 
-	public void testMIMETypes() {
+  test('testSplitEmptyFiveParts', () {
 
-		assertEquals("application/jose; charset=UTF-8", JOSEObject.MIME_TYPE_COMPACT);
-		assertEquals("application/jose+json; charset=UTF-8", JOSEObject.MIME_TYPE_JS);
-	}
-}
+    // JWS with empty payload
+    String s = "....";
+
+    List<Base64URL> parts = null;
+
+//		try {
+    parts = JOSEObject.split(s);
+
+//		} catch (ParseException e) {
+//
+//			fail(e.getMessage());
+//		}
+
+    expect(5, parts.length);
+
+    expect("", parts[0].toString());
+    expect("", parts[1].toString());
+    expect("", parts[2].toString());
+    expect("", parts[3].toString());
+    expect("", parts[4].toString());
+  });
+
+
+  test('testSplitException', () {
+
+    // Illegal JOSE
+    String s = "abc.def";
+
+    List<Base64URL> parts = null;
+
+//    try {
+    parts = JOSEObject.split(s);
+
+//			fail("Failed to raise exception");
+//
+//		} catch (ParseException e) {
+//
+//			// ok
+//		}
+  });
+
+
+  test('testMIMETypes', () {
+
+    expect("application/jose; charset=UTF-8", JOSEObject.MIME_TYPE_COMPACT);
+    expect("application/jose+json; charset=UTF-8", JOSEObject.MIME_TYPE_JS);
+  });
+/*
+
 */
+}

@@ -1,4 +1,4 @@
-library jose_jwt.test.jwt_claims_set_test;
+library jose_jwt.test.jwt.jwt_claims_set_test;
 
 import 'dart:convert';
 import 'package:unittest/unittest.dart';

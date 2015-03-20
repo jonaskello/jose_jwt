@@ -1,21 +1,15 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.payload_test;
 
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-
+import 'package:unittest/unittest.dart';
 
 /**
  * Tests the JOSE payload class.
  */
-public class PayloadTest extends TestCase {
+//public class PayloadTest extends TestCase {
+main() {
 
-
-	public void testJWSObject()
-		throws Exception {
+/*
+  test('testJWSObject', () {
 
 		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
@@ -33,11 +27,10 @@ public class PayloadTest extends TestCase {
 		assertEquals(jwsObject, payload.toJWSObject());
 		assertEquals(s, payload.toString());
 		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
-	}
+  });
 
 
-	public void testJWSObjectFromString()
-		throws Exception {
+  test('testJWSObjectFromString', () {
 
 		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
@@ -54,11 +47,10 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(s, payload.toString());
 		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
-	}
+  });
 
 
-	public void testSignedJWT()
-		throws Exception {
+  test('testSignedJWT', () {
 
 		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
@@ -79,11 +71,10 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(s, payload.toString());
 		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
-	}
+  });
 
 
-	public void testSignedJWTFromString()
-		throws Exception {
+  test('testSignedJWTFromString', () {
 
 		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
@@ -103,10 +94,10 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(s, payload.toString());
 		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
-	}
+  });
 
 
-	public void testRejectUnsignedJWS() {
+  test('testRejectUnsignedJWS', () {
 
 		try {
 			new Payload(new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("test")));
@@ -114,10 +105,10 @@ public class PayloadTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 			assertEquals("The JWS object must be signed", e.getMessage());
 		}
-	}
+  });
 
 
-	public void testRejectUnsignedJWT() {
+  test('testRejectUnsignedJWT', () {
 
 		try {
 			new Payload(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet()));
@@ -125,7 +116,9 @@ public class PayloadTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 			assertEquals("The JWT must be signed", e.getMessage());
 		}
-	}
-}
+  });
 
 */
+
+}
+

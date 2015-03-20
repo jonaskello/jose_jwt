@@ -1,4 +1,4 @@
-library jose_jwt.test.plain_jwt_test;
+library jose_jwt.test.jwt.plain_jwt_test;
 
 import 'package:unittest/unittest.dart';
 import 'package:jose_jwt/src/jwt.dart';

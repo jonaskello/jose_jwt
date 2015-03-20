@@ -1,18 +1,9 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jwe_header_test;
 
-
-import java.net.URL;
-import java.util.*;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.KeyUse;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/util.dart';
+import 'package:jose_jwt/src/jwk.dart';
 
 /**
  * Tests JWE header parsing and serialisation.
@@ -20,362 +11,352 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-02-15)
  */
-public class JWEHeaderTest extends TestCase {
+//public class JWEHeaderTest extends TestCase {
+main() {
 
+  test('testMinimalConstructor', () {
 
-	public void testMinimalConstructor() {
+    JWEHeader h = new JWEHeader.minimal(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM);
+
+    expect(JWEAlgorithm.A128KW, h.getAlgorithm());
+    expect(EncryptionMethod.A128GCM, h.getEncryptionMethod());
+    expect(h.getJWKURL(), isNull);
+    expect(h.getJWK(), isNull);
+    expect(h.getX509CertURL(), isNull);
+    expect(h.getX509CertThumbprint(), isNull);
+    expect(h.getX509CertSHA256Thumbprint(), isNull);
+    expect(h.getX509CertChain(), isNull);
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+    expect(h.getCriticalParams(), isNull);
+    expect(h.getEphemeralPublicKey(), isNull);
+    expect(h.getCompressionAlgorithm(), isNull);
+    expect(h.getAgreementPartyUInfo(), isNull);
+    expect(h.getAgreementPartyVInfo(), isNull);
+    expect(h.getPBES2Salt(), isNull);
+    expect(h.getIV(), isNull);
+    expect(h.getAuthTag(), isNull);
+    expect(0, h.getPBES2Count());
+    expect(h.getCustomParams().isEmpty, isTrue);
+  });
+
+
+  test('testParse1', () {
+
+    // Example header from JWE spec
+    // {"alg":"RSA-OAEP","enc":"A256GCM"}
+    Base64URL inn = new Base64URL("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ");
+
+    JWEHeader h = JWEHeader.parseBase64Url(inn);
+
+    expect(inn, h.toBase64URL());
+
+    expect(h, isNotNull);
+
+    expect(JWEAlgorithm.RSA_OAEP, h.getAlgorithm());
+    expect(EncryptionMethod.A256GCM, h.getEncryptionMethod());
+
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("enc"), isTrue);
+    expect(2, h.getIncludedParams().length);
+  });
+
+  test('testParse2', () {
+
+    // Example header from JWE spec
+    // {"alg":"RSA1_5","enc":"A128CBC-HS256"}
+    Base64URL inn = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0");
+
+    JWEHeader h = JWEHeader.parseBase64Url(inn);
+
+    expect(inn, h.toBase64URL());
+
+    expect(h, isNotNull);
+
+    expect(JWEAlgorithm.RSA1_5, h.getAlgorithm());
+    expect(EncryptionMethod.A128CBC_HS256, h.getEncryptionMethod());
+
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("enc"), isTrue);
+    expect(2, h.getIncludedParams().length);
+  });
+
+
+  test('testSerializeAndParse', () {
+
+    final Base64URL mod = new Base64URL("abc123");
+    final Base64URL exp = new Base64URL("def456");
+    final KeyUse use = KeyUse.ENCRYPTION;
+    final String kid = "1234";
+
+    RSAKey jwk = new RSAKey.publicKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
+
+    List<Base64> certChain = new List();
+    certChain.add(new Base64("asd"));
+    certChain.add(new Base64("fgh"));
+    certChain.add(new Base64("jkl"));
+
+    JWEHeader h = new JWEHeaderBuilder(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM).
+    type(new JOSEObjectType("JWT")).
+    compressionAlgorithm(CompressionAlgorithm.DEF).
+    jwkURL(Uri.parse("https://example.com/jku.json")).
+    jwk(jwk).
+    x509CertURL(Uri.parse("https://example/cert.b64")).
+    x509CertThumbprint(new Base64URL("789iop")).
+    x509CertSHA256Thumbprint(new Base64URL("789asd")).
+    x509CertChain(certChain).
+    keyID("1234").
+    agreementPartyUInfo(new Base64URL("abc")).
+    agreementPartyVInfo(new Base64URL("xyz")).
+    pbes2Salt(new Base64URL("omg")).
+    pbes2Count(1000).
+    iv(new Base64URL("101010")).
+    authTag(new Base64URL("202020")).
+    customParam("xCustom", "+++").
+    build();
+
+
+    Base64URL base64URL = h.toBase64URL();
+
+    // Parse back
+    h = JWEHeader.parseBase64Url(base64URL);
+
+    expect(JWEAlgorithm.RSA1_5, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect(EncryptionMethod.A256GCM, h.getEncryptionMethod());
+    expect(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
+    expect(Uri.parse("https://example.com/jku.json"), h.getJWKURL());
+    expect("1234", h.getKeyID());
+
+    jwk = h.getJWK() as RSAKey;
+    expect(jwk, isNotNull);
+    expect(new Base64URL("abc123"), jwk.getModulus());
+    expect(new Base64URL("def456"), jwk.getPublicExponent());
+    expect(KeyUse.ENCRYPTION, jwk.getKeyUse());
+    expect(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
+    expect("1234", jwk.getKeyID());
+
+    expect(Uri.parse("https://example/cert.b64"), h.getX509CertURL());
+    expect(new Base64URL("789iop"), h.getX509CertThumbprint());
+    expect(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
+
+    certChain = h.getX509CertChain();
+    expect(3, certChain.length);
+    expect(new Base64("asd"), certChain[0]);
+    expect(new Base64("fgh"), certChain[1]);
+    expect(new Base64("jkl"), certChain[2]);
+
+    expect(new Base64URL("abc"), h.getAgreementPartyUInfo());
+    expect(new Base64URL("xyz"), h.getAgreementPartyVInfo());
+
+    expect(new Base64URL("omg"), h.getPBES2Salt());
+    expect(1000, h.getPBES2Count());
+
+    expect(new Base64URL("101010"), h.getIV());
+    expect(new Base64URL("202020"), h.getAuthTag());
+
+    expect("+++", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
+
+    expect(base64URL, h.getParsedBase64URL());
+
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("typ"), isTrue);
+    expect(h.getIncludedParams().contains("enc"), isTrue);
+    expect(h.getIncludedParams().contains("zip"), isTrue);
+    expect(h.getIncludedParams().contains("jku"), isTrue);
+    expect(h.getIncludedParams().contains("jwk"), isTrue);
+    expect(h.getIncludedParams().contains("kid"), isTrue);
+    expect(h.getIncludedParams().contains("x5u"), isTrue);
+    expect(h.getIncludedParams().contains("x5t"), isTrue);
+    expect(h.getIncludedParams().contains("x5c"), isTrue);
+    expect(h.getIncludedParams().contains("apu"), isTrue);
+    expect(h.getIncludedParams().contains("apv"), isTrue);
+    expect(h.getIncludedParams().contains("p2s"), isTrue);
+    expect(h.getIncludedParams().contains("p2c"), isTrue);
+    expect(h.getIncludedParams().contains("iv"), isTrue);
+    expect(h.getIncludedParams().contains("tag"), isTrue);
+    expect(h.getIncludedParams().contains("xCustom"), isTrue);
+    expect(18, h.getIncludedParams().length);
+
+    // Test copy constructor
+    h = new JWEHeader.deepCopy(h);
+
+    expect(JWEAlgorithm.RSA1_5, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect(EncryptionMethod.A256GCM, h.getEncryptionMethod());
+    expect(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
+    expect( Uri.parse("https://example.com/jku.json"), h.getJWKURL());
+    expect("1234", h.getKeyID());
+
+    jwk = h.getJWK() as RSAKey;
+    expect(jwk, isNotNull);
+    expect(new Base64URL("abc123"), jwk.getModulus());
+    expect(new Base64URL("def456"), jwk.getPublicExponent());
+    expect(KeyUse.ENCRYPTION, jwk.getKeyUse());
+    expect(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
+    expect("1234", jwk.getKeyID());
+
+    expect( Uri.parse("https://example/cert.b64"), h.getX509CertURL());
+    expect(new Base64URL("789iop"), h.getX509CertThumbprint());
+    expect(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
+
+    certChain = h.getX509CertChain();
+    expect(3, certChain.length);
+    expect(new Base64("asd"), certChain[0]);
+    expect(new Base64("fgh"), certChain[1]);
+    expect(new Base64("jkl"), certChain[2]);
+
+    expect(new Base64URL("abc"), h.getAgreementPartyUInfo());
+    expect(new Base64URL("xyz"), h.getAgreementPartyVInfo());
+
+    expect(new Base64URL("omg"), h.getPBES2Salt());
+    expect(1000, h.getPBES2Count());
+
+    expect(new Base64URL("101010"), h.getIV());
+    expect(new Base64URL("202020"), h.getAuthTag());
+
+    expect("+++", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
+
+    expect(base64URL, h.getParsedBase64URL());
+  });
+
+  test('testCrit', () {
+
+    Set<String> crit = new Set();
+    crit.add("iat");
+    crit.add("exp");
+    crit.add("nbf");
+
+    JWEHeader h = new JWEHeaderBuilder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
+    criticalParams(crit).
+    build();
+
+    expect(3, h.getCriticalParams().length);
+
+    Base64URL b64url = h.toBase64URL();
+
+    // Parse back
+    h = JWEHeader.parseBase64Url(b64url);
+
+    crit = h.getCriticalParams();
+
+    expect(crit.contains("iat"), isTrue);
+    expect(crit.contains("exp"), isTrue);
+    expect(crit.contains("nbf"), isTrue);
+
+    expect(3, crit.length);
+  });
+
+  test('testRejectNone', () {
+
+//		try {
+    new JWEHeader.minimal(new JWEAlgorithm.onlyName("none"), EncryptionMethod.A128CBC_HS256);
+
+    fail("Failed to raise exception");
+
+//		} catch (IllegalArgumentException e) {
+//
+//			// ok
+//		}
+  });
+
+  test('testBuilder', () {
+
+    JWEHeader h = new JWEHeaderBuilder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
+    type(JOSEObjectType.JOSE).
+    contentType("application/json").
+    criticalParams(new Set.from(["exp", "nbf"])).
+    jwkURL(Uri.parse("http://example.com/jwk.json")).
+    jwk(new OctetSequenceKeyBuilder(new Base64URL("xyz")).build()).
+    x509CertURL(Uri.parse("http://example.com/cert.pem")).
+    x509CertThumbprint(new Base64URL("abc")).
+    x509CertSHA256Thumbprint(new Base64URL("abc256")).
+    x509CertChain([new Base64("abc"), new Base64("def")]).
+    keyID("123").
+    compressionAlgorithm(CompressionAlgorithm.DEF).
+    agreementPartyUInfo(new Base64URL("qwe")).
+    agreementPartyVInfo(new Base64URL("rty")).
+    pbes2Salt(new Base64URL("uiop")).
+    pbes2Count(1000).
+    iv(new Base64URL("101010")).
+    authTag(new Base64URL("202020")).
+    customParam("exp", 123).
+    customParam("nbf", 456).
+    build();
+
+    expect(JWEAlgorithm.A128KW, h.getAlgorithm());
+    expect(EncryptionMethod.A128GCM, h.getEncryptionMethod());
+    expect(JOSEObjectType.JOSE, h.getType());
+    expect("application/json", h.getContentType());
+    expect(h.getCriticalParams().contains("exp"), isTrue);
+    expect(h.getCriticalParams().contains("nbf"), isTrue);
+    expect(2, h.getCriticalParams().length);
+    expect("http://example.com/jwk.json", h.getJWKURL().toString());
+    expect("xyz", (h.getJWK() as OctetSequenceKey).getKeyValue().toString());
+    expect("http://example.com/cert.pem", h.getX509CertURL().toString());
+    expect("abc", h.getX509CertThumbprint().toString());
+    expect("abc256", h.getX509CertSHA256Thumbprint().toString());
+    expect("abc", h.getX509CertChain()[0].toString());
+    expect("def", h.getX509CertChain()[1].toString());
+    expect(2, h.getX509CertChain().length);
+    expect("123", h.getKeyID());
+    expect(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
+    expect("qwe", h.getAgreementPartyUInfo().toString());
+    expect("rty", h.getAgreementPartyVInfo().toString());
+    expect("uiop", h.getPBES2Salt().toString());
+    expect(1000, h.getPBES2Count());
+    expect("101010", h.getIV().toString());
+    expect("202020", h.getAuthTag().toString());
+    expect(123, (h.getCustomParam("exp") as int).toInt());
+    expect(456, (h.getCustomParam("nbf") as int).toInt());
+    expect(2, h.getCustomParams().length);
+    expect(h.getParsedBase64URL(), isNull);
+
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("enc"), isTrue);
+    expect(h.getIncludedParams().contains("typ"), isTrue);
+    expect(h.getIncludedParams().contains("cty"), isTrue);
+    expect(h.getIncludedParams().contains("crit"), isTrue);
+    expect(h.getIncludedParams().contains("jku"), isTrue);
+    expect(h.getIncludedParams().contains("jwk"), isTrue);
+    expect(h.getIncludedParams().contains("x5u"), isTrue);
+    expect(h.getIncludedParams().contains("x5t"), isTrue);
+    expect(h.getIncludedParams().contains("x5t#S256"), isTrue);
+    expect(h.getIncludedParams().contains("x5c"), isTrue);
+    expect(h.getIncludedParams().contains("kid"), isTrue);
+    expect(h.getIncludedParams().contains("zip"), isTrue);
+    expect(h.getIncludedParams().contains("apu"), isTrue);
+    expect(h.getIncludedParams().contains("apv"), isTrue);
+    expect(h.getIncludedParams().contains("p2s"), isTrue);
+    expect(h.getIncludedParams().contains("p2c"), isTrue);
+    expect(h.getIncludedParams().contains("iv"), isTrue);
+    expect(h.getIncludedParams().contains("tag"), isTrue);
+    expect(h.getIncludedParams().contains("exp"), isTrue);
+    expect(h.getIncludedParams().contains("nbf"), isTrue);
+    expect(21, h.getIncludedParams().length);
+  });
+
+  test('testBuilderWithCustomParams', () {
+
+    Map<String, Object> customParams = new Map();
+    customParams["x"] = "1";
+    customParams["y"] = "2";
+
+    JWEHeader h = new JWEHeaderBuilder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
+    customParams(customParams).
+    build();
+
+    expect("1", h.getCustomParam("x") as String);
+    expect("2", h.getCustomParam("y") as String);
+    expect(2, h.getCustomParams().length);
+  });
 
-		JWEHeader h = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM);
-
-		assertEquals(JWEAlgorithm.A128KW, h.getAlgorithm());
-		assertEquals(EncryptionMethod.A128GCM, h.getEncryptionMethod());
-		assertNull(h.getJWKURL());
-		assertNull(h.getJWK());
-		assertNull(h.getX509CertURL());
-		assertNull(h.getX509CertThumbprint());
-		assertNull(h.getX509CertSHA256Thumbprint());
-		assertNull(h.getX509CertChain());
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-		assertNull(h.getCriticalParams());
-		assertNull(h.getEphemeralPublicKey());
-		assertNull(h.getCompressionAlgorithm());
-		assertNull(h.getAgreementPartyUInfo());
-		assertNull(h.getAgreementPartyVInfo());
-		assertNull(h.getPBES2Salt());
-		assertNull(h.getIV());
-		assertNull(h.getAuthTag());
-		assertEquals(0, h.getPBES2Count());
-		assertTrue(h.getCustomParams().isEmpty());
-	}
-
-
-	public void testParse1()
-		throws Exception {
-
-		// Example header from JWE spec
-		// {"alg":"RSA-OAEP","enc":"A256GCM"}
-		Base64URL in = new Base64URL("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ");
-
-		JWEHeader h = JWEHeader.parse(in);
-
-		assertEquals(in, h.toBase64URL());
-
-		assertNotNull(h);
-
-		assertEquals(JWEAlgorithm.RSA_OAEP, h.getAlgorithm());
-		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("enc"));
-		assertEquals(2, h.getIncludedParams().size());
-	}
-
-
-	public void testParse2()
-		throws Exception {
-
-		// Example header from JWE spec
-		// {"alg":"RSA1_5","enc":"A128CBC-HS256"}
-		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0");
-
-		JWEHeader h = JWEHeader.parse(in);
-
-		assertEquals(in, h.toBase64URL());
-
-		assertNotNull(h);
-
-		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
-		assertEquals(EncryptionMethod.A128CBC_HS256, h.getEncryptionMethod());
-
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("enc"));
-		assertEquals(2, h.getIncludedParams().size());
-	}
-
-
-	public void testSerializeAndParse()
-		throws Exception {
-
-		final Base64URL mod = new Base64URL("abc123");
-		final Base64URL exp = new Base64URL("def456");
-		final KeyUse use = KeyUse.ENCRYPTION;
-		final String kid = "1234";
-
-		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
-
-		List<Base64> certChain = new LinkedList<>();
-		certChain.add(new Base64("asd"));
-		certChain.add(new Base64("fgh"));
-		certChain.add(new Base64("jkl"));
-
-		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM).
-			type(new JOSEObjectType("JWT")).
-			compressionAlgorithm(CompressionAlgorithm.DEF).
-			jwkURL(new URL("https://example.com/jku.json")).
-			jwk(jwk).
-			x509CertURL(new URL("https://example/cert.b64")).
-			x509CertThumbprint(new Base64URL("789iop")).
-			x509CertSHA256Thumbprint(new Base64URL("789asd")).
-			x509CertChain(certChain).
-			keyID("1234").
-			agreementPartyUInfo(new Base64URL("abc")).
-			agreementPartyVInfo(new Base64URL("xyz")).
-			pbes2Salt(new Base64URL("omg")).
-			pbes2Count(1000).
-			iv(new Base64URL("101010")).
-			authTag(new Base64URL("202020")).
-			customParam("xCustom", "+++").
-			build();
-
-
-		Base64URL base64URL = h.toBase64URL();
-
-		// Parse back
-		h = JWEHeader.parse(base64URL);
-
-		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
-		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
-		assertEquals("1234", h.getKeyID());
-
-		jwk = (RSAKey)h.getJWK();
-		assertNotNull(jwk);
-		assertEquals(new Base64URL("abc123"), jwk.getModulus());
-		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
-		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
-		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
-		assertEquals("1234", jwk.getKeyID());
-
-		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
-		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
-		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
-
-		certChain = h.getX509CertChain();
-		assertEquals(3, certChain.size());
-		assertEquals(new Base64("asd"), certChain.get(0));
-		assertEquals(new Base64("fgh"), certChain.get(1));
-		assertEquals(new Base64("jkl"), certChain.get(2));
-
-		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
-		assertEquals(new Base64URL("xyz"), h.getAgreementPartyVInfo());
-
-		assertEquals(new Base64URL("omg"), h.getPBES2Salt());
-		assertEquals(1000, h.getPBES2Count());
-
-		assertEquals(new Base64URL("101010"), h.getIV());
-		assertEquals(new Base64URL("202020"), h.getAuthTag());
-
-		assertEquals("+++", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
-
-		assertEquals(base64URL, h.getParsedBase64URL());
-
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("typ"));
-		assertTrue(h.getIncludedParams().contains("enc"));
-		assertTrue(h.getIncludedParams().contains("zip"));
-		assertTrue(h.getIncludedParams().contains("jku"));
-		assertTrue(h.getIncludedParams().contains("jwk"));
-		assertTrue(h.getIncludedParams().contains("kid"));
-		assertTrue(h.getIncludedParams().contains("x5u"));
-		assertTrue(h.getIncludedParams().contains("x5t"));
-		assertTrue(h.getIncludedParams().contains("x5c"));
-		assertTrue(h.getIncludedParams().contains("apu"));
-		assertTrue(h.getIncludedParams().contains("apv"));
-		assertTrue(h.getIncludedParams().contains("p2s"));
-		assertTrue(h.getIncludedParams().contains("p2c"));
-		assertTrue(h.getIncludedParams().contains("iv"));
-		assertTrue(h.getIncludedParams().contains("tag"));
-		assertTrue(h.getIncludedParams().contains("xCustom"));
-		assertEquals(18, h.getIncludedParams().size());
-
-		// Test copy constructor
-		h = new JWEHeader(h);
-
-		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
-		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
-		assertEquals("1234", h.getKeyID());
-
-		jwk = (RSAKey)h.getJWK();
-		assertNotNull(jwk);
-		assertEquals(new Base64URL("abc123"), jwk.getModulus());
-		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
-		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
-		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
-		assertEquals("1234", jwk.getKeyID());
-
-		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
-		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
-		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
-
-		certChain = h.getX509CertChain();
-		assertEquals(3, certChain.size());
-		assertEquals(new Base64("asd"), certChain.get(0));
-		assertEquals(new Base64("fgh"), certChain.get(1));
-		assertEquals(new Base64("jkl"), certChain.get(2));
-
-		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
-		assertEquals(new Base64URL("xyz"), h.getAgreementPartyVInfo());
-
-		assertEquals(new Base64URL("omg"), h.getPBES2Salt());
-		assertEquals(1000, h.getPBES2Count());
-
-		assertEquals(new Base64URL("101010"), h.getIV());
-		assertEquals(new Base64URL("202020"), h.getAuthTag());
-
-		assertEquals("+++", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
-
-		assertEquals(base64URL, h.getParsedBase64URL());
-	}
-
-
-	public void testCrit()
-		throws Exception {
-
-		Set<String> crit = new HashSet<>();
-		crit.add("iat");
-		crit.add("exp");
-		crit.add("nbf");
-
-		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
-			criticalParams(crit).
-			build();
-
-		assertEquals(3, h.getCriticalParams().size());
-
-		Base64URL b64url = h.toBase64URL();
-
-		// Parse back
-		h = JWEHeader.parse(b64url);
-		
-		crit = h.getCriticalParams();
-
-		assertTrue(crit.contains("iat"));
-		assertTrue(crit.contains("exp"));
-		assertTrue(crit.contains("nbf"));
-
-		assertEquals(3, crit.size());
-	}
-
-
-	public void testRejectNone() {
-
-		try {
-			new JWEHeader(new JWEAlgorithm("none"), EncryptionMethod.A128CBC_HS256);
-
-			fail("Failed to raise exception");
-
-		} catch (IllegalArgumentException e) {
-
-			// ok
-		}
-	}
-
-
-	public void testBuilder()
-		throws Exception {
-
-		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
-			type(JOSEObjectType.JOSE).
-			contentType("application/json").
-			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
-			jwkURL(new URL("http://example.com/jwk.json")).
-			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
-			x509CertURL(new URL("http://example.com/cert.pem")).
-			x509CertThumbprint(new Base64URL("abc")).
-			x509CertSHA256Thumbprint(new Base64URL("abc256")).
-			x509CertChain(Arrays.asList(new Base64("abc"), new Base64("def"))).
-			keyID("123").
-			compressionAlgorithm(CompressionAlgorithm.DEF).
-			agreementPartyUInfo(new Base64URL("qwe")).
-			agreementPartyVInfo(new Base64URL("rty")).
-			pbes2Salt(new Base64URL("uiop")).
-			pbes2Count(1000).
-			iv(new Base64URL("101010")).
-			authTag(new Base64URL("202020")).
-			customParam("exp", 123).
-			customParam("nbf", 456).
-			build();
-
-		assertEquals(JWEAlgorithm.A128KW, h.getAlgorithm());
-		assertEquals(EncryptionMethod.A128GCM, h.getEncryptionMethod());
-		assertEquals(JOSEObjectType.JOSE, h.getType());
-		assertEquals("application/json", h.getContentType());
-		assertTrue(h.getCriticalParams().contains("exp"));
-		assertTrue(h.getCriticalParams().contains("nbf"));
-		assertEquals(2, h.getCriticalParams().size());
-		assertEquals("http://example.com/jwk.json", h.getJWKURL().toString());
-		assertEquals("xyz", ((OctetSequenceKey)h.getJWK()).getKeyValue().toString());
-		assertEquals("http://example.com/cert.pem", h.getX509CertURL().toString());
-		assertEquals("abc", h.getX509CertThumbprint().toString());
-		assertEquals("abc256", h.getX509CertSHA256Thumbprint().toString());
-		assertEquals("abc", h.getX509CertChain().get(0).toString());
-		assertEquals("def", h.getX509CertChain().get(1).toString());
-		assertEquals(2, h.getX509CertChain().size());
-		assertEquals("123", h.getKeyID());
-		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
-		assertEquals("qwe", h.getAgreementPartyUInfo().toString());
-		assertEquals("rty", h.getAgreementPartyVInfo().toString());
-		assertEquals("uiop", h.getPBES2Salt().toString());
-		assertEquals(1000, h.getPBES2Count());
-		assertEquals("101010", h.getIV().toString());
-		assertEquals("202020", h.getAuthTag().toString());
-		assertEquals(123, ((Integer)h.getCustomParam("exp")).intValue());
-		assertEquals(456, ((Integer)h.getCustomParam("nbf")).intValue());
-		assertEquals(2, h.getCustomParams().size());
-		assertNull(h.getParsedBase64URL());
-
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("enc"));
-		assertTrue(h.getIncludedParams().contains("typ"));
-		assertTrue(h.getIncludedParams().contains("cty"));
-		assertTrue(h.getIncludedParams().contains("crit"));
-		assertTrue(h.getIncludedParams().contains("jku"));
-		assertTrue(h.getIncludedParams().contains("jwk"));
-		assertTrue(h.getIncludedParams().contains("x5u"));
-		assertTrue(h.getIncludedParams().contains("x5t"));
-		assertTrue(h.getIncludedParams().contains("x5t#S256"));
-		assertTrue(h.getIncludedParams().contains("x5c"));
-		assertTrue(h.getIncludedParams().contains("kid"));
-		assertTrue(h.getIncludedParams().contains("zip"));
-		assertTrue(h.getIncludedParams().contains("apu"));
-		assertTrue(h.getIncludedParams().contains("apv"));
-		assertTrue(h.getIncludedParams().contains("p2s"));
-		assertTrue(h.getIncludedParams().contains("p2c"));
-		assertTrue(h.getIncludedParams().contains("iv"));
-		assertTrue(h.getIncludedParams().contains("tag"));
-		assertTrue(h.getIncludedParams().contains("exp"));
-		assertTrue(h.getIncludedParams().contains("nbf"));
-		assertEquals(21, h.getIncludedParams().size());
-	}
-
-
-	public void testBuilderWithCustomParams() {
-
-		Map<String,Object> customParams = new HashMap<>();
-		customParams.put("x", "1");
-		customParams.put("y", "2");
-
-		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
-			customParams(customParams).
-			build();
-
-		assertEquals("1", (String)h.getCustomParam("x"));
-		assertEquals("2", (String)h.getCustomParam("y"));
-		assertEquals(2, h.getCustomParams().size());
-	}
 }
-*/

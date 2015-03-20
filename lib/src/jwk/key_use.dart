@@ -15,20 +15,23 @@ part of jose_jwt.jwk;
  * @version $version$ (2014-04-02)
  */
 //public enum KeyUse {
-class KeyUse {
+enum KeyUse {
 
-  /**
-   * Signature.
-   */
+/**
+ * Signature.
+ */
 //	SIGNATURE("sig"),
-  static const String SIGNATURE = "sig";
+//  static const String SIGNATURE = "sig";
+SIGNATURE,
 
-
-  /**
-   * Encryption.
-   */
+/**
+ * Encryption.
+ */
 //	ENCRYPTION("enc");
-  static const String ENCRYPTION = "enc";
+//  static const String ENCRYPTION = "enc";
+ENCRYPTION
+
+/*
 
   static const values = const [SIGNATURE, ENCRYPTION];
 
@@ -69,6 +72,12 @@ class KeyUse {
     return identifier();
   }
 
+
+*/
+}
+
+class KeyUseParser {
+
   /**
    * Parses a public key use from the specified JWK {@code use} parameter
    * value.
@@ -88,7 +97,8 @@ class KeyUse {
 
     for (KeyUse use in KeyUse.values) {
 
-      if (s == use.identifier) {
+//      if (s == use.identifier) {
+      if (s == use.toString()) {
         return use;
       }
     }

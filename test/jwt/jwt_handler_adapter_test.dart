@@ -1,4 +1,4 @@
-library jose_jwt.test.jwt_handler_adapter_test;
+library jose_jwt.test.jwt.jwt_handler_adapter_test;
 
 import 'package:unittest/unittest.dart';
 import 'package:cipher/cipher.dart';

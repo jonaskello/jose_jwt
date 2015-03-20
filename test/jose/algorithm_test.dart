@@ -1,9 +1,7 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.algorithm_test;
 
-
-import junit.framework.TestCase;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 /**
  * Tests the base Algorithm class.
@@ -11,73 +9,73 @@ import junit.framework.TestCase;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-26)
  */
-public class AlgorithmTest extends TestCase {
+//public class AlgorithmTest extends TestCase {
+main() {
+
+  test('testNoneConstant', () {
+
+    expect("none", Algorithm.NONE.getName());
+    expect(Requirement.REQUIRED, Algorithm.NONE.getRequirement());
+
+    expect(Algorithm.NONE, new Algorithm("none", Requirement.REQUIRED));
+  });
 
 
-	public void testNoneConstant() {
+  test('testMinimalConstructor', () {
 
-		assertEquals("none", Algorithm.NONE.getName());
-		assertEquals(Requirement.REQUIRED, Algorithm.NONE.getRequirement());
+    Algorithm alg = new Algorithm.withName("my-alg");
 
-		assertEquals(Algorithm.NONE, new Algorithm("none", Requirement.REQUIRED));
-	}
+    expect("my-alg", alg.getName());
+    expect("my-alg", alg.toString());
 
-
-	public void testMinimalConstructor() {
-
-		Algorithm alg = new Algorithm("my-alg");
-
-		assertEquals("my-alg", alg.getName());
-		assertEquals("my-alg", alg.toString());
-
-		assertNull(alg.getRequirement());
-	}
+    expect(alg.getRequirement(), isNull);
+  });
 
 
-	public void testFullContructor() {
+  test('testFullContructor', () {
 
-		Algorithm alg = new Algorithm("my-alg", Requirement.OPTIONAL);
+    Algorithm alg = new Algorithm("my-alg", Requirement.OPTIONAL);
 
-		assertEquals("my-alg", alg.getName());
-		assertEquals("my-alg", alg.toString());
+    expect("my-alg", alg.getName());
+    expect("my-alg", alg.toString());
 
-		assertEquals(Requirement.OPTIONAL, alg.getRequirement());
-	}
-
-
-	public void testEquality() {
-
-		Algorithm alg1 = new Algorithm("my-alg");
-		Algorithm alg2 = new Algorithm("my-alg");
-
-		assertTrue(alg1.equals(alg2));
-	}
+    expect(Requirement.OPTIONAL, alg.getRequirement());
+  });
 
 
-	public void testEqualityDifferentRequirementLevels() {
+  test('testEquality', () {
 
-		Algorithm alg1 = new Algorithm("my-alg", Requirement.REQUIRED);
-		Algorithm alg2 = new Algorithm("my-alg", Requirement.OPTIONAL);
+    Algorithm alg1 = new Algorithm.withName("my-alg");
+    Algorithm alg2 = new Algorithm.withName("my-alg");
 
-		assertTrue(alg1.equals(alg2));
-	}
-
-
-	public void testInequality() {
-
-		Algorithm alg1 = new Algorithm("my-alg");
-		Algorithm alg2 = new Algorithm("your-alg");
-
-		assertFalse(alg1.equals(alg2));
-	}
+    expect(alg1 == alg2, isTrue);
+  });
 
 
-	public void testHashCode() {
+  test('testEqualityDifferentRequirementLevels', () {
 
-		Algorithm alg1 = new Algorithm("my-alg");
-		Algorithm alg2 = new Algorithm("my-alg");
+    Algorithm alg1 = new Algorithm("my-alg", Requirement.REQUIRED);
+    Algorithm alg2 = new Algorithm("my-alg", Requirement.OPTIONAL);
 
-		assertEquals(alg1.hashCode(), alg2.hashCode());
-	}
+    expect(alg1 == alg2, isTrue);
+  });
+
+
+  test('testInequality', () {
+
+    Algorithm alg1 = new Algorithm.withName("my-alg");
+    Algorithm alg2 = new Algorithm.withName("your-alg");
+
+    expect(alg1 == alg2, isFalse);
+  });
+
+
+  test('testHashCode', () {
+
+    Algorithm alg1 = new Algorithm.withName("my-alg");
+    Algorithm alg2 = new Algorithm.withName("my-alg");
+
+    expect(alg1.hashCode, alg2.hashCode);
+  });
+
 }
-*/

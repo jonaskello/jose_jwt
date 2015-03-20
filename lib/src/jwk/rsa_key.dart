@@ -1160,6 +1160,7 @@ class RSAKey extends JWK {
         use, ops, alg, kid,
         x5u, x5t, x5c);
   }
+
 /*
   /**
    * Creates a new public / private RSA JSON Web Key (JWK) with the
@@ -1521,46 +1522,46 @@ class RSAKey extends JWK {
   }
 
   @override
-  JSONObject toJSONObject() {
+  Map toJson() {
 
-    JSONObject o = super.toJSONObject();
+    Map o = super.toJson();
 
     // Append public RSA key specific attributes
-    o.put("n", _n.toString());
-    o.put("e", _e.toString());
+    o["n"] = _n.toString();
+    o["e"] = _e.toString();
     if (_d != null) {
-      o.put("d", _d.toString());
+      o["d"] = _d.toString();
     }
     if (_p != null) {
-      o.put("p", _p.toString());
+      o["p"] = _p.toString();
     }
     if (_q != null) {
-      o.put("q", _q.toString());
+      o["q"] = _q.toString();
     }
     if (_dp != null) {
-      o.put("dp", _dp.toString());
+      o["dp"] = _dp.toString();
     }
     if (_dq != null) {
-      o.put("dq", _dq.toString());
+      o["dq"] = _dq.toString();
     }
     if (_qi != null) {
-      o.put("qi", _qi.toString());
+      o["qi"] = _qi.toString();
     }
     if (_oth != null && !_oth.isEmpty) {
 
-      JSONArray a = new JSONArray();
+      List a = new List();
 
       for (OtherPrimesInfo other in _oth) {
 
-        JSONObject oo = new JSONObject();
-        oo.put("r", other._r.toString());
-        oo.put("d", other._d.toString());
-        oo.put("t", other._t.toString());
+        Map oo = new Map();
+        oo["r"] = other._r.toString();
+        oo["d"] = other._d.toString();
+        oo["t"] = other._t.toString();
 
         a.add(oo);
       }
 
-      o.put("oth", a);
+      o["oth"] = a;
     }
 
     return o;
@@ -1577,9 +1578,9 @@ class RSAKey extends JWK {
    * @throws ParseException If the string couldn't be parsed to an RSA
    *                        JWK.
    */
-  static RSAKey parseFromString(final String s) {
+  static RSAKey fromJsonString(final String s) {
 
-    return parseFromJsonObject(JSONObjectUtils.parseJSONObject(s));
+    return fromJson(JSON.decode(s));
   }
 
   /**
@@ -1594,14 +1595,14 @@ class RSAKey extends JWK {
    * @throws ParseException If the JSON object couldn't be parsed to an
    *                        RSA JWK.
    */
-  static RSAKey parseFromJsonObject(final JSONObject jsonObject) {
+  static RSAKey fromJson(final Map jsonObject) {
 
     // Parse the mandatory public key parameters first
-    Base64URL n = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
-    Base64URL e = new Base64URL(JSONObjectUtils.getString(jsonObject, "e"));
+    Base64URL n = new Base64URL(JSONUtils.getString(jsonObject, "n"));
+    Base64URL e = new Base64URL(JSONUtils.getString(jsonObject, "e"));
 
     // Check key type
-    KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+    KeyType kty = KeyType.parse(JSONUtils.getString(jsonObject, "kty"));
     if (kty != KeyType.RSA) {
       throw new ParseError("The key type \"kty\" must be RSA", 0);
     }
@@ -1611,45 +1612,45 @@ class RSAKey extends JWK {
     // 1st private representation
     Base64URL d = null;
     if (jsonObject.containsKey("d")) {
-      d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
+      d = new Base64URL(JSONUtils.getString(jsonObject, "d"));
     }
 
     // 2nd private (CRT) representation
     Base64URL p = null;
     if (jsonObject.containsKey("p")) {
-      p = new Base64URL(JSONObjectUtils.getString(jsonObject, "p"));
+      p = new Base64URL(JSONUtils.getString(jsonObject, "p"));
     }
     Base64URL q = null;
     if (jsonObject.containsKey("q")) {
-      q = new Base64URL(JSONObjectUtils.getString(jsonObject, "q"));
+      q = new Base64URL(JSONUtils.getString(jsonObject, "q"));
     }
     Base64URL dp = null;
     if (jsonObject.containsKey("dp")) {
-      dp = new Base64URL(JSONObjectUtils.getString(jsonObject, "dp"));
+      dp = new Base64URL(JSONUtils.getString(jsonObject, "dp"));
     }
     Base64URL dq = null;
     if (jsonObject.containsKey("dq")) {
-      dq = new Base64URL(JSONObjectUtils.getString(jsonObject, "dq"));
+      dq = new Base64URL(JSONUtils.getString(jsonObject, "dq"));
     }
     Base64URL qi = null;
     if (jsonObject.containsKey("qi")) {
-      qi = new Base64URL(JSONObjectUtils.getString(jsonObject, "qi"));
+      qi = new Base64URL(JSONUtils.getString(jsonObject, "qi"));
     }
 
     List<OtherPrimesInfo> oth = null;
     if (jsonObject.containsKey("oth")) {
 
-      JSONArray arr = JSONObjectUtils.getJSONArray(jsonObject, "oth");
-      oth = new List(arr.lengh);
+      List arr = JSONUtils.getJSONArray(jsonObject, "oth");
+      oth = new List(arr.length);
 
       for (Object o in arr) {
 
-        if (o is JSONObject) {
-          JSONObject otherJson = o;
+        if (o is Map) {
+          Map otherJson = o;
 
-          Base64URL r = new Base64URL(JSONObjectUtils.getString(otherJson, "r"));
-          Base64URL odq = new Base64URL(JSONObjectUtils.getString(otherJson, "dq"));
-          Base64URL t = new Base64URL(JSONObjectUtils.getString(otherJson, "t"));
+          Base64URL r = new Base64URL(JSONUtils.getString(otherJson, "r"));
+          Base64URL odq = new Base64URL(JSONUtils.getString(otherJson, "dq"));
+          Base64URL t = new Base64URL(JSONUtils.getString(otherJson, "t"));
 
           OtherPrimesInfo prime = new OtherPrimesInfo(r, odq, t);
           oth.add(prime);
@@ -1661,49 +1662,49 @@ class RSAKey extends JWK {
     KeyUse use = null;
 
     if (jsonObject.containsKey("use")) {
-      use = KeyUse.parse(JSONObjectUtils.getString(jsonObject, "use"));
+      use = KeyUseParser.parse(JSONUtils.getString(jsonObject, "use"));
     }
 
     // Get optional key operations
     Set<KeyOperation> ops = null;
 
     if (jsonObject.containsKey("key_ops")) {
-      ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
+      ops = KeyOperation.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
     }
 
     // Get optional intended algorithm
     Algorithm alg = null;
 
     if (jsonObject.containsKey("alg")) {
-      alg = new Algorithm.withName(JSONObjectUtils.getString(jsonObject, "alg"));
+      alg = new Algorithm.withName(JSONUtils.getString(jsonObject, "alg"));
     }
 
     // Get optional key ID
     String kid = null;
 
     if (jsonObject.containsKey("kid")) {
-      kid = JSONObjectUtils.getString(jsonObject, "kid");
+      kid = JSONUtils.getString(jsonObject, "kid");
     }
 
     // Get optional X.509 cert URL
     Uri x5u = null;
 
     if (jsonObject.containsKey("x5u")) {
-      x5u = JSONObjectUtils.getURL(jsonObject, "x5u");
+      x5u = JSONUtils.getURL(jsonObject, "x5u");
     }
 
     // Get optional X.509 cert thumbprint
     Base64URL x5t = null;
 
     if (jsonObject.containsKey("x5t")) {
-      x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, "x5t"));
+      x5t = new Base64URL(JSONUtils.getString(jsonObject, "x5t"));
     }
 
     // Get optional X.509 cert chain
     List<Base64> x5c = null;
 
     if (jsonObject.containsKey("x5c")) {
-      x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));
+      x5c = X509CertChainUtils.parseX509CertChain(JSONUtils.getJSONArray(jsonObject, "x5c"));
     }
 
     try {

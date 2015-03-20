@@ -1,9 +1,6 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.plain_object_test;
 
-
-import junit.framework.TestCase;
-
+import 'package:unittest/unittest.dart';
 
 /**
  * Tests plaintext JOSE object parsing and serialisation.
@@ -11,11 +8,11 @@ import junit.framework.TestCase;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-08)
  */
-public class PlainObjectTest extends TestCase {
+//public class PlainObjectTest extends TestCase {
+main() {
+/*
 
-
-	public void testSerializeAndParse()
-		throws Exception {
+  test('testSerializeAndParse', () {
 
 		Payload payload = new Payload("Hello world!");
 
@@ -43,7 +40,9 @@ public class PlainObjectTest extends TestCase {
 		assertEquals("Hello world!", p.getPayload().toString());
 
 		assertEquals(serializedJOSEObject, p.getParsedString());
-	}
-}
+  });
 
 */
+
+}
+

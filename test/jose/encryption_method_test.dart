@@ -1,9 +1,7 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.encryption_method_test;
 
-
-import junit.framework.TestCase;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 /**
  * Tests the EncryptionMethod class.
@@ -11,21 +9,21 @@ import junit.framework.TestCase;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-05-23)
  */
-public class EncryptionMethodTest extends TestCase {
+//public class EncryptionMethodTest extends TestCase {
+main() {
 
+  test('testCMKLengths', () {
 
-	public void testCMKLengths() {
+    expect(256, EncryptionMethod.A128CBC_HS256.cekBitLength());
+    expect(384, EncryptionMethod.A192CBC_HS384.cekBitLength());
+    expect(512, EncryptionMethod.A256CBC_HS512.cekBitLength());
 
-		assertEquals(256, EncryptionMethod.A128CBC_HS256.cekBitLength());
-		assertEquals(384, EncryptionMethod.A192CBC_HS384.cekBitLength());
-		assertEquals(512, EncryptionMethod.A256CBC_HS512.cekBitLength());
+    expect(128, EncryptionMethod.A128GCM.cekBitLength());
+    expect(192, EncryptionMethod.A192GCM.cekBitLength());
+    expect(256, EncryptionMethod.A256GCM.cekBitLength());
 
-		assertEquals(128, EncryptionMethod.A128GCM.cekBitLength());
-		assertEquals(192, EncryptionMethod.A192GCM.cekBitLength());
-		assertEquals(256, EncryptionMethod.A256GCM.cekBitLength());
+    expect(256, EncryptionMethod.A128CBC_HS256_DEPRECATED.cekBitLength());
+    expect(512, EncryptionMethod.A256CBC_HS512_DEPRECATED.cekBitLength());
+  });
 
-		assertEquals(256, EncryptionMethod.A128CBC_HS256_DEPRECATED.cekBitLength());
-		assertEquals(512, EncryptionMethod.A256CBC_HS512_DEPRECATED.cekBitLength());
-	}
 }
-*/

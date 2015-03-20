@@ -209,9 +209,9 @@ class JSONUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static JSONArray getJSONArray(final Map o, final String key) {
+  static List getJSONArray(final Map o, final String key) {
 
-    return _getGeneric(o, key, JSONArray);
+    return _getGeneric(o, key, List);
   }
 
   /**
@@ -227,10 +227,12 @@ class JSONUtils {
    */
   static List<String> getStringArray(final Map o, final String key) {
 
-    JSONArray jsonArray = getJSONArray(o, key);
-
     try {
-      return jsonArray.toArray(const []);
+
+      List<String> jsonArray = getJSONArray(o, key);
+
+//      return jsonArray.toArray(const []);
+      return jsonArray;
 
     } catch (e) {
 //ArrayStoreException
@@ -270,9 +272,9 @@ class JSONUtils {
    * @throws ParseException If the value is missing, {@code null} or not
    *                        of the expected type.
    */
-  static JSONObject getJSONObject(final Map o, final String key) {
+  static Map getJSONObject(final Map o, final String key) {
 
-    return _getGeneric(o, key, JSONObject);
+    return _getGeneric(o, key, Map);
   }
 
   /**

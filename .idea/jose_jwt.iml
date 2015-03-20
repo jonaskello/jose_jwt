@@ -3,9 +3,12 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/packages/jose_jwt" />
+      <excludeFolder url="file://$MODULE_DIR$/test/crypto/packages" />
       <excludeFolder url="file://$MODULE_DIR$/test/jose/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/test/jwk/packages" />
       <excludeFolder url="file://$MODULE_DIR$/test/jwt/packages" />
       <excludeFolder url="file://$MODULE_DIR$/test/packages" />
+      <excludeFolder url="file://$MODULE_DIR$/test/util/packages" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,4 +1,4 @@
-library jose_jwt.all_tests;
+library jose_jwt.test.jwt.all_tests;
 
 import 'package:unittest/unittest.dart';
 import 'encrypted_jwt_test.dart' as encrypted_jwt_test;

@@ -1,11 +1,8 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jwe_object_test;
 
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.util.Base64URL;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/util.dart';
 
 /**
  * Tests JWE object methods.
@@ -13,13 +10,12 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-08-20)
  */
-public class JWEObjectTest extends TestCase {
+//public class JWEObjectTest extends TestCase {
+main() {
 
+  test('testBase64URLConstructor', () {
 
-	public void testBase64URLConstructor()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, 
+		JWEHeader header = new JWEHeader.minimal(JWEAlgorithm.RSA1_5,
 			                         EncryptionMethod.A128CBC_HS256);
 
 		Base64URL firstPart = header.toBase64URL();
@@ -32,15 +28,15 @@ public class JWEObjectTest extends TestCase {
 				thirdPart, fourthPart, 
 				fifthPart);
 
-		assertEquals(firstPart, jwe.getHeader().toBase64URL());
-		assertEquals(secondPart, jwe.getEncryptedKey());
-		assertEquals(thirdPart, jwe.getIV());
-		assertEquals(fourthPart, jwe.getCipherText());
+		expect(firstPart, jwe.getHeader().toBase64URL());
+		expect(secondPart, jwe.getEncryptedKey());
+		expect(thirdPart, jwe.getIV());
+		expect(fourthPart, jwe.getCipherText());
 
-		assertEquals(firstPart.toString() + ".abc.def.ghi.jkl", jwe.serialize());
-		assertEquals(firstPart.toString() + ".abc.def.ghi.jkl", jwe.getParsedString());
+		expect(firstPart.toString() + ".abc.def.ghi.jkl", jwe.serialize());
+		expect(firstPart.toString() + ".abc.def.ghi.jkl", jwe.getParsedString());
 
-		assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
-	}
+		expect(JWEObjectState.ENCRYPTED, jwe.getState());
+  });
+
 }
-*/

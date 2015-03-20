@@ -252,7 +252,7 @@ abstract class CommonSEHeader extends Header {
 		}
 
 		if (_jwk != null) {
-			o.put("jwk", _jwk.toJSONObject());
+			o.put("jwk", _jwk.toJson());
 		}
 
 		if (_x5u != null) {

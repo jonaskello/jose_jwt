@@ -1,12 +1,6 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jws_object_test;
 
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.util.Base64URL;
-
+import 'package:unittest/unittest.dart';
 
 /**
  * Tests JWS object methods.
@@ -14,11 +8,12 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-01-15)
  */
-public class JWSObjectTest extends TestCase {
+//public class JWSObjectTest extends TestCase {
+main() {
 
+	/*
 
-	public void testBase64URLConstructor()
-		throws Exception {
+  test('testBase64URLConstructor', () {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
 
@@ -36,11 +31,10 @@ public class JWSObjectTest extends TestCase {
 		assertEquals(firstPart.toString() + ".abc.def", jws.getParsedString());
 
 		assertEquals(JWSObject.State.SIGNED, jws.getState());
-	}
+  });
 
 
-	public void testSignAndSerialize()
-		throws Exception {
+  test('testSignAndSerialize', () {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
@@ -55,6 +49,7 @@ public class JWSObjectTest extends TestCase {
 		String output = jwsObject.serialize();
 
 		assertEquals(output, jwsObject.serialize());
-	}
-}
+  });
+
 */
+}

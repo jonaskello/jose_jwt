@@ -1,35 +1,33 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.jose_object_type_test;
 
-
-import junit.framework.TestCase;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 /**
  * Tests the JOSE object type header parmeter.
  */
-public class JOSEObjectTypeTest extends TestCase {
+//public class JOSEObjectTypeTest extends TestCase {
+main() {
+
+  test('testConstants', () {
+
+    expect("JOSE", JOSEObjectType.JOSE.getType());
+    expect("JOSE+JSON", JOSEObjectType.JOSE_JSON.getType());
+    expect("JWT", JOSEObjectType.JWT.getType());
+  });
 
 
-	public void testConstants() {
+  test('testToString', () {
 
-		assertEquals("JOSE", JOSEObjectType.JOSE.getType());
-		assertEquals("JOSE+JSON", JOSEObjectType.JOSE_JSON.getType());
-		assertEquals("JWT", JOSEObjectType.JWT.getType());
-	}
-
-
-	public void testToString() {
-
-		assertEquals(JOSEObjectType.JOSE.getType(), JOSEObjectType.JOSE.toString());
-		assertEquals(JOSEObjectType.JOSE_JSON.getType(), JOSEObjectType.JOSE_JSON.toString());
-		assertEquals(JOSEObjectType.JWT.getType(), JOSEObjectType.JWT.toString());
-	}
+    expect(JOSEObjectType.JOSE.getType(), JOSEObjectType.JOSE.toString());
+    expect(JOSEObjectType.JOSE_JSON.getType(), JOSEObjectType.JOSE_JSON.toString());
+    expect(JOSEObjectType.JWT.getType(), JOSEObjectType.JWT.toString());
+  });
 
 
-	public void testJSONAware() {
+  test('testJSONAware', () {
 
-		assertEquals("\"JWT\"", JOSEObjectType.JWT.toJSONString());
-	}
+    expect("\"JWT\"", JOSEObjectType.JWT.toJSONString());
+  });
+
 }
-*/

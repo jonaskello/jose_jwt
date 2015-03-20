@@ -1,16 +1,6 @@
-/*
-package com.nimbusds.jose;
+library jose_jwt.test.jose.plain_header_test;
 
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.util.Base64URL;
-
+import 'package:unittest/unittest.dart';
 
 /**
  * Tests plain header parsing and serialisation.
@@ -18,11 +8,12 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-10)
  */
-public class PlainHeaderTest extends TestCase {
+//public class PlainHeaderTest extends TestCase {
+main() {
 
+	/*
 
-	public void testMinimalConstructor()
-		throws Exception {
+  test('testMinimalConstructor', () {
 
 		PlainHeader h = new PlainHeader();
 
@@ -43,11 +34,9 @@ public class PlainHeaderTest extends TestCase {
 		assertNull(h.getCriticalParams());
 		assertEquals(b64url, h.getParsedBase64URL());
 		assertEquals(b64url, h.toBase64URL());
-	}
+  });
 
-
-	public void testFullAndCopyConstructors()
-		throws Exception {
+  test('testFullAndCopyConstructors', () {
 
 		Set<String> crit = new HashSet<>();
 		crit.add("iat");
@@ -104,11 +93,10 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals("abc", (String)h.getCustomParam("xCustom"));
 		assertEquals(1, h.getCustomParams().size());
 		assertEquals(b64url, h.getParsedBase64URL());
-	}
+  });
 
 
-	public void testBuilder()
-		throws Exception {
+  test('testBuilder', () {
 
 		Set<String> crit = new HashSet<>();
 		crit.add("iat");
@@ -142,11 +130,10 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(3, h.getCriticalParams().size());
 		assertEquals("abc", (String)h.getCustomParam("xCustom"));
 		assertEquals(1, h.getCustomParams().size());
-	}
+  });
 
 
-	public void testParseExample()
-		throws Exception {
+  test('testParseExample', () {
 
 		// Example BASE64URL from JWT spec
 		Base64URL in = new Base64URL("eyJhbGciOiJub25lIn0");
@@ -156,10 +143,10 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(in, header.toBase64URL());
 
 		assertEquals(Algorithm.NONE, header.getAlgorithm());
-	}
+  });
 
 
-	public void testBuilderWithCustomParams() {
+  test('testBuilderWithCustomParams', () {
 
 		Map<String,Object> customParams = new HashMap<>();
 		customParams.put("x", "1");
@@ -172,8 +159,10 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals("1", (String)h.getCustomParam("x"));
 		assertEquals("2", (String)h.getCustomParam("y"));
 		assertEquals(2, h.getCustomParams().size());
-	}
+  });
+
+*/
+
 }
 
 
-*/

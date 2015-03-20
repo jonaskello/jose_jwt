@@ -317,12 +317,12 @@ class OctetSequenceKey extends JWK {
   }
 
   @override
-  JSONObject toJSONObject() {
+  Map toJson() {
 
-    JSONObject o = super.toJSONObject();
+    Map o = super.toJson();
 
     // Append key value
-    o.put("k", _k.toString());
+    o["k"] = _k.toString();
 
     return o;
   }
@@ -338,9 +338,9 @@ class OctetSequenceKey extends JWK {
    * @throws ParseException If the string couldn't be parsed to an octet
    *                        sequence JWK.
    */
-  static OctetSequenceKey parseFromString(final String s) {
+  static OctetSequenceKey fromJsonString(final String s) {
 
-    return parseFromJsonObject(JSONObjectUtils.parseJSONObject(s));
+    return fromJson(JSON.decode(s));
   }
 
   /**
@@ -355,13 +355,13 @@ class OctetSequenceKey extends JWK {
    * @throws ParseException If the JSON object couldn't be parsed to an
    *                        octet sequence JWK.
    */
-  static OctetSequenceKey parseFromJsonObject(final JSONObject jsonObject) {
+  static OctetSequenceKey fromJson(final Map jsonObject) {
 
     // Parse the mandatory parameters first
-    Base64URL k = new Base64URL(JSONObjectUtils.getString(jsonObject, "k"));
+    Base64URL k = new Base64URL(JSONUtils.getString(jsonObject, "k"));
 
     // Check key type
-    KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+    KeyType kty = KeyType.parse(JSONUtils.getString(jsonObject, "kty"));
 
     if (kty != KeyType.OCT) {
 
@@ -372,49 +372,49 @@ class OctetSequenceKey extends JWK {
     KeyUse use = null;
 
     if (jsonObject.containsKey("use")) {
-      use = KeyUse.parse(JSONObjectUtils.getString(jsonObject, "use"));
+      use = KeyUseParser.parse(JSONUtils.getString(jsonObject, "use"));
     }
 
     // Get optional key operations
     Set<KeyOperation> ops = null;
 
     if (jsonObject.containsKey("key_ops")) {
-      ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
+      ops = KeyOperation.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
     }
 
     // Get optional intended algorithm
     Algorithm alg = null;
 
     if (jsonObject.containsKey("alg")) {
-      alg = new Algorithm.withName(JSONObjectUtils.getString(jsonObject, "alg"));
+      alg = new Algorithm.withName(JSONUtils.getString(jsonObject, "alg"));
     }
 
     // Get optional key ID
     String kid = null;
 
     if (jsonObject.containsKey("kid")) {
-      kid = JSONObjectUtils.getString(jsonObject, "kid");
+      kid = JSONUtils.getString(jsonObject, "kid");
     }
 
     // Get optional X.509 cert URL
     Uri x5u = null;
 
     if (jsonObject.containsKey("x5u")) {
-      x5u = JSONObjectUtils.getURL(jsonObject, "x5u");
+      x5u = JSONUtils.getURL(jsonObject, "x5u");
     }
 
     // Get optional X.509 cert thumbprint
     Base64URL x5t = null;
 
     if (jsonObject.containsKey("x5t")) {
-      x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, "x5t"));
+      x5t = new Base64URL(JSONUtils.getString(jsonObject, "x5t"));
     }
 
     // Get optional X.509 cert chain
     List<Base64> x5c = null;
 
     if (jsonObject.containsKey("x5c")) {
-      x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));
+      x5c = X509CertChainUtils.parseX509CertChain(JSONUtils.getJSONArray(jsonObject, "x5c"));
     }
 
     return new OctetSequenceKey(k, use, ops, alg, kid, x5u, x5t, x5c);
