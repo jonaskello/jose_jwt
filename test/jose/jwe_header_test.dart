@@ -258,9 +258,11 @@ main() {
   test('testRejectNone', () {
 
 //		try {
-    new JWEHeader.minimal(new JWEAlgorithm.onlyName("none"), EncryptionMethod.A128CBC_HS256);
+  expect(()=>
+    new JWEHeader.minimal(new JWEAlgorithm.onlyName("none"), EncryptionMethod.A128CBC_HS256),
+  throwsA(new isInstanceOf<ArgumentError>()));
 
-    fail("Failed to raise exception");
+//    fail("Failed to raise exception");
 
 //		} catch (IllegalArgumentException e) {
 //

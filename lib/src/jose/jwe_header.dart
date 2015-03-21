@@ -52,26 +52,26 @@ class JWEHeader extends CommonSEHeader {
    */
   static final Set<String> _REGISTERED_PARAMETER_NAMES = new UnmodifiableSetView(new Set<String>.from(
       [
-          "alg",
-          "enc",
-          "epk",
-          "zip",
-          "jku",
-          "jwk",
-          "x5u",
-          "x5t",
-          "x5t#S256",
-          "x5c",
-          "kid",
-          "typ",
-          "cty",
-          "crit",
-          "apu",
-          "apv",
-          "p2s",
-          "p2c",
-          "iv",
-          "authTag",
+        "alg",
+        "enc",
+        "epk",
+        "zip",
+        "jku",
+        "jwk",
+        "x5u",
+        "x5t",
+        "x5t#S256",
+        "x5c",
+        "kid",
+        "typ",
+        "cty",
+        "crit",
+        "apu",
+        "apv",
+        "p2s",
+        "p2c",
+        "iv",
+        "authTag",
       ]
   ));
 
@@ -455,7 +455,7 @@ class JWEHeader extends CommonSEHeader {
       includedParameters.add("p2s");
     }
 
-    if (_p2c > 0) {
+    if (_p2c != null && _p2c > 0) {
       includedParameters.add("p2c");
     }
 
@@ -471,44 +471,44 @@ class JWEHeader extends CommonSEHeader {
   }
 
   @override
-  JSONObject toJSONObject() {
+  Map toJson() {
 
-    JSONObject o = super.toJSONObject();
+    Map o = super.toJson();
 
     if (_enc != null) {
-      o.put("enc", _enc.toString());
+      o["enc"] = _enc.toString();
     }
 
     if (_epk != null) {
-      o.put("epk", _epk.toJson());
+      o["epk"] = _epk.toJson();
     }
 
     if (_zip != null) {
-      o.put("zip", _zip.toString());
+      o["zip"] = _zip.toString();
     }
 
     if (_apu != null) {
-      o.put("apu", _apu.toString());
+      o["apu"] = _apu.toString();
     }
 
     if (_apv != null) {
-      o.put("apv", _apv.toString());
+      o["apv"] = _apv.toString();
     }
 
     if (_p2s != null) {
-      o.put("p2s", _p2s.toString());
+      o["p2s"] = _p2s.toString();
     }
 
-    if (_p2c > 0) {
-      o.put("p2c", _p2c);
+    if (_p2c != null && _p2c > 0) {
+      o["p2c"] = _p2c;
     }
 
     if (_iv != null) {
-      o.put("iv", _iv.toString());
+      o["iv"] = _iv.toString();
     }
 
     if (_tag != null) {
-      o.put("tag", _tag.toString());
+      o["tag"] = _tag.toString();
     }
 
     return o;
@@ -618,7 +618,7 @@ class JWEHeader extends CommonSEHeader {
       } else if ("tag" == name) {
         header = header.authTag(new Base64URL(JSONUtils.getString(jsonObject, name)));
       } else {
-        header = header.customParam(name, jsonObject["name"]);
+        header = header.customParam(name, jsonObject[name]);
       }
     }
 
@@ -827,7 +827,7 @@ class JWEHeaderBuilder {
       alg, enc, null, null, null, null, null, null,
       null, null, null, null, null, null,
       null, null, null, null, null, null,
-      null, null
+      null
   );
 
   /**
@@ -859,14 +859,13 @@ class JWEHeaderBuilder {
       jweHeader.getPBES2Salt(),
       jweHeader.getPBES2Count(),
       jweHeader.getIV(),
-      jweHeader.getAuthTag(),
-      jweHeader.getCustomParams()
+      jweHeader.getAuthTag()
   );
 
   JWEHeaderBuilder._(this._alg, this._enc, this._typ, this._cty, this._crit, this._customParams,
                      this._jku, this._jwk, this._x5u, this._x5t, this._x5t256, this._x5c,
                      this._kid, this._epk, this._zip, this._apu, this._apv, this._p2s, this._p2c,
-                     this._iv, this._tag, this._customParams)
+                     this._iv, this._tag)
   {
     if (_alg.getName() == Algorithm.NONE.getName()) {
       throw new ArgumentError("The JWE algorithm \"alg\" cannot be \"none\"");
@@ -917,7 +916,7 @@ class JWEHeaderBuilder {
    */
   JWEHeaderBuilder criticalParams(final Set<String> crit) {
 
-    this._crit = crit;
+    _crit = crit;
     return this;
   }
 

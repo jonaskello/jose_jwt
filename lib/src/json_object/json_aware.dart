@@ -4,5 +4,5 @@ abstract class JSONAware {
   /**
    * @return JSON text
    */
-  String toJSONString();
+  String toJsonString();
 }

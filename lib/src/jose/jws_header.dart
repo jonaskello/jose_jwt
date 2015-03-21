@@ -244,7 +244,7 @@ class JWSHeaderBuilder {
    */
   JWSHeaderBuilder x509CertChain(final List<Base64> x5c) {
 
-    this._x5c = x5c;
+    _x5c = x5c;
     return this;
   }
 
@@ -259,7 +259,7 @@ class JWSHeaderBuilder {
    */
   JWSHeaderBuilder keyID(final String kid) {
 
-    this._kid = kid;
+    _kid = kid;
     return this;
   }
 
@@ -306,7 +306,7 @@ class JWSHeaderBuilder {
    */
   JWSHeaderBuilder customParams(final Map<String, Object> customParameters) {
 
-    this._customParams = customParameters;
+    _customParams = customParameters;
     return this;
   }
 
@@ -321,7 +321,7 @@ class JWSHeaderBuilder {
    */
   JWSHeaderBuilder parsedBase64URL(final Base64URL base64URL) {
 
-    this._parsedBase64URL = base64URL;
+    _parsedBase64URL = base64URL;
     return this;
   }
 
@@ -598,7 +598,7 @@ class JWSHeader extends CommonSEHeader {
       } else if ("kid" == name) {
         header = header.keyID(JSONUtils.getString(jsonObject, name));
       } else {
-        header = header.customParam(name, jsonObject["name"]);
+        header = header.customParam(name, jsonObject[name]);
       }
     }
 

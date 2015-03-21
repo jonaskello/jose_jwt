@@ -101,11 +101,12 @@ class JOSEObjectType implements JSONAware {
 	 * @return The JSON string representation.
 	 */
 	@override
-	String toJSONString() {
+	String toJsonString() {
 
 		StringBuffer sb = new StringBuffer();
 		sb.write('"');
-		sb.write(JSONObject.escape(_type));
+//    sb.write(JSONObject.escape(_type));
+    sb.write(_type);
 		sb.write('"');
 		return sb.toString();
 	}

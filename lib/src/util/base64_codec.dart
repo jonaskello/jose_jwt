@@ -271,7 +271,8 @@ class Base64Codec {
    * @return The base 64 encoded string. Never {@code null}.
    */
   static String encodeToString(Uint8List byteArray, final bool urlSafe) {
-    throw new UnimplementedError();
+    return CryptoUtils.bytesToBase64(byteArray, urlSafe:urlSafe);
+
 /*
 		// Reuse char[] since we can't create a String incrementally
 		// and StringBuffer/Builder would be slower

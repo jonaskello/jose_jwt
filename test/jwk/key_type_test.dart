@@ -1,19 +1,14 @@
+library jose_jwt.test.jwk.key_type_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.Requirement;
-
-
 /**
  * Tests the key type class.
  */
-public class KeyTypeTest extends TestCase {
+//public class KeyTypeTest extends TestCase {
+main() {
 
 
-	public void testConstants() {
+  test('testConstants', () {
 
 		assertEquals("RSA", KeyType.RSA.getValue());
 		assertEquals(Requirement.REQUIRED, KeyType.RSA.getRequirement());
@@ -23,7 +18,8 @@ public class KeyTypeTest extends TestCase {
 
 		assertEquals("oct", KeyType.OCT.getValue());
 		assertEquals(Requirement.OPTIONAL, KeyType.OCT.getRequirement());
-	}
+  });
+
 }
 
 */

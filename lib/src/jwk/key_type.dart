@@ -124,7 +124,7 @@ class KeyType implements JSONAware {
    * @return The JSON string representation.
    */
   @override
-  String toJSONString() {
+  String toJsonString() {
 
     StringBuffer sb = new StringBuffer();
     sb.write('"');

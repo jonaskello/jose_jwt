@@ -210,7 +210,7 @@ abstract class JOSEObject {
     }
 
     // Four dots -> five parts
-    List<Base64URL> parts = new List<Base64URL>();
+    List<Base64URL> parts = new List<Base64URL>(5);
     parts[0] = new Base64URL(s.substring(0, dot1));
     parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
     parts[2] = new Base64URL(s.substring(dot2 + 1, dot3));

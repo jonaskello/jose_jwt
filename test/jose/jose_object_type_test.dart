@@ -27,7 +27,7 @@ main() {
 
   test('testJSONAware', () {
 
-    expect("\"JWT\"", JOSEObjectType.JWT.toJSONString());
+    expect("\"JWT\"", JOSEObjectType.JWT.toJsonString());
   });
 
 }

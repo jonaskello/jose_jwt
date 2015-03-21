@@ -1,6 +1,9 @@
 library jose_jwt.test.jose.jws_object_test;
 
 import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/util.dart';
+import 'package:jose_jwt/src/crypto.dart';
 
 /**
  * Tests JWS object methods.
@@ -11,45 +14,43 @@ import 'package:unittest/unittest.dart';
 //public class JWSObjectTest extends TestCase {
 main() {
 
-	/*
 
   test('testBase64URLConstructor', () {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
+    JWSHeader header = new JWSHeader.fromAlg(JWSAlgorithm.RS256);
 
-		Base64URL firstPart = header.toBase64URL();
-		Base64URL secondPart = new Base64URL("abc");
-		Base64URL thirdPart = new Base64URL("def");
+    Base64URL firstPart = header.toBase64URL();
+    Base64URL secondPart = new Base64URL("abc");
+    Base64URL thirdPart = new Base64URL("def");
 
-		JWSObject jws = new JWSObject(firstPart, secondPart, thirdPart);
+    JWSObject jws = new JWSObject.fromParts(firstPart, secondPart, thirdPart);
 
-		assertEquals(firstPart, jws.getHeader().toBase64URL());
-		assertEquals(secondPart, jws.getPayload().toBase64URL());
-		assertEquals(thirdPart, jws.getSignature());
+    expect(firstPart, jws.getHeader().toBase64URL());
+    expect(secondPart, jws.getPayload().toBase64URL());
+    expect(thirdPart, jws.getSignature());
 
-		assertEquals(firstPart.toString() + ".abc.def", jws.serialize());
-		assertEquals(firstPart.toString() + ".abc.def", jws.getParsedString());
+    expect(firstPart.toString() + ".abc.def", jws.serialize());
+    expect(firstPart.toString() + ".abc.def", jws.getParsedString());
 
-		assertEquals(JWSObject.State.SIGNED, jws.getState());
+    expect(JWSObjectState.SIGNED, jws.getState());
   });
 
 
   test('testSignAndSerialize', () {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
+    JWSHeader header = new JWSHeader.fromAlg(JWSAlgorithm.HS256);
 
-		JWSObject jwsObject = new JWSObject(header, new Payload("Hello world!"));
+    JWSObject jwsObject = new JWSObject(header, new Payload.fromString("Hello world!"));
 
-		Base64URL signingInput = Base64URL.encode(jwsObject.getSigningInput());
+    Base64URL signingInput = Base64URL.encodeBytes(jwsObject.getSigningInput());
 
-		assertTrue(signingInput.equals(Base64URL.encode(jwsObject.getSigningInput())));
+    expect(signingInput == Base64URL.encodeBytes(jwsObject.getSigningInput()), isTrue);
 
-		jwsObject.sign(new MACSigner("12345678901234567890123456789012"));
+    jwsObject.sign(new MACSigner.secretString("12345678901234567890123456789012"));
 
-		String output = jwsObject.serialize();
+    String output = jwsObject.serialize();
 
-		assertEquals(output, jwsObject.serialize());
+    expect(output, jwsObject.serialize());
   });
 
-*/
 }

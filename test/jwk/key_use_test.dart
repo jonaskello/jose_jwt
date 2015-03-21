@@ -1,40 +1,32 @@
+library jose_jwt.test.jwk.key_use_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import java.text.ParseException;
-
-import junit.framework.TestCase;
-
-
 /**
  * Tests the key use enumeration.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-03)
  */
-public class KeyUseTest extends TestCase {
+//public class KeyUseTest extends TestCase {
+main() {
 
 
-	public void testIdentifiers() {
+  test('testIdentifiers', () {
 
 		assertEquals("sig", KeyUse.SIGNATURE.identifier());
 		assertEquals("sig", KeyUse.SIGNATURE.toString());
 
 		assertEquals("enc", KeyUse.ENCRYPTION.identifier());
 		assertEquals("enc", KeyUse.ENCRYPTION.toString());
-	}
+  });
 
-
-	public void testParse()
-		throws ParseException {
+  test('testParse', () {
 
 		assertEquals(KeyUse.SIGNATURE, KeyUse.parse("sig"));
 		assertEquals(KeyUse.ENCRYPTION, KeyUse.parse("enc"));
-	}
+  });
 
-
-	public void testParseException() {
+  test('testParseException', () {
 
 		try {
 			KeyUse.parse("no-such-use");
@@ -44,14 +36,13 @@ public class KeyUseTest extends TestCase {
 		} catch (ParseException e) {
 			// ok
 		}
-	}
+  });
 
-
-	public void testParseNull()
-		throws ParseException {
+  test('testParseNull', () {
 
 		assertNull(KeyUse.parse(null));
-	}
+  });
+
 }
 
 */

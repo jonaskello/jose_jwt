@@ -1,6 +1,9 @@
 library jose_jwt.test.jose.payload_test;
 
+import 'dart:convert';
 import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/jwt.dart';
 
 /**
  * Tests the JOSE payload class.
@@ -8,116 +11,119 @@ import 'package:unittest/unittest.dart';
 //public class PayloadTest extends TestCase {
 main() {
 
-/*
   test('testJWSObject', () {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
-		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
-			"." +
-			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+    // From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+    String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
+    "." +
+    "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
+    "." +
+    "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		JWSObject jwsObject = JWSObject.parse(s);
+    JWSObject jwsObject = JWSObject.parse(s);
 
-		Payload payload = new Payload(jwsObject);
+    Payload payload = new Payload.fromJWSObject(jwsObject);
 
-		assertEquals(Payload.Origin.JWS_OBJECT, payload.getOrigin());
-		assertEquals(jwsObject, payload.toJWSObject());
-		assertEquals(s, payload.toString());
-		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
+    expect(PayloadOrigin.JWS_OBJECT, payload.getOrigin());
+    expect(jwsObject, payload.toJWSObject());
+    expect(s, payload.toString());
+    expect(s, UTF8.decode(payload.toBytes()));
   });
 
 
   test('testJWSObjectFromString', () {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
-		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
-			"." +
-			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+    // From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+    String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
+    "." +
+    "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
+    "." +
+    "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		Payload payload = new Payload(s);
+    Payload payload = new Payload.fromString(s);
 
-		assertEquals(Payload.Origin.STRING, payload.getOrigin());
-		assertEquals(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
+    expect(PayloadOrigin.STRING, payload.getOrigin());
+    expect(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
 
-		assertEquals(s, payload.toString());
-		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
+    expect(s, payload.toString());
+    expect(s, UTF8.decode(payload.toBytes()));
   });
 
 
   test('testSignedJWT', () {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
-		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
-			"." +
-			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+    // From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+    String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
+    "." +
+    "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
+    "." +
+    "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		SignedJWT signedJWT = SignedJWT.parse(s);
+    SignedJWT signedJWT = SignedJWT.parse(s);
 
-		Payload payload = new Payload(signedJWT);
+    Payload payload = new Payload.fromSignedJwt(signedJWT);
 
-		assertEquals(Payload.Origin.SIGNED_JWT, payload.getOrigin());
-		assertEquals(signedJWT, payload.toSignedJWT());
+    expect(PayloadOrigin.SIGNED_JWT, payload.getOrigin());
+    expect(signedJWT, payload.toSignedJWT());
 
-		assertNotNull(payload.toJWSObject());
+    expect(payload.toJWSObject(), isNotNull);
 
-		assertEquals(s, payload.toString());
-		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
+    expect(s, payload.toString());
+    expect(s, UTF8.decode(payload.toBytes()));
   });
-
 
   test('testSignedJWTFromString', () {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
-		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
-			"." +
-			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+    // From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+    String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
+    "." +
+    "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+    "cGxlLmNvbS9pc19yb290Ijp0cnVlfQ" +
+    "." +
+    "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		Payload payload = new Payload(s);
+    Payload payload = new Payload.fromString(s);
 
-		assertEquals(Payload.Origin.STRING, payload.getOrigin());
-		assertEquals(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
-		assertEquals("joe", payload.toSignedJWT().getJWTClaimsSet().getIssuer());
+    expect(PayloadOrigin.STRING, payload.getOrigin());
+    expect(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
+    expect("joe", payload.toSignedJWT().getJWTClaimsSet().getIssuer());
 
-		assertNotNull(payload.toJWSObject());
+    expect(payload.toJWSObject(), isNotNull);
 
-		assertEquals(s, payload.toString());
-		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
+    expect(s, payload.toString());
+    expect(s, UTF8.decode(payload.toBytes()));
   });
-
 
   test('testRejectUnsignedJWS', () {
 
-		try {
-			new Payload(new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("test")));
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("The JWS object must be signed", e.getMessage());
-		}
+//		try {
+    expect(() =>
+    new Payload.fromJWSObject(new JWSObject(new JWSHeader.fromAlg(JWSAlgorithm.HS256), new Payload.fromString("test"))),
+    throwsA(new isInstanceOf<ArgumentError>())
+    );
+//    fail();
+//		} catch (IllegalArgumentException e) {
+//			expect("The JWS object must be signed", e.getMessage());
+//		}
   });
-
 
   test('testRejectUnsignedJWT', () {
 
-		try {
-			new Payload(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet()));
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("The JWT must be signed", e.getMessage());
-		}
+//		try {
+    expect(()=>
+        new Payload.fromSignedJwt(new SignedJWT(new JWSHeader.fromAlg(JWSAlgorithm.HS256), new JWTClaimsSet())),
+        throwsA(new isInstanceOf<ArgumentError>())
+    );
+//    fail();
+//		} catch (IllegalArgumentException e) {
+//			expect("The JWT must be signed", e.getMessage());
+//		}
   });
 
+/*
 */
 
 }

@@ -137,10 +137,11 @@ main() {
     // Illegal JOSE
     String s = "abc.def";
 
-    List<Base64URL> parts = null;
+//    List<Base64URL> parts = null;
 
 //    try {
-    parts = JOSEObject.split(s);
+    expect(() =>
+    JOSEObject.split(s), throwsA(new isInstanceOf<ParseError>()));
 
 //			fail("Failed to raise exception");
 //

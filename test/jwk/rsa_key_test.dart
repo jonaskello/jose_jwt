@@ -1,30 +1,14 @@
+library jose_jwt.test.jwk.rsa_key_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import java.net.URL;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.*;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-
-
 /**
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-21)
  */
-public class RSAKeyTest extends TestCase {
-
+//public class RSAKeyTest extends TestCase {
+main() {
 
 	// Test parameters are from JPSK spec
 
@@ -79,8 +63,7 @@ public class RSAKeyTest extends TestCase {
 		"yR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU";
 
 
-	public void testFullConstructorAndSerialization()
-		throws Exception {
+  test('testFullConstructorAndSerialization', () {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
@@ -176,11 +159,9 @@ public class RSAKeyTest extends TestCase {
 		assertTrue(key.getOtherPrimes().isEmpty());
 
 		assertFalse(key.isPrivate());
-	}
+  });
 
-
-	public void testBase64Builder()
-		throws Exception {
+  test('testBase64Builder', () {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
@@ -258,11 +239,9 @@ public class RSAKeyTest extends TestCase {
 		assertTrue(key.getOtherPrimes().isEmpty());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testObjectBuilder()
-		throws Exception {
+  test('testObjectBuilder', () {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
@@ -332,12 +311,9 @@ public class RSAKeyTest extends TestCase {
 		assertTrue(key.getOtherPrimes().isEmpty());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testPublicKeyExportAndImport()
-		throws Exception {
-
+  test('testPublicKeyExportAndImport', () {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e),
 			                null, null, null, null,
@@ -354,11 +330,9 @@ public class RSAKeyTest extends TestCase {
 		key = new RSAKey(pubKey, null, null, null, null, null, null, null);
 		assertEquals(new Base64URL(n), key.getModulus());
 		assertEquals(new Base64URL(e), key.getPublicExponent());
-	}
+  });
 
-
-	public void testPrivateKeyExportAndImport()
-		throws Exception {
+  test('testPrivateKeyExportAndImport', () {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
 			                new Base64URL(p), new Base64URL(q), 
@@ -450,11 +424,9 @@ public class RSAKeyTest extends TestCase {
 		assertTrue(key.getOtherPrimes().isEmpty());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testParseSomeKey()
-		throws Exception {
+  test('testParseSomeKey', () {
 
 		String json = "{\n" +
 			"      \"kty\": \"RSA\",\n" +
@@ -468,11 +440,9 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 
 		assertEquals(256, key.getModulus().decode().length);
-	}
+  });
 
-
-	public void testKeyConversionRoundTrip()
-		throws Exception {
+  test('testKeyConversionRoundTrip', () {
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 		keyGen.initialize(512);
@@ -508,11 +478,9 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK2.getPublicExponent().decodeToBigInteger());
 		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK2.getModulus().decodeToBigInteger());
 		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK2.getPrivateExponent().decodeToBigInteger());
-	}
+  });
 
-
-	public void testKeyConversionRoundTripWithCRTParams()
-		throws Exception {
+  test('testKeyConversionRoundTripWithCRTParams', () {
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 		keyGen.initialize(512);
@@ -570,10 +538,9 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(rsaPrivateKeyIn.getPrimeExponentQ(), rsaJWK2.getSecondFactorCRTExponent().decodeToBigInteger());
 		assertEquals(rsaPrivateKeyIn.getCrtCoefficient(), rsaJWK2.getFirstCRTCoefficient().decodeToBigInteger());
 		assertTrue(rsaJWK2.getOtherPrimes() == null || rsaJWK2.getOtherPrimes().isEmpty());
-	}
+  });
 
-
-	public void testRejectKeyUseWithOps() {
+  test('testRejectKeyUseWithOps', () {
 
 		KeyUse use = KeyUse.SIGNATURE;
 
@@ -594,11 +561,9 @@ public class RSAKeyTest extends TestCase {
 		} catch (IllegalStateException e) {
 			// ok
 		}
-	}
+  });
 
-
-	public void testParseCookbookExample()
-		throws Exception {
+  test('testParseCookbookExample', () {
 
 		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.1.1
 
@@ -715,11 +680,9 @@ public class RSAKeyTest extends TestCase {
 			"6l-DqEiWxqg82sXt2h-LMnT3046AOYJoRioz75tSUQfGCshWTBnP5uDj" +
 			"d18kKhyv07lhfSJdrPdM5Plyl21hsFf4L_mHCuoFau7gdsPfHPxxjVOc" +
 			"OpBrQzwQ", jwk.getPrivateExponent().toString());
-	}
+  });
 
-
-	public void testParseCookbookExample2()
-		throws Exception {
+  test('testParseCookbookExample2', () {
 
 		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.1.1
 
@@ -836,6 +799,7 @@ public class RSAKeyTest extends TestCase {
 			"1GFULimrRdndm-P8q8kvN3KHlNAtEgrQAgTTgz80S-3VD0FgWfgnb1PN"+
 			"miuPUxO8OpI9KDIfu_acc6fg14nsNaJqXe6RESvhGPH2afjHqSy_Fd2v"+
 			"pzj85bQQ", jwk.getPrivateExponent().toString());
-	}
+  });
+
 }
 */

@@ -284,7 +284,7 @@ class Payload {
       throw new ArgumentError.notNull("signedJWT");
     }
     if (signedJWT.getState() == JWSObjectState.UNSIGNED) {
-      throw new ArgumentError.notNull("The JWT must be signed");
+      throw new ArgumentError("The JWT must be signed");
     }
   }
 

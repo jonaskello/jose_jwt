@@ -1,6 +1,7 @@
 library jose_jwt.test.jose.plain_header_test;
 
 import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 /**
  * Tests plain header parsing and serialisation.
@@ -11,157 +12,155 @@ import 'package:unittest/unittest.dart';
 //public class PlainHeaderTest extends TestCase {
 main() {
 
-	/*
 
   test('testMinimalConstructor', () {
 
-		PlainHeader h = new PlainHeader();
+    PlainHeader h = new PlainHeader.minimal();
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-		assertNull(h.getCriticalParams());
-		assertNull(h.getParsedBase64URL());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+    expect(h.getCriticalParams(), isNull);
+    expect(h.getParsedBase64URL(), isNull);
 
-		Base64URL b64url = h.toBase64URL();
+    Base64URL b64url = h.toBase64URL();
 
-		// Parse back
-		h = PlainHeader.parse(b64url);
+    // Parse back
+    h = PlainHeader.parseBase64Url(b64url);
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-		assertNull(h.getCriticalParams());
-		assertEquals(b64url, h.getParsedBase64URL());
-		assertEquals(b64url, h.toBase64URL());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+    expect(h.getCriticalParams(), isNull);
+    expect(b64url, h.getParsedBase64URL());
+    expect(b64url, h.toBase64URL());
   });
 
   test('testFullAndCopyConstructors', () {
 
-		Set<String> crit = new HashSet<>();
-		crit.add("iat");
-		crit.add("exp");
-		crit.add("nbf");
+    Set<String> crit = new Set();
+    crit.add("iat");
+    crit.add("exp");
+    crit.add("nbf");
 
-		Map<String,Object> customParams = new HashMap<>();
-		customParams.put("xCustom", "abc");
+    Map<String, Object> customParams = new Map();
+    customParams["xCustom"] = "abc";
 
-		PlainHeader h = new PlainHeader(
-			new JOSEObjectType("JWT"),
-			"application/jwt",
-			crit,
-			customParams,
-			null);
+    PlainHeader h = new PlainHeader(
+        new JOSEObjectType("JWT"),
+        "application/jwt",
+        crit,
+        customParams,
+        null);
 
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("typ"));
-		assertTrue(h.getIncludedParams().contains("cty"));
-		assertTrue(h.getIncludedParams().contains("crit"));
-		assertTrue(h.getIncludedParams().contains("xCustom"));
-		assertEquals(5, h.getIncludedParams().size());
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("typ"), isTrue);
+    expect(h.getIncludedParams().contains("cty"), isTrue);
+    expect(h.getIncludedParams().contains("crit"), isTrue);
+    expect(h.getIncludedParams().contains("xCustom"), isTrue);
+    expect(5, h.getIncludedParams().length);
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalParams().size());
-		assertEquals("abc", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
-		assertNull(h.getParsedBase64URL());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect("application/jwt", h.getContentType());
+    expect(3, h.getCriticalParams().length);
+    expect("abc", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
+    expect(h.getParsedBase64URL(), isNull);
 
-		Base64URL b64url = h.toBase64URL();
+    Base64URL b64url = h.toBase64URL();
 
-		// Parse back
-		h = PlainHeader.parse(b64url);
+    // Parse back
+    h = PlainHeader.parseBase64Url(b64url);
 
-		assertEquals(b64url, h.toBase64URL());
+    expect(b64url, h.toBase64URL());
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalParams().size());
-		assertEquals("abc", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
-		assertEquals(b64url, h.getParsedBase64URL());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect("application/jwt", h.getContentType());
+    expect(3, h.getCriticalParams().length);
+    expect("abc", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
+    expect(b64url, h.getParsedBase64URL());
 
-		// Copy
-		h = new PlainHeader(h);
+    // Copy
+    h = new PlainHeader.deepCopy(h);
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalParams().size());
-		assertEquals("abc", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
-		assertEquals(b64url, h.getParsedBase64URL());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect("application/jwt", h.getContentType());
+    expect(3, h.getCriticalParams().length);
+    expect("abc", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
+    expect(b64url, h.getParsedBase64URL());
   });
 
 
   test('testBuilder', () {
 
-		Set<String> crit = new HashSet<>();
-		crit.add("iat");
-		crit.add("exp");
-		crit.add("nbf");
+    Set<String> crit = new Set();
+    crit.add("iat");
+    crit.add("exp");
+    crit.add("nbf");
 
-		PlainHeader h = new PlainHeader.Builder().
-			type(new JOSEObjectType("JWT")).
-			contentType("application/jwt").
-			criticalParams(crit).
-			customParam("xCustom", "abc").
-			build();
+    PlainHeader h = new PlainHeaderBuilder().
+    type(new JOSEObjectType("JWT")).
+    contentType("application/jwt").
+    criticalParams(crit).
+    customParam("xCustom", "abc").
+    build();
 
-		assertTrue(h.getIncludedParams().contains("alg"));
-		assertTrue(h.getIncludedParams().contains("typ"));
-		assertTrue(h.getIncludedParams().contains("cty"));
-		assertTrue(h.getIncludedParams().contains("crit"));
-		assertTrue(h.getIncludedParams().contains("xCustom"));
-		assertEquals(5, h.getIncludedParams().size());
+    expect(h.getIncludedParams().contains("alg"), isTrue);
+    expect(h.getIncludedParams().contains("typ"), isTrue);
+    expect(h.getIncludedParams().contains("cty"), isTrue);
+    expect(h.getIncludedParams().contains("crit"), isTrue);
+    expect(h.getIncludedParams().contains("xCustom"), isTrue);
+    expect(5, h.getIncludedParams().length);
 
-		Base64URL b64url = h.toBase64URL();
+    Base64URL b64url = h.toBase64URL();
 
-		// Parse back
-		h = PlainHeader.parse(b64url);
+    // Parse back
+    h = PlainHeader.parseBase64Url(b64url);
 
-		assertEquals(b64url, h.toBase64URL());
+    expect(b64url, h.toBase64URL());
 
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalParams().size());
-		assertEquals("abc", (String)h.getCustomParam("xCustom"));
-		assertEquals(1, h.getCustomParams().size());
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(new JOSEObjectType("JWT"), h.getType());
+    expect("application/jwt", h.getContentType());
+    expect(3, h.getCriticalParams().length);
+    expect("abc", h.getCustomParam("xCustom") as String);
+    expect(1, h.getCustomParams().length);
   });
 
 
   test('testParseExample', () {
 
-		// Example BASE64URL from JWT spec
-		Base64URL in = new Base64URL("eyJhbGciOiJub25lIn0");
+    // Example BASE64URL from JWT spec
+    Base64URL inn = new Base64URL("eyJhbGciOiJub25lIn0");
 
-		PlainHeader header = PlainHeader.parse(in);
+    PlainHeader header = PlainHeader.parseBase64Url(inn);
 
-		assertEquals(in, header.toBase64URL());
+    expect(inn, header.toBase64URL());
 
-		assertEquals(Algorithm.NONE, header.getAlgorithm());
+    expect(Algorithm.NONE, header.getAlgorithm());
   });
 
 
   test('testBuilderWithCustomParams', () {
 
-		Map<String,Object> customParams = new HashMap<>();
-		customParams.put("x", "1");
-		customParams.put("y", "2");
+    Map<String, Object> customParams = new Map();
+    customParams["x"] = "1";
+    customParams["y"] = "2";
 
-		PlainHeader h = new PlainHeader.Builder().
-			customParams(customParams).
-			build();
+    PlainHeader h = new PlainHeaderBuilder().
+    customParams(customParams).
+    build();
 
-		assertEquals("1", (String)h.getCustomParam("x"));
-		assertEquals("2", (String)h.getCustomParam("y"));
-		assertEquals(2, h.getCustomParams().size());
+    expect("1", h.getCustomParam("x") as String);
+    expect("2", h.getCustomParam("y") as String);
+    expect(2, h.getCustomParams().length);
   });
 
-*/
 
 }
 

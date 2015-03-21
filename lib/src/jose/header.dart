@@ -72,7 +72,7 @@ abstract class Header {
          Set<String> crit,
          final Map<String, Object> customParams,
          this._parsedBase64URL) :
-  _crit =crit != null ? new UnmodifiableSetView(new Set.from([crit])) : null,
+  _crit =crit != null ? new UnmodifiableSetView(new Set.from(crit)) : null,
   _customParams = customParams != null ? new UnmodifiableMapView(new Map.from(customParams)) : _EMPTY_CUSTOM_PARAMS {
 
     if (_alg == null) {
@@ -226,25 +226,25 @@ abstract class Header {
    *
    * @return The JSON object representation of the header.
    */
-  JSONObject toJSONObject() {
+  Map toJson() {
 
     // Include custom parameters, they will be overwritten if their
     // names match specified registered ones
-    JSONObject o = new JSONObject.fromMap(_customParams);
+    Map o = new Map.from(_customParams);
 
     // Alg is always defined
-    o.put("alg", _alg.toString());
+    o["alg"] = _alg.toString();
 
     if (_typ != null) {
-      o.put("typ", _typ.toString());
+      o["typ"] = _typ.toString();
     }
 
     if (_cty != null) {
-      o.put("cty", _cty);
+      o["cty"] = _cty;
     }
 
     if (_crit != null && !_crit.isEmpty) {
-      o.put("crit", new List.from(_crit));
+      o["crit"] = new List.from(_crit);
     }
 
     return o;
@@ -259,7 +259,8 @@ abstract class Header {
    */
   String toString() {
 
-    return toJSONObject().toString();
+//    return toJson().toString();
+    return JSON.encode(toJson());
   }
 
   /**
@@ -352,7 +353,7 @@ abstract class Header {
    *                        represent a valid header.
    */
   static Header parseJsonObjectAndUrl(final Map jsonObject,
-                             final Base64URL parsedBase64URL) {
+                                      final Base64URL parsedBase64URL) {
 
     Algorithm alg = parseAlgorithm(jsonObject);
 
@@ -406,7 +407,7 @@ abstract class Header {
    *                        represent a valid header.
    */
   static Header parseJsonStringAndUrl(final String jsonString,
-                      final Base64URL parsedBase64URL) {
+                                      final Base64URL parsedBase64URL) {
 
     Map jsonObject = JSON.decode(jsonString);
 

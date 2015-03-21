@@ -1,30 +1,17 @@
+library jose_jwt.test.jwk.octet_sequence_key_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import java.net.URL;
-import java.security.SecureRandom;
-import java.util.*;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-
-
 /**
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-01-20)
  */
-public class OctetSequenceKeyTest extends TestCase {
+//public class OctetSequenceKeyTest extends TestCase {
+main() {
 
 
-	public void testConstructorAndSerialization()
-		throws Exception {
+  test('testConstructorAndSerialization', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
 		URL x5u = new URL("http://example.com/jwk.json");
@@ -87,11 +74,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testAltConstructorAndSerialization()
-		throws Exception {
+  test('testAltConstructorAndSerialization', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
 		URL x5u = new URL("http://example.com/jwk.json");
@@ -148,10 +133,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testRejectUseAndOpsTogether() {
+  test('testRejectUseAndOpsTogether', () {
 
 		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
@@ -161,11 +145,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
-	}
+  });
 
-
-	public void testBuilder()
-		throws Exception {
+  test('testBuilder', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
 		URL x5u = new URL("http://example.com/jwk.json");
@@ -235,11 +217,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
-	}
+  });
 
-
-	public void testBuilderWithByteArray()
-		throws Exception {
+  test('testBuilderWithByteArray', () {
 
 		byte[] key = new byte[32];
 		new SecureRandom().nextBytes(key);
@@ -247,11 +227,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		OctetSequenceKey oct = new OctetSequenceKey.Builder(key).build();
 
 		assertEquals(Base64URL.encode(key), oct.getKeyValue());
-	}
+  });
 
-
-	public void testCookbookHMACKeyExample()
-		throws Exception {
+  test('testCookbookHMACKeyExample', () {
 
 		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.1
 		
@@ -269,11 +247,9 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
 
 		assertEquals("hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg", jwk.getKeyValue().toString());
-	}
+  });
 
-
-	public void testCookbookAESKeyExample()
-		throws Exception {
+  test('testCookbookAESKeyExample', () {
 
 		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.6.1
 
@@ -293,6 +269,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertEquals(EncryptionMethod.A128GCM, jwk.getAlgorithm());
 
 		assertEquals("XctOhJAkA-pD9Lh7ZgW_2A", jwk.getKeyValue().toString());
-	}
+  });
+
 }
 */

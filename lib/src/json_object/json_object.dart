@@ -1,5 +1,6 @@
 part of jose_jwt.json_object;
 
+/*
 class JSONObject {
 
   Map<String, Object> _map;
@@ -37,3 +38,4 @@ class JSONObject {
   }
 
 }
+*/

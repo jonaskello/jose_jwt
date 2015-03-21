@@ -348,7 +348,7 @@ class PlainHeader extends Header {
       } else if ("crit" == name) {
         header = header.criticalParams(new Set.from(JSONUtils.getStringList(jsonObject, name)));
       } else {
-        header = header.customParam(name, jsonObject["name"]);
+        header = header.customParam(name, jsonObject[name]);
       }
     }
 

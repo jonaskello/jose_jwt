@@ -108,7 +108,7 @@ abstract class CommonSEHeader extends Header {
                  final Map<String, Object> customParams,
                  final Base64URL parsedBase64URL)
   : super(alg, typ, cty, crit, customParams, parsedBase64URL),
-  this._x5c = x5c != null ? new UnmodifiableListView([x5c]) : null {
+  this._x5c = x5c != null ? new UnmodifiableListView(new List.from(x5c)) : null {
 
 //		this._jku = jku;
 //		this._jwk = jwk;
@@ -242,40 +242,40 @@ abstract class CommonSEHeader extends Header {
   }
 
 
-	@override
-	JSONObject toJSONObject() {
+  @override
+  Map toJson() {
 
-		JSONObject o = super.toJSONObject();
+    Map o = super.toJson();
 
-		if (_jku != null) {
-			o.put("jku", _jku.toString());
-		}
+    if (_jku != null) {
+      o["jku"] = _jku.toString();
+    }
 
-		if (_jwk != null) {
-			o.put("jwk", _jwk.toJson());
-		}
+    if (_jwk != null) {
+      o["jwk"] = _jwk.toJson();
+    }
 
-		if (_x5u != null) {
-			o.put("x5u", _x5u.toString());
-		}
+    if (_x5u != null) {
+      o["x5u"] = _x5u.toString();
+    }
 
-		if (_x5t != null) {
-			o.put("x5t", _x5t.toString());
-		}
+    if (_x5t != null) {
+      o["x5t"] = _x5t.toString();
+    }
 
-		if (_x5t256 != null) {
-			o.put("x5t#S256", _x5t256.toString());
-		}
+    if (_x5t256 != null) {
+      o["x5t#S256"] = _x5t256.toString();
+    }
 
-		if (_x5c != null && ! _x5c.isEmpty) {
-			o.put("x5c", _x5c);
-		}
+    if (_x5c != null && !_x5c.isEmpty) {
+      o["x5c"] = _x5c;
+    }
 
-		if (_kid != null) {
-			o.put("kid", _kid);
-		}
+    if (_kid != null) {
+      o["kid"] = _kid;
+    }
 
-		return o;
-	}
+    return o;
+  }
 
 }

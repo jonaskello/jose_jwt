@@ -1,25 +1,17 @@
+library jose_jwt.test.jwk.key_operation_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-
 /**
  * Tests the key operation enumeration.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-03)
  */
-public class KeyOperationTest extends TestCase {
+//public class KeyOperationTest extends TestCase {
+main() {
 
 
-	public void testIdentifiers() {
+  test('testIdentifiers', () {
 
 		assertEquals("sign", KeyOperation.SIGN.identifier());
 		assertEquals("sign", KeyOperation.SIGN.toString());
@@ -44,18 +36,14 @@ public class KeyOperationTest extends TestCase {
 
 		assertEquals("deriveBits", KeyOperation.DERIVE_BITS.identifier());
 		assertEquals("deriveBits", KeyOperation.DERIVE_BITS.toString());
-	}
+  });
 
-
-	public void testParseNull()
-		throws ParseException {
+  test('testParseNull', () {
 
 		assertNull(KeyOperation.parse(null));
-	}
+  });
 
-
-	public void testParseSparseList()
-		throws ParseException {
+  test('testParseSparseList', () {
 
 		List<String> sl = Arrays.asList("sign", null, "verify");
 
@@ -63,11 +51,9 @@ public class KeyOperationTest extends TestCase {
 		assertTrue(ops.contains(KeyOperation.SIGN));
 		assertTrue(ops.contains(KeyOperation.VERIFY));
 		assertEquals(2, ops.size());
-	}
+  });
 
-
-	public void testParseList()
-		throws ParseException {
+  test('testParseList', () {
 
 		List<String> sl = Arrays.asList("sign", "verify");
 
@@ -75,10 +61,9 @@ public class KeyOperationTest extends TestCase {
 		assertTrue(ops.contains(KeyOperation.SIGN));
 		assertTrue(ops.contains(KeyOperation.VERIFY));
 		assertEquals(2, ops.size());
-	}
+  });
 
-
-	public void testParseException() {
+  test('testParseException', () {
 
 		List<String> sl = Arrays.asList("sign", "no-such-op", "verify");
 
@@ -88,7 +73,8 @@ public class KeyOperationTest extends TestCase {
 		} catch (ParseException e) {
 			// ok
 		}
-	}
+  });
+
 }
 
 */

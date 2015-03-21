@@ -75,11 +75,14 @@ class Base64 implements JSONAware {
    * @return The JSON string representation of this object.
    */
   @override
-  String toJSONString() {
+  String toJsonString() {
 
     return "\"" + JSONValue.escape(_value) + "\"";
   }
 
+  String toJson() {
+    return _value;
+  }
 
   /**
    * Returns a Base64 string representation of this object. The string

@@ -1,22 +1,20 @@
+library jose_jwt.test.jwk.jwk_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import junit.framework.TestCase;
-
-
 /**
  * Tests the base JWK class.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-02-04)
  */
-public class JWKTest extends TestCase {
+//public class JWKTest extends TestCase {
+main() {
 
-	public void testMIMEType() {
+  test('testMIMEType', () {
 
 		assertEquals("application/jwk+json; charset=UTF-8", JWK.MIME_TYPE);
-	}
+  });
+
 }
 
 */

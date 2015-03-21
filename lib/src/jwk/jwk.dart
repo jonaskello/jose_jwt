@@ -299,7 +299,7 @@ abstract class JWK implements JSONAware {
    * @return The JSON object string representation.
    */
   @override
-  String toJSONString() {
+  String toJsonString() {
 
     return toJson().toString();
   }

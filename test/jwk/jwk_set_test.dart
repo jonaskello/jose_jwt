@@ -1,39 +1,17 @@
+library jose_jwt.test.jwk.jwk_set_test;
+
 /*
-package com.nimbusds.jose.jwk;
-
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.text.ParseException;
-import java.util.LinkedList;
-import java.util.List;
-
-import junit.framework.TestCase;
-
-import static net.jadler.Jadler.*;
-
-import net.minidev.json.JSONObject;
-
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64URL;
-import org.junit.After;
-
-
 /**
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-12-14)
  */
-public class JWKSetTest extends TestCase {
+//public class JWKSetTest extends TestCase {
+main() {
 
 
-	public void testParsePublicJWKSet()
-		throws Exception {
+  test('testParsePublicJWKSet', () {
 
 		// The string is from the JWK spec
 		String s = "{\"keys\":" +
@@ -97,11 +75,10 @@ public class JWKSetTest extends TestCase {
 		             rsaKey.getModulus().toString());
 		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 		assertFalse(key.isPrivate());
-	}
+  });
 
 
-	public void testSerializeAndParsePublicJWKSet()
-		throws Exception {
+  test('testSerializeAndParsePublicJWKSet', () {
 
 		ECKey ecKey = new ECKey(ECKey.Curve.P_256, 
 				new Base64URL("abc"), 
@@ -162,11 +139,9 @@ public class JWKSetTest extends TestCase {
 		// Check additional JWKSet members
 		assertEquals(1, keySet.getAdditionalMembers().size());
 		assertEquals("xyz123", (String)keySet.getAdditionalMembers().get("setID"));
-	}
+  });
 
-
-	public void testParseOctetSequenceJWKSet()
-		throws Exception {
+  test('testParseOctetSequenceJWKSet', () {
 
 		// The string is from the JPSK spec
 		String s = "{\"keys\":" +
@@ -205,11 +180,9 @@ public class JWKSetTest extends TestCase {
 		assertNull(key.getAlgorithm());
 		assertEquals("HMAC key used in JWS A.1 example", key.getKeyID());
 		assertEquals(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"), ((OctetSequenceKey)key).getKeyValue());
-	}
+  });
 
-
-	public void testParsePrivateJWKSet()
-		throws Exception {
+  test('testParsePrivateJWKSet', () {
 
 		// The string is from the JPSK spec
 		String s = "{\"keys\":" +
@@ -350,11 +323,9 @@ public class JWKSetTest extends TestCase {
 		assertNull(rsaKey.toPublicJWK().getSecondFactorCRTExponent());
 		assertNull(rsaKey.toPublicJWK().getFirstCRTCoefficient());
 		assertTrue(rsaKey.toPublicJWK().getOtherPrimes().isEmpty());
-	}
+  });
 
-
-	public void testPublicJSONObjectSerialization()
-		throws Exception {
+  test('testPublicJSONObjectSerialization', () {
 
 		// The string is from the JPSK spec
 		String s = "{\"keys\":" +
@@ -452,9 +423,10 @@ public class JWKSetTest extends TestCase {
 		             rsaKey.getModulus().toString());
 		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 		assertFalse(key.isPrivate());
-	}
+  });
 	
-	public void testGetByKeyId() throws Exception{
+  test('testGetByKeyId', () {
+
 		// The string is from the JWK spec
 		String s = "{\"keys\":" +
 			   "[" +
@@ -514,11 +486,9 @@ public class JWKSetTest extends TestCase {
 		             rsaKey.getModulus().toString());
 		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 		assertFalse(key.isPrivate());
-	}
+  });
 
-
-	public void testOctJWKSetPublicExport()
-		throws Exception {
+  test('testOctJWKSetPublicExport', () {
 
 		OctetSequenceKey oct1 = new OctetSequenceKey.Builder(new Base64URL("abc")).build();
 		assertEquals("abc", oct1.getKeyValue().toString());
@@ -538,11 +508,9 @@ public class JWKSetTest extends TestCase {
 		JWKSet publicSet = JWKSet.parse(jsonObject.toJSONString());
 
 		assertEquals(0, publicSet.getKeys().size());
-	}
+  });
 
-
-	public void testOctJWKSetToPublic()
-		throws Exception {
+  test('testOctJWKSetToPublic', () {
 
 		OctetSequenceKey oct1 = new OctetSequenceKey.Builder(new Base64URL("abc")).build();
 		assertEquals("abc", oct1.getKeyValue().toString());
@@ -559,17 +527,14 @@ public class JWKSetTest extends TestCase {
 		JWKSet publicSet = privateSet.toPublicJWKSet();
 
 		assertEquals(0, publicSet.getKeys().size());
-	}
+  });
 
-
-	public void testMIMEType() {
+  test('testMIMEType', () {
 
 		assertEquals("application/jwk-set+json; charset=UTF-8", JWKSet.MIME_TYPE);
-	}
+  });
 
-
-	public void testLoadFromFile()
-		throws Exception {
+  test('testLoadFromFile', () {
 
 		// The string is from the JWK spec
 		String s = "{\"keys\":" +
@@ -639,11 +604,9 @@ public class JWKSetTest extends TestCase {
 		assertFalse(key.isPrivate());
 
 		Files.delete(file.toPath());
-	}
+  });
 
-
-	public void testLoadFromURL()
-		throws Exception {
+  test('testLoadFromURL', () {
 
 		initJadler();
 
@@ -718,7 +681,8 @@ public class JWKSetTest extends TestCase {
 		assertFalse(key.isPrivate());
 
 		closeJadler();
-	}
+  });
+
 }
 
 */

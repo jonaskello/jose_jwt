@@ -1,6 +1,7 @@
 library jose_jwt.test.jose.plain_object_test;
 
 import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
 
 /**
  * Tests plaintext JOSE object parsing and serialisation.
@@ -10,39 +11,36 @@ import 'package:unittest/unittest.dart';
  */
 //public class PlainObjectTest extends TestCase {
 main() {
-/*
 
   test('testSerializeAndParse', () {
 
-		Payload payload = new Payload("Hello world!");
+    Payload payload = new Payload.fromString("Hello world!");
 
-		PlainObject p = new PlainObject(payload);
+    PlainObject p = new PlainObject.payloadOnly(payload);
 
-		assertNotNull(p.getHeader());
-		assertEquals("Hello world!", p.getPayload().toString());
+    expect(p.getHeader(), isNotNull);
+    expect("Hello world!", p.getPayload().toString());
 
-		PlainHeader h = p.getHeader();
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-		assertTrue(h.getCustomParams().isEmpty());
+    PlainHeader h = p.getHeader();
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+    expect(h.getCustomParams().isEmpty,isTrue);
 
-		String serializedJOSEObject = p.serialize();
+    String serializedJOSEObject = p.serialize();
 
-		p = PlainObject.parse(serializedJOSEObject);
+    p = PlainObject.parse(serializedJOSEObject);
 
-		h = p.getHeader();
-		assertEquals(Algorithm.NONE, h.getAlgorithm());
-		assertNull(h.getType());
-		assertNull(h.getContentType());
-		assertTrue(h.getCustomParams().isEmpty());
+    h = p.getHeader();
+    expect(Algorithm.NONE, h.getAlgorithm());
+    expect(h.getType(), isNull);
+    expect(h.getContentType(), isNull);
+    expect(h.getCustomParams().isEmpty, isTrue);
 
-		assertEquals("Hello world!", p.getPayload().toString());
+    expect("Hello world!", p.getPayload().toString());
 
-		assertEquals(serializedJOSEObject, p.getParsedString());
+    expect(serializedJOSEObject, p.getParsedString());
   });
-
-*/
 
 }
 

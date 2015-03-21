@@ -88,7 +88,7 @@ main() {
     expect(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
     expect("1234", jwk.getKeyID());
 
-    expect( Uri.parse("https://example/cert.b64"), h.getX509CertURL());
+    expect(Uri.parse("https://example/cert.b64"), h.getX509CertURL());
     expect(new Base64URL("789iop"), h.getX509CertThumbprint());
     expect(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
 
@@ -220,9 +220,12 @@ main() {
   test('testRejectNone', () {
 
 //		try {
-    new JWSHeader.fromAlg(new JWSAlgorithm.onlyName("none"));
 
-    fail("Failed to raise exception");
+    expect(()=>
+    new JWSHeader.fromAlg(new JWSAlgorithm.onlyName("none")),
+    throwsA(new isInstanceOf<ArgumentError>()));
+
+//    fail("Failed to raise exception");
 
 //		} catch (IllegalArgumentException e) {
 //
@@ -237,9 +240,9 @@ main() {
     type(JOSEObjectType.JOSE).
     contentType("application/json").
     criticalParams(new Set.from(["exp", "nbf"])).
-    jwkURL( Uri.parse("http://example.com/jwk.json")).
+    jwkURL(Uri.parse("http://example.com/jwk.json")).
     jwk(new OctetSequenceKeyBuilder(new Base64URL("xyz")).build()).
-    x509CertURL( Uri.parse("http://example.com/cert.pem")).
+    x509CertURL(Uri.parse("http://example.com/cert.pem")).
     x509CertThumbprint(new Base64URL("abc")).
     x509CertSHA256Thumbprint(new Base64URL("abc256")).
     x509CertChain([new Base64("abc"), new Base64("def")]).
@@ -286,8 +289,8 @@ main() {
   test('testBuilderWithCustomParams', () {
 
     Map<String, Object> customParams = new Map();
-    customParams.put("x", "1");
-    customParams.put("y", "2");
+    customParams["x"] = "1";
+    customParams["y"] = "2";
 
     JWSHeader h = new JWSHeaderBuilder(JWSAlgorithm.HS256).
     customParams(customParams).
@@ -301,17 +304,18 @@ main() {
 
   test('testImmutableCustomParams', () {
 
-		Map<String,Object> customParams = new Map();
-		customParams.put("x", "1");
-		customParams.put("y", "2");
+    Map<String, Object> customParams = new Map();
+    customParams["x"] = "1";
+    customParams["y"] = "2";
 
-		JWSHeader h = new JWSHeaderBuilder(JWSAlgorithm.HS256).
-			customParams(customParams).
-			build();
+    JWSHeader h = new JWSHeaderBuilder(JWSAlgorithm.HS256).
+    customParams(customParams).
+    build();
 
 //		try {
-			h.getCustomParams().put("x", "3");
-			fail();
+    expect(() =>
+    h.getCustomParams()["x"] = "3", throwsA(new isInstanceOf<UnsupportedError>()));
+//    fail();
 //		} catch (UnsupportedOperationException e) {
 //			// ok
 //		}
@@ -320,13 +324,16 @@ main() {
 
   test('testImmutableCritHeaders', () {
 
-		JWSHeader h = new JWSHeaderBuilder(JWSAlgorithm.HS256).
-			criticalParams(new Set.from(["exp", "nbf"])).
-			build();
+    JWSHeader h = new JWSHeaderBuilder(JWSAlgorithm.HS256).
+    criticalParams(new Set.from(["exp", "nbf"])).
+    build();
 
 //		try {
-			h.getCriticalParams().remove("exp");
-			fail();
+    expect(() =>
+    h.getCriticalParams().remove("exp"),
+    throwsA(new isInstanceOf<UnsupportedError>())
+    );
+//    fail();
 //		} catch (UnsupportedOperationException e) {
 //			// ok
 //		}

@@ -1,15 +1,9 @@
-/*
-package com.nimbusds.jose.jwk;
+library jose_jwt.test.jwk.jwk_selector_test;
 
-
-import java.util.*;
-
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.Algorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64URL;
-
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jwk.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/util.dart';
 
 /**
  * Tests the JWK selector.
@@ -17,406 +11,400 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-03)
  */
-public class JWKSelectorTest extends TestCase {
+//public class JWKSelectorTest extends TestCase {
+main() {
+
+  expectNull(a) {
+    return expect(a, isNull);
+  }
 
+  expectFalse(a) {
+    return expect(a, isFalse);
+  }
 
-	public void testConstructor() {
+  expectTrue(a) {
+    return expect(a, isTrue);
+  }
 
-		JWKSelector selector = new JWKSelector();
+  test('testConstructor', () {
 
-		assertNull(selector.getKeyTypes());
-		assertNull(selector.getKeyUses());
-		assertNull(selector.getKeyOperations());
-		assertNull(selector.getAlgorithms());
-		assertNull(selector.getKeyIDs());
-		assertFalse(selector.isPrivateOnly());
-		assertFalse(selector.isPublicOnly());
-	}
+    JWKSelector selector = new JWKSelector();
 
+    expectNull(selector.getKeyTypes());
+    expectNull(selector.getKeyUses());
+    expectNull(selector.getKeyOperations());
+    expectNull(selector.getAlgorithms());
+    expectNull(selector.getKeyIDs());
+    expectFalse(selector.isPrivateOnly());
+    expectFalse(selector.isPublicOnly());
+  });
 
-	public void testPrivateAndPublicOnlySetters() {
+  test('testPrivateAndPublicOnlySetters', () {
 
-		JWKSelector selector = new JWKSelector();
+    JWKSelector selector = new JWKSelector();
 
-		assertFalse(selector.isPrivateOnly());
-		assertFalse(selector.isPublicOnly());
+    expectFalse(selector.isPrivateOnly());
+    expectFalse(selector.isPublicOnly());
 
-		selector.setPrivateOnly(true);
-		assertTrue(selector.isPrivateOnly());
+    selector.setPrivateOnly(true);
+    expectTrue(selector.isPrivateOnly());
 
-		selector.setPublicOnly(true);
-		assertTrue(selector.isPublicOnly());
-	}
+    selector.setPublicOnly(true);
+    expectTrue(selector.isPublicOnly());
+  });
 
+  test('testSetSetters', () {
 
-	public void testSetSetters() {
+    JWKSelector selector = new JWKSelector();
 
-		JWKSelector selector = new JWKSelector();
+    Set<KeyType> types = new Set();
+    types.add(KeyType.RSA);
+    selector.setKeyTypes(types);
+    expect(types, selector.getKeyTypes());
 
-		Set<KeyType> types = new HashSet<>();
-		types.add(KeyType.RSA);
-		selector.setKeyTypes(types);
-		assertEquals(types, selector.getKeyTypes());
+    Set<KeyUse> uses = new Set();
+    uses.add(KeyUse.SIGNATURE);
+    selector.setKeyUses(uses);
+    expect(uses, selector.getKeyUses());
 
-		Set<KeyUse> uses = new HashSet<>();
-		uses.add(KeyUse.SIGNATURE);
-		selector.setKeyUses(uses);
-		assertEquals(uses, selector.getKeyUses());
+    Set<KeyOperation> ops = new Set();
+    ops.add(KeyOperation.SIGN);
+    ops.add(KeyOperation.VERIFY);
+    selector.setKeyOperations(ops);
+    expect(ops, selector.getKeyOperations());
 
-		Set<KeyOperation> ops = new HashSet<>();
-		ops.add(KeyOperation.SIGN);
-		ops.add(KeyOperation.VERIFY);
-		selector.setKeyOperations(ops);
-		assertEquals(ops, selector.getKeyOperations());
+    Set<Algorithm> algs = new Set();
+    algs.add(JWSAlgorithm.PS256);
+    selector.setAlgorithms(algs);
+    expect(algs, selector.getAlgorithms());
 
-		Set<Algorithm> algs = new HashSet<>();
-		algs.add(JWSAlgorithm.PS256);
-		selector.setAlgorithms(algs);
-		assertEquals(algs, selector.getAlgorithms());
+    Set<String> ids = new Set();
+    ids.add("1");
+    selector.setKeyIDs(ids);
+    expect(ids, selector.getKeyIDs());
+  });
 
-		Set<String> ids = new HashSet<>();
-		ids.add("1");
-		selector.setKeyIDs(ids);
-		assertEquals(ids, selector.getKeyIDs());
-	}
+  test('testVarArgSetters', () {
 
+    JWKSelector selector = new JWKSelector();
 
-	public void testVarArgSetters() {
+    selector.setKeyTypes([KeyType.EC, KeyType.RSA, null].toSet());
+    Set<KeyType> types = selector.getKeyTypes();
+    expectTrue(types.containsAll([KeyType.EC, KeyType.RSA, null]));
+    expect(3, types.length);
 
-		JWKSelector selector = new JWKSelector();
+    selector.setKeyUses([KeyUse.SIGNATURE, null].toSet());
+    Set<KeyUse> uses = selector.getKeyUses();
+    expectTrue(uses.containsAll([KeyUse.SIGNATURE, null]));
+    expect(2, uses.length);
 
-		selector.setKeyTypes(KeyType.EC, KeyType.RSA, null);
-		Set<KeyType> types = selector.getKeyTypes();
-		assertTrue(types.containsAll(Arrays.asList(KeyType.EC, KeyType.RSA, null)));
-		assertEquals(3, types.size());
+    selector.setKeyOperations([KeyOperation.SIGN, null].toSet());
+    Set<KeyOperation> ops = selector.getKeyOperations();
+    expectTrue(ops.containsAll([KeyOperation.SIGN, null]));
+    expect(2, ops.length);
 
-		selector.setKeyUses(KeyUse.SIGNATURE, null);
-		Set<KeyUse> uses = selector.getKeyUses();
-		assertTrue(uses.containsAll(Arrays.asList(KeyUse.SIGNATURE, null)));
-		assertEquals(2, uses.size());
+    selector.setAlgorithms([JWSAlgorithm.RS256, JWSAlgorithm.PS256].toSet());
+    Set<Algorithm> algs = selector.getAlgorithms();
+    expectTrue(algs.containsAll([JWSAlgorithm.RS256, JWSAlgorithm.PS256]));
+    expect(2, algs.length);
 
-		selector.setKeyOperations(KeyOperation.SIGN, null);
-		Set<KeyOperation> ops = selector.getKeyOperations();
-		assertTrue(ops.containsAll(Arrays.asList(KeyOperation.SIGN, null)));
-		assertEquals(2, ops.size());
+    selector.setKeyIDs(["1", "2", "3", null].toSet());
+    Set<String> ids = selector.getKeyIDs();
+    expectTrue(ids.containsAll(["1", "2", "3", null]));
+    expect(4, ids.length);
+  });
 
-		selector.setAlgorithms(JWSAlgorithm.RS256, JWSAlgorithm.PS256);
-		Set<Algorithm> algs = selector.getAlgorithms();
-		assertTrue(algs.containsAll(Arrays.asList(JWSAlgorithm.RS256, JWSAlgorithm.PS256)));
-		assertEquals(2, algs.size());
+  test('testSelectFromNullSet', () {
 
-		selector.setKeyIDs("1", "2", "3", null);
-		Set<String> ids = selector.getKeyIDs();
-		assertTrue(ids.containsAll(Arrays.asList("1", "2", "3", null)));
-		assertEquals(4, ids.size());
-	}
+    List<JWK> matches = new JWKSelector().select(null);
 
+    expectTrue(matches.isEmpty);
+  });
 
-	public void testSelectFromNullSet() {
+  test('testSelectFromEmptySet', () {
 
-		List<JWK> matches = new JWKSelector().select(null);
+    List<JWK> matches = new JWKSelector().select(new JWKSet());
 
-		assertTrue(matches.isEmpty());
-	}
+    expectTrue(matches.isEmpty);
+  });
 
+  test('testMatchType', () {
 
-	public void testSelectFromEmptySet() {
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyType(KeyType.RSA);
 
-		List<JWK> matches = new JWKSelector().select(new JWKSet());
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
-		assertTrue(matches.isEmpty());
-	}
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
+    List<JWK> matches = selector.select(jwkSet);
 
-	public void testMatchType() {
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect("1", key1.getKeyID());
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyType(KeyType.RSA);
+    expect(1, matches.length);
+  });
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+  test('testMatchTwoTypes', () {
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyTypes([KeyType.RSA, KeyType.EC].toSet());
 
-		List<JWK> matches = selector.select(jwkSet);
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals("1", key1.getKeyID());
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		assertEquals(1, matches.size());
-	}
+    List<JWK> matches = selector.select(jwkSet);
 
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect("1", key1.getKeyID());
 
-	public void testMatchTwoTypes() {
+    ECKey key2 = matches[1] as ECKey;
+    expect(KeyType.EC, key2.getKeyType());
+    expect("2", key2.getKeyID());
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyTypes(KeyType.RSA, KeyType.EC);
+    expect(2, matches.length);
+  });
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+  test('testMatchUse', () {
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyUse(KeyUse.ENCRYPTION);
 
-		List<JWK> matches = selector.select(jwkSet);
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build());
+    keyList.add(new ECKeyBuilder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals("1", key1.getKeyID());
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		ECKey key2 = (ECKey)matches.get(1);
-		assertEquals(KeyType.EC, key2.getKeyType());
-		assertEquals("2", key2.getKeyID());
+    List<JWK> matches = selector.select(jwkSet);
 
-		assertEquals(2, matches.size());
-	}
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect(KeyUse.ENCRYPTION, key1.getKeyUse());
+    expect("1", key1.getKeyID());
 
+    expect(1, matches.length);
+  });
 
-	public void testMatchUse() {
+  test('testMatchUseNotSpecifiedOrSignature', () {
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyUse(KeyUse.ENCRYPTION);
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyUses([KeyUse.SIGNATURE, null].toSet());
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		List<JWK> matches = selector.select(jwkSet);
+    List<JWK> matches = selector.select(jwkSet);
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals(KeyUse.ENCRYPTION, key1.getKeyUse());
-		assertEquals("1", key1.getKeyID());
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect(KeyUse.SIGNATURE, key1.getKeyUse());
+    expect("1", key1.getKeyID());
 
-		assertEquals(1, matches.size());
-	}
+    ECKey key2 = matches[1] as ECKey;
+    expect(KeyType.EC, key2.getKeyType());
+    expect("2", key2.getKeyID());
 
+    expect(2, matches.length);
+  });
 
-	public void testMatchUseNotSpecifiedOrSignature() {
+  test('testMatchOperations', () {
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyUses(KeyUse.SIGNATURE, null);
+    JWKSelector selector = new JWKSelector();
+    Set<KeyOperation> ops = [KeyOperation.SIGN, KeyOperation.VERIFY].toSet();
+    selector.setKeyOperations(ops);
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1")
+    .keyOperations(new Set.from([KeyOperation.SIGN, KeyOperation.VERIFY])).build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		List<JWK> matches = selector.select(jwkSet);
+    List<JWK> matches = selector.select(jwkSet);
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key1.getKeyUse());
-		assertEquals("1", key1.getKeyID());
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect("1", key1.getKeyID());
 
-		ECKey key2 = (ECKey)matches.get(1);
-		assertEquals(KeyType.EC, key2.getKeyType());
-		assertEquals("2", key2.getKeyID());
+    expect(1, matches.length);
+  });
 
-		assertEquals(2, matches.size());
-	}
+  test('testMatchOperationsNotSpecifiedOrSign', () {
 
+    JWKSelector selector = new JWKSelector();
+    Set<KeyOperation> ops = [KeyOperation.SIGN, null].toSet();
+    selector.setKeyOperations(ops);
 
-	public void testMatchOperations() {
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1")
+    .keyOperations(new Set.from([KeyOperation.SIGN])).build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
+    .keyOperations(new Set.from([KeyOperation.ENCRYPT])).build());
 
-		JWKSelector selector = new JWKSelector();
-		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
-		selector.setKeyOperations(ops);
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+    List<JWK> matches = selector.select(jwkSet);
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect("1", key1.getKeyID());
 
-		List<JWK> matches = selector.select(jwkSet);
+    ECKey key2 = matches[1] as ECKey;
+    expect(KeyType.EC, key2.getKeyType());
+    expect("2", key2.getKeyID());
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals("1", key1.getKeyID());
+    expect(2, matches.length);
+  });
 
-		assertEquals(1, matches.size());
-	}
+  test('testMatchAlgorithm', () {
 
+    JWKSelector selector = new JWKSelector();
+    selector.setAlgorithm(JWSAlgorithm.RS256);
 
-	public void testMatchOperationsNotSpecifiedOrSign() {
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.PS256).build());
 
-		JWKSelector selector = new JWKSelector();
-		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, null));
-		selector.setKeyOperations(ops);
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.ENCRYPT))).build());
+    List<JWK> matches = selector.select(jwkSet);
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    RSAKey key1 = matches[0] as RSAKey;
+    expect(KeyType.RSA, key1.getKeyType());
+    expect(JWSAlgorithm.RS256, key1.getAlgorithm());
+    expect("1", key1.getKeyID());
 
-		List<JWK> matches = selector.select(jwkSet);
+    expect(1, matches.length);
+  });
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals("1", key1.getKeyID());
+  test('testMatchID', () {
 
-		ECKey key2 = (ECKey)matches.get(1);
-		assertEquals(KeyType.EC, key2.getKeyType());
-		assertEquals("2", key2.getKeyID());
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyID("1");
 
-		assertEquals(2, matches.size());
-	}
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
 
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-	public void testMatchAlgorithm() {
+    List<JWK> matches = selector.select(jwkSet);
 
-		JWKSelector selector = new JWKSelector();
-		selector.setAlgorithm(JWSAlgorithm.RS256);
+    RSAKey key1 = matches[0] as RSAKey;
+    expect("1", key1.getKeyID());
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.PS256).build());
+    expect(1, matches.length);
+  });
 
-		JWKSet jwkSet = new JWKSet(keyList);
+  test('testMatchAnyID', () {
 
-		List<JWK> matches = selector.select(jwkSet);
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyID(null);
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals(KeyType.RSA, key1.getKeyType());
-		assertEquals(JWSAlgorithm.RS256, key1.getAlgorithm());
-		assertEquals("1", key1.getKeyID());
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
 
-		assertEquals(1, matches.size());
-	}
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
+    List<JWK> matches = selector.select(jwkSet);
 
-	public void testMatchID() {
+    RSAKey key1 = matches[0] as RSAKey;
+    expect("1", key1.getKeyID());
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyID("1");
+    RSAKey key2 = matches[1] as RSAKey;
+    expect("2", key2.getKeyID());
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
+    expect(2, matches.length);
+  });
 
-		JWKSet jwkSet = new JWKSet(keyList);
+  test('testNoMatchesByID', () {
 
-		List<JWK> matches = selector.select(jwkSet);
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyID("1");
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals("1", key1.getKeyID());
+    RSAKey key = new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("2").build();
 
-		assertEquals(1, matches.size());
-	}
+    JWKSet jwkSet = new JWKSet.fromKey(key);
 
+    List<JWK> matches = selector.select(jwkSet);
 
-	public void testMatchAnyID() {
+    expectTrue(matches.isEmpty);
+  });
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyID(null);
+  test('testMatchPrivateOnly', () {
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
+    JWKSelector selector = new JWKSelector();
+    selector.setPrivateOnly(true);
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new OctetSequenceKeyBuilder(new Base64URL("k")).build());
 
-		List<JWK> matches = selector.select(jwkSet);
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals("1", key1.getKeyID());
+    List<JWK> matches = selector.select(jwkSet);
 
-		RSAKey key2 = (RSAKey)matches.get(1);
-		assertEquals("2", key2.getKeyID());
+    OctetSequenceKey key1 = matches[0] as OctetSequenceKey;
+    expect("k", key1.getKeyValue().toString());
 
-		assertEquals(2, matches.size());
-	}
+    expect(1, matches.length);
+  });
 
+  test('testMatchPublicOnly', () {
 
-	public void testNoMatchesByID() {
+    JWKSelector selector = new JWKSelector();
+    selector.setPublicOnly(true);
 
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyID("1");
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new OctetSequenceKeyBuilder(new Base64URL("k")).build());
 
-		RSAKey key = new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").build();
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		JWKSet jwkSet = new JWKSet(key);
+    List<JWK> matches = selector.select(jwkSet);
 
-		List<JWK> matches = selector.select(jwkSet);
+    RSAKey key1 = matches[0] as RSAKey;
+    expect("1", key1.getKeyID());
 
-		assertTrue(matches.isEmpty());
-	}
+    expect(1, matches.length);
+  });
 
+  test('testMatchComplex', () {
 
-	public void testMatchPrivateOnly() {
+    JWKSelector selector = new JWKSelector();
+    selector.setKeyType(KeyType.RSA);
+    selector.setKeyUse(KeyUse.SIGNATURE);
+    selector.setAlgorithm(JWSAlgorithm.RS256);
+    selector.setKeyID("1");
+    selector.setPublicOnly(true);
 
-		JWKSelector selector = new JWKSelector();
-		selector.setPrivateOnly(true);
+    List<JWK> keyList = new List();
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).algorithm(JWSAlgorithm.RS256).build());
+    keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
 
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
+    JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 
-		JWKSet jwkSet = new JWKSet(keyList);
+    List<JWK> matches = selector.select(jwkSet);
 
-		List<JWK> matches = selector.select(jwkSet);
+    RSAKey key1 = matches[0] as RSAKey;
+    expect("1", key1.getKeyID());
 
-		OctetSequenceKey key1 = (OctetSequenceKey)matches.get(0);
-		assertEquals("k", key1.getKeyValue().toString());
+    expect(1, matches.length);
+  });
 
-		assertEquals(1, matches.size());
-	}
-
-
-	public void testMatchPublicOnly() {
-
-		JWKSelector selector = new JWKSelector();
-		selector.setPublicOnly(true);
-
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
-
-		JWKSet jwkSet = new JWKSet(keyList);
-
-		List<JWK> matches = selector.select(jwkSet);
-
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals("1", key1.getKeyID());
-
-		assertEquals(1, matches.size());
-	}
-
-
-	public void testMatchComplex() {
-
-		JWKSelector selector = new JWKSelector();
-		selector.setKeyType(KeyType.RSA);
-		selector.setKeyUse(KeyUse.SIGNATURE);
-		selector.setAlgorithm(JWSAlgorithm.RS256);
-		selector.setKeyID("1");
-		selector.setPublicOnly(true);
-
-		List<JWK> keyList = new ArrayList<>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).algorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
-
-		JWKSet jwkSet = new JWKSet(keyList);
-
-		List<JWK> matches = selector.select(jwkSet);
-
-		RSAKey key1 = (RSAKey)matches.get(0);
-		assertEquals("1", key1.getKeyID());
-
-		assertEquals(1, matches.size());
-	}
 }
 
-*/

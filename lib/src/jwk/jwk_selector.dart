@@ -23,387 +23,385 @@ part of jose_jwt.jwk;
  */
 class JWKSelector {
 
-/*
 
-	/**
-	 * The selected key types.
-	 */
-	private Set<KeyType> types;
+  /**
+   * The selected key types.
+   */
+  Set<KeyType> _types;
 
 
-	/**
-	 * The selected public key uses.
-	 */
-	private Set<KeyUse> uses;
+  /**
+   * The selected key uses.
+   */
+  Set<KeyUse> _uses;
 
 
-	/**
-	 * The selected key operations.
-	 */
-	private Set<KeyOperation> ops;
+  /**
+   * The selected key operations.
+   */
+  Set<KeyOperation> _ops;
 
 
-	/**
-	 * The selected algorithms.
-	 */
-	private Set<Algorithm> algs;
+  /**
+   * The selected algorithms.
+   */
+  Set<Algorithm> _algs;
 
 
-	/**
-	 * The selected key IDs.
-	 */
-	private Set<String> ids;
+  /**
+   * The selected key IDs.
+   */
+  Set<String> _ids;
 
 
-	/**
-	 * If {@code true} only private keys are matched.
-	 */
-	private boolean privateOnly = false;
+  /**
+   * If {@code true} only private keys are matched.
+   */
+  bool _privateOnly = false;
 
 
-	/**
-	 * If {@code true} only public keys are matched.
-	 */
-	private boolean publicOnly = false;
+  /**
+   * If {@code true} only keys are matched.
+   */
+  bool _publicOnly = false;
 
 
-	/**
-	 * Gets the selected key types.
-	 *
-	 * @return The key types, {@code null} if not specified.
-	 */
-	public Set<KeyType> getKeyTypes() {
+  /**
+   * Gets the selected key types.
+   *
+   * @return The key types, {@code null} if not specified.
+   */
+  Set<KeyType> getKeyTypes() {
 
-		return types;
-	}
+    return _types;
+  }
 
 
-	/**
-	 * Sets a single selected key type.
-	 *
-	 * @param kty The key type, {@code null} if not specified.
-	 */
-	public void setKeyType(final KeyType kty) {
+  /**
+   * Sets a single selected key type.
+   *
+   * @param kty The key type, {@code null} if not specified.
+   */
+  void setKeyType(final KeyType kty) {
 
-		if (kty == null) {
-			types = null;
-		} else {
-			types = new HashSet<>(Arrays.asList(kty));
-		}
-	}
+    if (kty == null) {
+      _types = null;
+    } else {
+      _types = new Set.from([kty]);
+    }
+  }
 
 
-	/**
-	 * Sets the selected key types.
-	 *
-	 * @param types The key types.
-	 */
-	public void setKeyTypes(final KeyType ... types) {
+//  /**
+//   * Sets the selected key types.
+//   *
+//   * @param types The key types.
+//   */
+//  void setKeyTypesFromList(final List<KeyType> types) {
+//
+//    setKeyTypes(new Set.from([types]));
+//  }
+
+
+  /**
+   * Sets the selected key types.
+   *
+   * @param types The key types, {@code null} if not specified.
+   */
+  void setKeyTypes(final Set<KeyType> types) {
+
+    _types = types;
+  }
+
+
+  /**
+   * Gets the selected key uses.
+   *
+   * @return The key uses, {@code null} if not specified.
+   */
+  Set<KeyUse> getKeyUses() {
+
+    return _uses;
+  }
 
-		setKeyTypes(new HashSet<>(Arrays.asList(types)));
-	}
 
-
-	/**
-	 * Sets the selected key types.
-	 *
-	 * @param types The key types, {@code null} if not specified.
-	 */
-	public void setKeyTypes(final Set<KeyType> types) {
-
-		this.types = types;
-	}
-
-
-	/**
-	 * Gets the selected public key uses.
-	 *
-	 * @return The public key uses, {@code null} if not specified.
-	 */
-	public Set<KeyUse> getKeyUses() {
-
-		return uses;
-	}
-
-
-	/**
-	 * Sets a single selected public key use.
-	 *
-	 * @param use The public key use, {@code null} if not specified.
-	 */
-	public void setKeyUse(final KeyUse use) {
-
-		if (use == null) {
-			uses = null;
-		} else {
-			uses = new HashSet<>(Arrays.asList(use));
-		}
-	}
-
-
-	/**
-	 * Sets the selected public key uses.
-	 *
-	 * @param uses The public key uses.
-	 */
-	public void setKeyUses(final KeyUse... uses) {
-
-		setKeyUses(new HashSet<>(Arrays.asList(uses)));
-	}
-
-
-	/**
-	 * Sets the selected public key uses.
-	 *
-	 * @param uses The public key uses, {@code null} if not specified.
-	 */
-	public void setKeyUses(final Set<KeyUse> uses) {
-
-		this.uses = uses;
-	}
-
-
-	/**
-	 * Gets the selected key operations.
-	 *
-	 * @return The key operations, {@code null} if not specified.
-	 */
-	public Set<KeyOperation> getKeyOperations() {
-
-		return ops;
-	}
-
-
-	/**
-	 * Sets a single selected key operation.
-	 *
-	 * @param op The key operation, {@code null} if not specified.
-	 */
-	public void setKeyOperation(final KeyOperation op) {
-
-		if (op == null) {
-			ops = null;
-		} else {
-			ops = new HashSet<>(Arrays.asList(op));
-		}
-	}
-
-
-	/**
-	 * Sets the selected key operations.
-	 *
-	 * @param ops The key operations.
-	 */
-	public void setKeyOperations(final KeyOperation... ops) {
-
-		setKeyOperations(new HashSet<>(Arrays.asList(ops)));
-	}
-
-
-	/**
-	 * Sets the selected key operations.
-	 *
-	 * @param ops The key operations, {@code null} if not specified.
-	 */
-	public void setKeyOperations(final Set<KeyOperation> ops) {
-
-		this.ops = ops;
-	}
-
-
-	/**
-	 * Gets the selected JOSE algorithms.
-	 *
-	 * @return The JOSE algorithms, {@code null} if not specified.
-	 */
-	public Set<Algorithm> getAlgorithms() {
-
-		return algs;
-	}
-
-
-	/**
-	 * Sets a singled selected JOSE algorithm.
-	 *
-	 * @param alg The JOSE algorithm, {@code null} if not specified.
-	 */
-	public void setAlgorithm(final Algorithm alg) {
-
-		if (alg == null) {
-			algs = null;
-		} else {
-			algs = new HashSet<>(Arrays.asList(alg));
-		}
-	}
-
-
-	/**
-	 * Sets the selected JOSE algorithms.
-	 *
-	 * @param algs The JOSE algorithms.
-	 */
-	public void setAlgorithms(final Algorithm ... algs) {
-
-		setAlgorithms(new HashSet<>(Arrays.asList(algs)));
-	}
-
-
-	/**
-	 * Sets the selected JOSE algorithms.
-	 *
-	 * @param algs The JOSE algorithms, {@code null} if not specified.
-	 */
-	public void setAlgorithms(final Set<Algorithm> algs) {
-
-		this.algs = algs;
-	}
-
-
-	/**
-	 * Gets the selected key IDs.
-	 *
-	 * @return The key IDs, {@code null} if not specified.
-	 */
-	public Set<String> getKeyIDs() {
-
-		return ids;
-	}
-
-
-	/**
-	 * Sets the selected key IDs.
-	 *
-	 * @param ids The key IDs.
-	 */
-	public void setKeyIDs(final String ... ids) {
-
-		setKeyIDs(new HashSet<>(Arrays.asList(ids)));
-	}
-
-
-	/**
-	 * Sets the selected key IDs.
-	 *
-	 * @param ids The key IDs, {@code null} if not specified.
-	 */
-	public void setKeyIDs(final Set<String> ids) {
-
-		this.ids = ids;
-	}
-
-
-	/**
-	 * Sets a single selected key ID.
-	 *
-	 * @param id The key ID, {@code null} if not specified.
-	 */
-	public void setKeyID(final String id) {
-
-		if (id == null) {
-			ids = null;
-		} else {
-			ids = new HashSet<>(Arrays.asList(id));
-		}
-	}
-
-
-	/**
-	 * Gets the selection of private keys.
-	 *
-	 * @return If {@code true} only private keys are selected.
-	 */
-	public boolean isPrivateOnly() {
-
-		return privateOnly;
-	}
-
-
-	/**
-	 * Sets the selection of private keys.
-	 *
-	 * @param privateOnly If {@code true} only private keys are selected.
-	 */
-	public void setPrivateOnly(final boolean privateOnly) {
-
-		this.privateOnly = privateOnly;
-	}
-
-
-	/**
-	 * Gets the selection of public keys.
-	 *
-	 * @return  If {@code true} only public keys are selected.
-	 */
-	public boolean isPublicOnly() {
-
-		return publicOnly;
-	}
-
-
-	/**
-	 * Sets the selection of public keys.
-	 *
-	 * @param publicOnly  If {@code true} only public keys are selected.
-	 */
-	public void setPublicOnly(final boolean publicOnly) {
-
-		this.publicOnly = publicOnly;
-	}
-
-
-	/**
-	 * Selects the keys from the specified JWK set that match the
-	 * configured criteria.
-	 *
-	 * @param jwkSet The JWK set. May be {@code null}.
-	 *
-	 * @return The selected keys, ordered by their position in the JWK set,
-	 *         empty list if none were matched or the JWK is {@code null}.
-	 *
-	 */
-	public List<JWK> select(final JWKSet jwkSet) {
-
-		List<JWK> matches = new LinkedList<>();
-
-		if (jwkSet == null)
-			return matches;
-
-		for (JWK key: jwkSet.getKeys()) {
-
-			if (privateOnly && ! key.isPrivate())
-				continue;
-
-			if (publicOnly && key.isPrivate())
-				continue;
-
-			if (types != null && ! types.contains(key.getKeyType()))
-				continue;
-
-			if (uses != null && ! uses.contains(key.getKeyUse()))
-				continue;
-
-			if (ops != null) {
-
-				if (ops.contains(null) && key.getKeyOperations() == null) {
-					// pass
-				} else if (key.getKeyOperations() != null && ops.containsAll(key.getKeyOperations())) {
-					// pass
-				} else {
-					continue;
-				}
-			}
-
-			if (algs != null && ! algs.contains(key.getAlgorithm()))
-				continue;
-
-			if (ids != null && ! ids.contains(key.getKeyID()))
-				continue;
-
-			matches.add(key);
-		}
-
-		return matches;
-	}
-*/
+//	/**
+//	 * Sets a single selected key use.
+//	 *
+//	 * @param use The key use, {@code null} if not specified.
+//	 */
+//	void setKeyUse(final KeyUse use) {
+//
+//		if (use == null) {
+//			uses = null;
+//		} else {
+//			uses = new Set(Arrays.asList(use));
+//		}
+//	}
+
+
+//  /**
+//   * Sets the selected key uses.
+//   *
+//   * @param uses The key uses.
+//   */
+//  void setKeyUsesFromList(final List<KeyUse> uses) {
+//
+//    setKeyUses(new Set.from([uses]));
+//  }
+
+
+  /**
+   * Sets the selected key uses.
+   *
+   * @param uses The key uses, {@code null} if not specified.
+   */
+  void setKeyUses(final Set<KeyUse> uses) {
+
+    _uses = uses;
+  }
+
+
+  /**
+   * Gets the selected key operations.
+   *
+   * @return The key operations, {@code null} if not specified.
+   */
+  Set<KeyOperation> getKeyOperations() {
+
+    return _ops;
+  }
+
+
+  /**
+   * Sets a single selected key operation.
+   *
+   * @param op The key operation, {@code null} if not specified.
+   */
+  void setKeyOperation(final KeyOperation op) {
+
+    if (op == null) {
+      _ops = null;
+    } else {
+      _ops = new Set.from([op]);
+    }
+  }
+
+
+//  /**
+//   * Sets the selected key operations.
+//   *
+//   * @param ops The key operations.
+//   */
+//  void setKeyOperationsFromList(final List<KeyOperation> ops) {
+//
+//    setKeyOperations(new Set.from(ops));
+//  }
+
+
+  /**
+   * Sets the selected key operations.
+   *
+   * @param ops The key operations, {@code null} if not specified.
+   */
+  void setKeyOperations(final Set<KeyOperation> ops) {
+
+    _ops = ops;
+  }
+
+
+  /**
+   * Gets the selected JOSE algorithms.
+   *
+   * @return The JOSE algorithms, {@code null} if not specified.
+   */
+  Set<Algorithm> getAlgorithms() {
+
+    return _algs;
+  }
+
+
+  /**
+   * Sets a singled selected JOSE algorithm.
+   *
+   * @param alg The JOSE algorithm, {@code null} if not specified.
+   */
+  void setAlgorithm(final Algorithm alg) {
+
+    if (alg == null) {
+      _algs = null;
+    } else {
+      _algs = new Set.from([alg]);
+    }
+  }
+
+
+//	/**
+//	 * Sets the selected JOSE algorithms.
+//	 *
+//	 * @param algs The JOSE algorithms.
+//	 */
+//	void setAlgorithmsFromList(final List<Algorithm> algs) {
+//
+//		setAlgorithms(new Set.from(algs));
+//	}
+
+
+  /**
+   * Sets the selected JOSE algorithms.
+   *
+   * @param algs The JOSE algorithms, {@code null} if not specified.
+   */
+  void setAlgorithms(final Set<Algorithm> algs) {
+
+    _algs = algs;
+  }
+
+
+  /**
+   * Gets the selected key IDs.
+   *
+   * @return The key IDs, {@code null} if not specified.
+   */
+  Set<String> getKeyIDs() {
+
+    return _ids;
+  }
+
+
+//	/**
+//	 * Sets the selected key IDs.
+//	 *
+//	 * @param ids The key IDs.
+//	 */
+//	void setKeyIDsFromList(final List<String> ids) {
+//
+//		setKeyIDs(new Set.from(ids));
+//	}
+
+
+  /**
+   * Sets the selected key IDs.
+   *
+   * @param ids The key IDs, {@code null} if not specified.
+   */
+  void setKeyIDs(final Set<String> ids) {
+
+    _ids = ids;
+  }
+
+
+  /**
+   * Sets a single selected key ID.
+   *
+   * @param id The key ID, {@code null} if not specified.
+   */
+  void setKeyID(final String id) {
+
+    if (id == null) {
+      _ids = null;
+    } else {
+      _ids = new Set.from([id]);
+    }
+  }
+
+
+  /**
+   * Gets the selection of private keys.
+   *
+   * @return If {@code true} only private keys are selected.
+   */
+  bool isPrivateOnly() {
+
+    return _privateOnly;
+  }
+
+
+  /**
+   * Sets the selection of private keys.
+   *
+   * @param privateOnly If {@code true} only private keys are selected.
+   */
+  void setPrivateOnly(final bool privateOnly) {
+
+    _privateOnly = privateOnly;
+  }
+
+
+  /**
+   * Gets the selection of keys.
+   *
+   * @return  If {@code true} only keys are selected.
+   */
+  bool isPublicOnly() {
+
+    return _publicOnly;
+  }
+
+
+  /**
+   * Sets the selection of keys.
+   *
+   * @param publicOnly  If {@code true} only keys are selected.
+   */
+  void setPublicOnly(final bool publicOnly) {
+
+    _publicOnly = publicOnly;
+  }
+
+
+  /**
+   * Selects the keys from the specified JWK set that match the
+   * configured criteria.
+   *
+   * @param jwkSet The JWK set. May be {@code null}.
+   *
+   * @return The selected keys, ordered by their position in the JWK set,
+   *         empty list if none were matched or the JWK is {@code null}.
+   *
+   */
+  List<JWK> select(final JWKSet jwkSet) {
+
+    List<JWK> matches = new List();
+
+    if (jwkSet == null)
+      return matches;
+
+    for (JWK key in jwkSet.getKeys()) {
+
+      if (_privateOnly && !key.isPrivate())
+        continue;
+
+      if (_publicOnly && key.isPrivate())
+        continue;
+
+      if (_types != null && !_types.contains(key.getKeyType()))
+        continue;
+
+      if (_uses != null && !_uses.contains(key.getKeyUse()))
+        continue;
+
+      if (_ops != null) {
+
+        if (_ops.contains(null) && key.getKeyOperations() == null) {
+          // pass
+        } else if (key.getKeyOperations() != null && _ops.containsAll(key.getKeyOperations())) {
+          // pass
+        } else {
+          continue;
+        }
+      }
+
+      if (_algs != null && !_algs.contains(key.getAlgorithm()))
+        continue;
+
+      if (_ids != null && !_ids.contains(key.getKeyID()))
+        continue;
+
+      matches.add(key);
+    }
+
+    return matches;
+  }
 
 }
