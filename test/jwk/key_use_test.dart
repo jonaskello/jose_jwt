@@ -1,6 +1,8 @@
 library jose_jwt.test.jwk.key_use_test;
 
-/*
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jwk.dart';
+
 /**
  * Tests the key use enumeration.
  *
@@ -13,36 +15,38 @@ main() {
 
   test('testIdentifiers', () {
 
-		assertEquals("sig", KeyUse.SIGNATURE.identifier());
-		assertEquals("sig", KeyUse.SIGNATURE.toString());
+    expect("sig", KeyUseParser.getIdentifier(KeyUse.SIGNATURE));
+//    expect("sig", KeyUse.SIGNATURE.toString());
 
-		assertEquals("enc", KeyUse.ENCRYPTION.identifier());
-		assertEquals("enc", KeyUse.ENCRYPTION.toString());
+    expect("enc", KeyUseParser.getIdentifier(KeyUse.ENCRYPTION));
+//    expect("enc", KeyUse.ENCRYPTION.toString());
   });
 
   test('testParse', () {
 
-		assertEquals(KeyUse.SIGNATURE, KeyUse.parse("sig"));
-		assertEquals(KeyUse.ENCRYPTION, KeyUse.parse("enc"));
+    expect(KeyUse.SIGNATURE, KeyUseParser.parse("sig"));
+    expect(KeyUse.ENCRYPTION, KeyUseParser.parse("enc"));
   });
 
   test('testParseException', () {
 
-		try {
-			KeyUse.parse("no-such-use");
+//		try {
+    KeyUseParser.parse("no-such-use");
 
-			fail();
+    fail("");
 
-		} catch (ParseException e) {
-			// ok
-		}
+//		} catch (ParseException e) {
+//			// ok
+//		}
   });
 
   test('testParseNull', () {
 
-		assertNull(KeyUse.parse(null));
+    expect(KeyUseParser.parse(null), isNull);
   });
+
+/*
+*/
 
 }
 
-*/

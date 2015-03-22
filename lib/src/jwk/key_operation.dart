@@ -20,51 +20,58 @@ part of jose_jwt.jwk;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-02)
  */
-//enum KeyOperation {
-class KeyOperation {
+enum KeyOperation {
+//class KeyOperation {
 
-  /**
-   * Compute signature or MAC.
-   */
-  static const String SIGN = "sign";
+/**
+ * Compute signature or MAC.
+ */
+//static const String SIGN = "sign";
+SIGN,
 
-  /**
-   * Verify signature or MAC.
-   */
-  static const String VERIFY = "verify";
+/**
+ * Verify signature or MAC.
+ */
+//static const String VERIFY = "verify";
+VERIFY,
 
-  /**
-   * Encrypt content.
-   */
-  static const String ENCRYPT = "encrypt";
+/**
+ * Encrypt content.
+ */
+//static const String ENCRYPT = "encrypt";
+ENCRYPT,
 
-  /**
-   * Decrypt content and validate decryption, if applicable.
-   */
-  static const String DECRYPT = "decrypt";
+/**
+ * Decrypt content and validate decryption, if applicable.
+ */
+//static const String DECRYPT = "decrypt";
+DECRYPT,
 
-  /**
-   * Encrypt key.
-   */
-  static const String WRAP_KEY = "wrapKey";
+/**
+ * Encrypt key.
+ */
+//  static const String WRAP_KEY = "wrapKey";
+WRAP_KEY,
 
+/**
+ * Decrypt key and validate decryption, if applicable.
+ */
+//static const String UNWRAP_KEY = "unwrapKey";
+UNWRAP_KEY,
 
-  /**
-   * Decrypt key and validate decryption, if applicable.
-   */
-  static const String UNWRAP_KEY = "unwrapKey";
+/**
+ * Derive key.
+ */
+//static const String DERIVE_KEY = "deriveKey";
+DERIVE_KEY,
 
+/**
+ * Derive bits not to be used as a key.
+ */
+//static const String DERIVE_BITS = "deriveBits";
+DERIVE_BITS
 
-  /**
-   * Derive key.
-   */
-  static const String DERIVE_KEY = "deriveKey";
-
-  /**
-   * Derive bits not to be used as a key.
-   */
-  static const String DERIVE_BITS = "deriveBits";
-
+/*
   static const List<String> values = const [
       SIGN,
       VERIFY,
@@ -109,6 +116,33 @@ class KeyOperation {
   @override
   String toString() => identifier();
 
+
+*/
+}
+
+class KeyOperationParser {
+
+  static String getIdentifier(KeyOperation op) {
+    switch (op) {
+      case KeyOperation.SIGN:
+        return "sign";
+      case KeyOperation.VERIFY:
+        return "verify";
+      case KeyOperation.ENCRYPT:
+        return "encrypt";
+      case KeyOperation.DECRYPT:
+        return "decrypt";
+      case KeyOperation.WRAP_KEY:
+        return "wrapKey";
+      case KeyOperation.UNWRAP_KEY:
+        return "unwrapKey";
+      case KeyOperation.DERIVE_KEY:
+        return "deriveKey";
+      case KeyOperation.DERIVE_BITS:
+        return "deriveBits";
+    }
+  }
+
   /**
    * Parses a key operation set from the specified JWK {@code key_ops}
    * parameter value.
@@ -139,7 +173,7 @@ class KeyOperation {
 
       for (KeyOperation op in KeyOperation.values) {
 
-        if (s == op.identifier()) {
+        if (s == getIdentifier(op)) {
           parsedOp = op;
           break;
         }

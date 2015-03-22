@@ -179,7 +179,7 @@ main() {
 
     List<JWK> keyList = new List();
     keyList.add(new RSAKeyBuilder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build());
-    keyList.add(new ECKeyBuilder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+    keyList.add(new ECKeyBuilder(ECKeyCurve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
     JWKSet jwkSet = new JWKSet.fromKeys(keyList);
 

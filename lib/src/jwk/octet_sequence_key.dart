@@ -379,7 +379,7 @@ class OctetSequenceKey extends JWK {
     Set<KeyOperation> ops = null;
 
     if (jsonObject.containsKey("key_ops")) {
-      ops = KeyOperation.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
+      ops = KeyOperationParser.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
     }
 
     // Get optional intended algorithm

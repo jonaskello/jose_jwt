@@ -19,7 +19,10 @@ class BigIntegerUtils {
    *         sign bit.
    */
   static Uint8List toBytesUnsigned(final BigInteger bigInt) {
-    throw new UnimplementedError();
+
+    // TODO: Check if this routine returns unsigned
+    return new Uint8List.fromList(bigInt.toByteArray());
+//    throw new UnimplementedError();
 /*
 
 		// Copied from Apache Commons Codec 1.8

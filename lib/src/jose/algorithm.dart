@@ -113,11 +113,12 @@ class Algorithm implements JSONAware {
   @override
   String toJsonString() {
 
-    StringBuffer sb = new StringBuffer();
-    sb.write('"');
-    sb.write(JSONObject.escape(_name));
-    sb.write('"');
-    return sb.toString();
+    return JSON.encode(_name);
+//    StringBuffer sb = new StringBuffer();
+//    sb.write('"');
+//    sb.write(JSONObject.escape(_name));
+//    sb.write('"');
+//    return sb.toString();
   }
 
 }

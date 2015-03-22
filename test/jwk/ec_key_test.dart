@@ -78,7 +78,7 @@ main() {
 
   test('testCoordinateEncoding', () {
 
-    Uint8List unpadded = [1, 2, 3, 4, 5];
+    Uint8List unpadded = new Uint8List.fromList([1, 2, 3, 4, 5]);
     BigInteger bigInteger = new BigInteger(1, unpadded);
 
     // With no padding required
@@ -121,7 +121,7 @@ main() {
     expect(key.isPrivate(), isTrue);
 
 
-    String jwkString = key.toJson().toString();
+    String jwkString = key.toJsonString();
 
     key = ECKey.fromJsonString(jwkString);
 
@@ -266,7 +266,7 @@ main() {
     expectTrue(key.isPrivate());
 
 
-    String jwkString = key.toJson().toString();
+    String jwkString = key.toJsonString();
 
     key = ECKey.fromJsonString(jwkString);
 

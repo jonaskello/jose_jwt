@@ -190,9 +190,9 @@ class JWKSet {
    *
    * @return The JSON object representation.
    */
-  Map toJSONObject() {
+  Map toJson() {
 
-    return toJSONObjectPublicKeysOnly(true);
+    return toJsonPublicKeysOnly(true);
   }
 
 
@@ -208,11 +208,11 @@ class JWKSet {
    *
    * @return The JSON object representation.
    */
-  Map toJSONObjectPublicKeysOnly(final bool publicKeysOnly) {
+  Map toJsonPublicKeysOnly(final bool publicKeysOnly) {
 
     Map o = new Map.from(_customMembers);
 
-    JSONArray a = new JSONArray();
+    List a = new List();
 
     for (JWK key in _keys) {
 
@@ -245,7 +245,7 @@ class JWKSet {
   @override
   String toString() {
 
-    return toJSONObject().toString();
+    return toJson().toString();
   }
 
 
@@ -309,7 +309,7 @@ class JWKSet {
 //        continue;
 //      }
 
-      if (!(k == null || k.equals("keys"))) {
+      if (!(k == null || k == "keys")) {
         jwkSet.getAdditionalMembers()[k] = v;
       }
     });

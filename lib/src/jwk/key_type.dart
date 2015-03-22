@@ -126,11 +126,12 @@ class KeyType implements JSONAware {
   @override
   String toJsonString() {
 
-    StringBuffer sb = new StringBuffer();
-    sb.write('"');
-    sb.write(JSONObject.escape(_value));
-    sb.write('"');
-    return sb.toString();
+    return JSON.encode(_value);
+//    StringBuffer sb = new StringBuffer();
+//    sb.write('"');
+//    sb.write(JSONObject.escape(_value));
+//    sb.write('"');
+//    return sb.toString();
   }
 
   /**

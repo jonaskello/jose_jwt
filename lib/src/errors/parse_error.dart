@@ -3,8 +3,10 @@ part of jose_jwt.errors;
 class ParseError extends Error {
 
   final message;
-  int errorOffset;
+  final int errorOffset;
 
-  ParseError(this.message, errorOffset);
+  ParseError(this.message, this.errorOffset);
+
+  @override toString() => this.message;
 
 }

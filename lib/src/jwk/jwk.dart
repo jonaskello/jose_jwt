@@ -261,10 +261,10 @@ abstract class JWK implements JSONAware {
 
     if (_ops != null) {
 
-      List<String> sl = new List(_ops.length);
+      List<String> sl = new List();// new List(_ops.length);
 
       for (KeyOperation op in _ops) {
-        sl.add(op.identifier());
+        sl.add(KeyOperationParser.getIdentifier(op));
       }
 
       o["key_ops"] = sl;
@@ -301,7 +301,7 @@ abstract class JWK implements JSONAware {
   @override
   String toJsonString() {
 
-    return toJson().toString();
+    return JSON.encode(toJson());
   }
 
   /**

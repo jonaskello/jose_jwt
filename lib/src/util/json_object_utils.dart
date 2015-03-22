@@ -1,5 +1,5 @@
 part of jose_jwt.util;
-
+/*
 /**
  * JSON object helper methods for parsing and typed retrieval of member values.
  *
@@ -298,3 +298,4 @@ class JSONObjectUtils {
 
 }
 
+*/

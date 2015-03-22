@@ -125,19 +125,19 @@ class JWKSelector {
   }
 
 
-//	/**
-//	 * Sets a single selected key use.
-//	 *
-//	 * @param use The key use, {@code null} if not specified.
-//	 */
-//	void setKeyUse(final KeyUse use) {
-//
-//		if (use == null) {
-//			uses = null;
-//		} else {
-//			uses = new Set(Arrays.asList(use));
-//		}
-//	}
+	/**
+	 * Sets a single selected key use.
+	 *
+	 * @param use The key use, {@code null} if not specified.
+	 */
+	void setKeyUse(final KeyUse use) {
+
+		if (use == null) {
+			_uses = null;
+		} else {
+			_uses = new Set.from([use]);
+		}
+	}
 
 
 //  /**

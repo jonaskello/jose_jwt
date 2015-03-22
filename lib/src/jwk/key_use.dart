@@ -78,6 +78,18 @@ ENCRYPTION
 
 class KeyUseParser {
 
+
+  static String getIdentifier(KeyUse use) {
+
+    switch (use) {
+      case KeyUse.SIGNATURE :
+        return "sig";
+      case KeyUse.ENCRYPTION :
+        return "enc";
+    }
+
+  }
+
   /**
    * Parses a public key use from the specified JWK {@code use} parameter
    * value.
@@ -97,8 +109,7 @@ class KeyUseParser {
 
     for (KeyUse use in KeyUse.values) {
 
-//      if (s == use.identifier) {
-      if (s == use.toString()) {
+      if (s == getIdentifier(use)) {
         return use;
       }
     }

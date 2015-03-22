@@ -468,7 +468,7 @@ class ECKeyBuilder {
   ECKey build() {
 
 //    try {
-    if (d == null) {
+    if (_d == null) {
       // key
       return new ECKey.key(_crv, _x, _y, _use, _ops, _alg, _kid, _x5u, _x5t, _x5c);
     }
@@ -954,7 +954,7 @@ class ECKey extends JWK {
    */
   static ECKey fromJsonString(final String s) {
 
-    return fromJson(JSONObjectUtils.parseJSONObject(s));
+    return fromJson(JSON.decode(s));
   }
 
   /**
@@ -1000,7 +1000,7 @@ class ECKey extends JWK {
     Set<KeyOperation> ops = null;
 
     if (jsonObject.containsKey("key_ops")) {
-      ops = KeyOperation.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
+      ops = KeyOperationParser.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
     }
 
     // Get optional intended algorithm

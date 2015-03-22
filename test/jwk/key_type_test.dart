@@ -1,25 +1,26 @@
 library jose_jwt.test.jwk.key_type_test;
 
-/*
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/jwk.dart';
+
 /**
  * Tests the key type class.
  */
 //public class KeyTypeTest extends TestCase {
 main() {
 
-
   test('testConstants', () {
 
-		assertEquals("RSA", KeyType.RSA.getValue());
-		assertEquals(Requirement.REQUIRED, KeyType.RSA.getRequirement());
+    expect("RSA", KeyType.RSA.getValue());
+    expect(Requirement.REQUIRED, KeyType.RSA.getRequirement());
 
-		assertEquals("EC", KeyType.EC.getValue());
-		assertEquals(Requirement.RECOMMENDED, KeyType.EC.getRequirement());
+    expect("EC", KeyType.EC.getValue());
+    expect(Requirement.RECOMMENDED, KeyType.EC.getRequirement());
 
-		assertEquals("oct", KeyType.OCT.getValue());
-		assertEquals(Requirement.OPTIONAL, KeyType.OCT.getRequirement());
+    expect("oct", KeyType.OCT.getValue());
+    expect(Requirement.OPTIONAL, KeyType.OCT.getRequirement());
   });
 
 }
 
-*/

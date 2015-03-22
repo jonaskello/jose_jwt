@@ -1,6 +1,10 @@
 library jose_jwt.test.jwk.octet_sequence_key_test;
 
-/*
+import 'dart:typed_data';
+import 'package:unittest/unittest.dart';
+import 'package:jose_jwt/src/jose.dart';
+import 'package:jose_jwt/src/jwk.dart';
+
 /**
  * Tests the Octet Sequence JWK class.
  *
@@ -10,154 +14,163 @@ library jose_jwt.test.jwk.octet_sequence_key_test;
 //public class OctetSequenceKeyTest extends TestCase {
 main() {
 
+  expectNull(a) {
+    return expect(a, isNull);
+  }
+
+  expectTrue(a) {
+    return expect(a, isTrue);
+  }
+
 
   test('testConstructorAndSerialization', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		Uri x5u = Uri.parse("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<>();
+		List<Base64> x5c = new List();
 		x5c.add(new Base64("def"));
 
-		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = [KeyOperation.SIGN, KeyOperation.VERIFY].toSet();
 
 		OctetSequenceKey key = new OctetSequenceKey(k, null, ops, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertNull(key.getKeyUse());
-		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-		assertEquals(2, key.getKeyOperations().size());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		expect(KeyType.OCT, key.getKeyType());
+		expect(key.getKeyUse(), isNull);
+		expect(key.getKeyOperations().contains(KeyOperation.SIGN), isTrue);
+		expect(key.getKeyOperations().contains(KeyOperation.VERIFY), isTrue);
+		expect(2, key.getKeyOperations().length);
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
 
-		assertEquals(k, key.getKeyValue());
+		expect(k, key.getKeyValue());
 
-		byte[] keyBytes = k.decode();
+		Uint8List keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
+		expectTrue(key.isPrivate());
 
-		String jwkString = key.toJSONObject().toString();
+		String jwkString = key.toJsonString();
 
-		key = OctetSequenceKey.parse(jwkString);
+		key = OctetSequenceKey.fromJsonString(jwkString);
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertNull(key.getKeyUse());
-		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-		assertEquals(2, key.getKeyOperations().size());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		expect(KeyType.OCT, key.getKeyType());
+		expectNull(key.getKeyUse());
+		expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		expect(2, key.getKeyOperations().length);
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
 
-		assertEquals(k, key.getKeyValue());
+		expect(k, key.getKeyValue());
 
 		keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
 
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
+		expectTrue(key.isPrivate());
+
   });
 
   test('testAltConstructorAndSerialization', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		Uri x5u = Uri.parse("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<>();
+		List<Base64> x5c = new List();
 		x5c.add(new Base64("def"));
 
 		OctetSequenceKey key = new OctetSequenceKey(k, KeyUse.SIGNATURE, null, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
-		assertNull(key.getKeyOperations());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		expect(KeyType.OCT, key.getKeyType());
+		expect(KeyUse.SIGNATURE, key.getKeyUse());
+		expectNull(key.getKeyOperations());
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
 
-		assertEquals(k, key.getKeyValue());
+		expect(k, key.getKeyValue());
 
-		byte[] keyBytes = k.decode();
+		Uint8List keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
+		expectTrue(key.isPrivate());
 
-		String jwkString = key.toJSONObject().toString();
+		String jwkString = key.toJsonString();
 
-		key = OctetSequenceKey.parse(jwkString);
+		key = OctetSequenceKey.fromJsonString(jwkString);
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
-		assertNull(key.getKeyOperations());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		expect(KeyType.OCT, key.getKeyType());
+		expect(KeyUse.SIGNATURE, key.getKeyUse());
+		expectNull(key.getKeyOperations());
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
 
-		assertEquals(k, key.getKeyValue());
+		expect(k, key.getKeyValue());
 
 		keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
 
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
+		expectTrue(key.isPrivate());
   });
 
   test('testRejectUseAndOpsTogether', () {
 
-		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops =  [KeyOperation.SIGN, KeyOperation.VERIFY].toSet();
 
-		try {
+//		try {
 			new OctetSequenceKey(new Base64URL("GawgguFyGrWKav7AX4VKUg"), KeyUse.SIGNATURE, ops, null, null, null, null, null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
+			fail("");
+//		} catch (IllegalArgumentException e) {
+//			// ok
+//		}
   });
 
   test('testBuilder', () {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		Uri x5u = Uri.parse("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<>();
+		List<Base64> x5c = new List();
 		x5c.add(new Base64("def"));
 
-		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = [KeyOperation.SIGN, KeyOperation.VERIFY].toSet();
 
-		OctetSequenceKey key = new OctetSequenceKey.Builder(k).
+		OctetSequenceKey key = new OctetSequenceKeyBuilder(k).
 			keyOperations(ops).
 			algorithm(JWSAlgorithm.HS256).
 			keyID("1").
@@ -166,67 +179,67 @@ main() {
 			x509CertChain(x5c).
 			build();
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertNull(key.getKeyUse());
-		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-		assertEquals(2, key.getKeyOperations().size());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		expect(KeyType.OCT, key.getKeyType());
+		expectNull(key.getKeyUse());
+		expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		expect(2, key.getKeyOperations().length);
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
 
-		assertEquals(k, key.getKeyValue());
+		expect(k, key.getKeyValue());
 
-		byte[] keyBytes = k.decode();
+		Uint8List keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
-
-
-		String jwkString = key.toJSONObject().toString();
-
-		key = OctetSequenceKey.parse(jwkString);
+		expectTrue(key.isPrivate());
 
 
-		assertEquals(KeyType.OCT, key.getKeyType());
-		assertNull(key.getKeyUse());
-		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
-		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
-		assertEquals(2, key.getKeyOperations().size());
-		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
-		assertEquals("1", key.getKeyID());
-		assertEquals(x5u.toString(), key.getX509CertURL().toString());
-		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
-		assertEquals(x5c.size(), key.getX509CertChain().size());
+		String jwkString = key.toJsonString();
 
-		assertEquals(k, key.getKeyValue());
+		key = OctetSequenceKey.fromJsonString(jwkString);
+
+
+		expect(KeyType.OCT, key.getKeyType());
+		expectNull(key.getKeyUse());
+		expectTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		expectTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		expect(2, key.getKeyOperations().length);
+		expect(JWSAlgorithm.HS256, key.getAlgorithm());
+		expect("1", key.getKeyID());
+		expect(x5u.toString(), key.getX509CertURL().toString());
+		expect(x5t.toString(), key.getX509CertThumbprint().toString());
+		expect(x5c.length, key.getX509CertChain().length);
+
+		expect(k, key.getKeyValue());
 
 		keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-			assertEquals(keyBytes[i], key.toByteArray()[i]);
+			expect(keyBytes[i], key.toByteArray()[i]);
 		}
 
-		assertNull(key.toPublicJWK());
+		expectNull(key.toPublicJWK());
 
-		assertTrue(key.isPrivate());
+		expectTrue(key.isPrivate());
   });
 
   test('testBuilderWithByteArray', () {
 
-		byte[] key = new byte[32];
+		Uint8List key = new Uint8List(32);
 		new SecureRandom().nextBytes(key);
 
-		OctetSequenceKey oct = new OctetSequenceKey.Builder(key).build();
+		OctetSequenceKey oct = new OctetSequenceKeyBuilder.fromBytes(key).build();
 
-		assertEquals(Base64URL.encode(key), oct.getKeyValue());
+		expect(Base64URL.encodeBytes(key), oct.getKeyValue());
   });
 
   test('testCookbookHMACKeyExample', () {
@@ -240,13 +253,13 @@ main() {
 			"\"k\":\"hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg\""+
 			"}";
 
-		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+		OctetSequenceKey jwk = OctetSequenceKey.fromJsonString(json);
 
-		assertEquals(KeyType.OCT, jwk.getKeyType());
-		assertEquals("018c0ae5-4d9b-471b-bfd6-eef314bc7037", jwk.getKeyID());
-		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
+		expect(KeyType.OCT, jwk.getKeyType());
+		expect("018c0ae5-4d9b-471b-bfd6-eef314bc7037", jwk.getKeyID());
+		expect(KeyUse.SIGNATURE, jwk.getKeyUse());
 
-		assertEquals("hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg", jwk.getKeyValue().toString());
+		expect("hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg", jwk.getKeyValue().toString());
   });
 
   test('testCookbookAESKeyExample', () {
@@ -261,15 +274,14 @@ main() {
 			"\"k\":\"XctOhJAkA-pD9Lh7ZgW_2A\""+
 			"}";
 
-		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+		OctetSequenceKey jwk = OctetSequenceKey.fromJsonString(json);
 
-		assertEquals(KeyType.OCT, jwk.getKeyType());
-		assertEquals("77c7e2b8-6e13-45cf-8672-617b5b45243a", jwk.getKeyID());
-		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
-		assertEquals(EncryptionMethod.A128GCM, jwk.getAlgorithm());
+		expect(KeyType.OCT, jwk.getKeyType());
+		expect("77c7e2b8-6e13-45cf-8672-617b5b45243a", jwk.getKeyID());
+		expect(KeyUse.ENCRYPTION, jwk.getKeyUse());
+		expect(EncryptionMethod.A128GCM, jwk.getAlgorithm());
 
-		assertEquals("XctOhJAkA-pD9Lh7ZgW_2A", jwk.getKeyValue().toString());
+		expect("XctOhJAkA-pD9Lh7ZgW_2A", jwk.getKeyValue().toString());
   });
 
 }
-*/

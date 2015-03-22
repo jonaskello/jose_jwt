@@ -295,11 +295,9 @@ class RSAKeyBuilder {
    * @param pub The public RSA key to represent. Must not be
    *            {@code null}.
    */
-  RSAKeyBuilder.publicKey(final RSAPublicKey pub) {
-
-    _n = Base64URL.encodeBytes(pub.getModulus());
-    _e = Base64URL.encodeBytes(pub.getPublicExponent());
-  }
+  RSAKeyBuilder.publicKey(final RSAPublicKey pub) :
+  _n = Base64URL.encodeBytes(pub.getModulus()),
+  _e = Base64URL.encodeBytes(pub.getPublicExponent());
 
 
   /**
@@ -335,7 +333,7 @@ class RSAKeyBuilder {
     } else if (priv is RSAMultiPrimePrivateCrtKey) {
       return this.privateKey(priv as RSAMultiPrimePrivateCrtKey);
     } else {
-      this.d = Base64URL.encodeBytes(priv.getPrivateExponent());
+      _d = Base64URL.encodeBytes(priv.exponent.toByteArray());
       return this;
     }
   }
@@ -1368,7 +1366,6 @@ class RSAKey extends JWK {
     return _oth;
   }
 
-/*
   /**
    * Returns a standard {@code java.security.interfaces.RSAPublicKey}
    * representation of this RSA JWK.
@@ -1386,14 +1383,13 @@ class RSAKey extends JWK {
     BigInteger modulus = _n.decodeToBigInteger();
     BigInteger exponent = _e.decodeToBigInteger();
 
-    RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-    KeyFactory factory = KeyFactory.getInstance("RSA");
-
-    return factory.generatePublic(spec) as RSAPublicKey;
+    return new RSAPublicKey(modulus, exponent);
+//    RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+//    KeyFactory factory = KeyFactory.getInstance("RSA");
+//
+//    return factory.generatePublic(spec) as RSAPublicKey;
   }
-*/
 
-/*
   /**
    * Returns a standard {@code java.security.interfaces.RSAPrivateKey}
    * representation of this RSA JWK.
@@ -1408,6 +1404,9 @@ class RSAKey extends JWK {
    *                                  invalid for a private RSA key.
    */
   RSAPrivateKey toRSAPrivateKey() {
+
+    throw new UnimplementedError();
+    /*
 
     if (_d == null) {
       // no private key
@@ -1474,10 +1473,9 @@ class RSAKey extends JWK {
     KeyFactory factory = KeyFactory.getInstance("RSA");
 
     return factory.generatePrivate(spec) as RSAPrivateKey;
-  }
 */
+  }
 
-/*
   /**
    * Returns a standard {@code java.security.KeyPair} representation of
    * this RSA JWK.
@@ -1497,7 +1495,7 @@ class RSAKey extends JWK {
 
     return new AsymmetricKeyPair(toRSAPublicKey(), toRSAPrivateKey());
   }
-*/
+
 
   @override
   bool isPrivate() {
@@ -1667,7 +1665,7 @@ class RSAKey extends JWK {
     Set<KeyOperation> ops = null;
 
     if (jsonObject.containsKey("key_ops")) {
-      ops = KeyOperation.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
+      ops = KeyOperationParser.parse(JSONUtils.getStringList(jsonObject, "key_ops"));
     }
 
     // Get optional intended algorithm
